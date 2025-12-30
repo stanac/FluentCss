@@ -1,4 +1,7 @@
-﻿namespace CssB.Core;
+﻿// Color values and names are lifted from Tailwind, their licence (MIT)
+// can be found here: https://github.com/tailwindlabs/tailwindcss/blob/9720692edac4b8045b3646b26e47ad7b97a37cbf/LICENSE
+
+namespace CssB.Core;
 
 public struct Color
 {

@@ -1,7 +1,6 @@
 ﻿@page "/"
 
 @using CssB.Core
-@using static CssB.Core.CssBuilder
 
 <PageTitle>Home</PageTitle>
 
@@ -9,6 +8,7 @@
 
 Welcome to your new app.
 
-<p class="@Css.Bg(Color.Slate400).Text(Color.Green400)">
+<p class="
+    @Css.Background(Color.Slate400).Color(Color.Green400).Hover(h => h.Background(Color.Black).Color(Color.White))" >
     Test
 </p>

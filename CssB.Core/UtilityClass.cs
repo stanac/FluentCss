@@ -2,18 +2,33 @@
 
 public class UtilityClass
 {
-    public string ClassName { get; }
+    private readonly string _classNameNoPseudo;
+
+    public string ClassName =>
+        string.IsNullOrWhiteSpace(Pseudo)
+            ? _classNameNoPseudo
+            : $"{Pseudo}:{_classNameNoPseudo}";
+
     public string Property { get; }
     public string Value { get; }
+    public string? Pseudo { get; private set; }
 
     public UtilityClass(string className, string property, string value)
     {
         Property = property;
         Value = value;
-        ClassName = className;
+        _classNameNoPseudo = className;
     }
 
-    public string CssString => field ??= $".{ClassName} {{ {Property}: {Value}; }}";
+    public UtilityClass AddPseudo(string pseudo)
+    {
+        return new UtilityClass(ClassName, Property, Value)
+        {
+            Pseudo = pseudo.Trim(':')
+        };
+    }
+
+    public string CssString => field ??= BuildCssString();
 
     public override int GetHashCode() => ClassName.GetHashCode();
 
@@ -40,5 +55,15 @@ public class UtilityClass
     public static bool operator !=(UtilityClass? c1, UtilityClass? c2)
     {
         return !(c1 == c2);
+    }
+
+    private string BuildCssString()
+    {
+        if (string.IsNullOrWhiteSpace(Pseudo))
+        {
+            return $".{ClassName} {{ {Property}: {Value}; }}";
+        }
+
+        return $".{Pseudo}\\:{_classNameNoPseudo}:{Pseudo} {{ {Property}: {Value} }}";
     }
 }
