@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CssB.Core;
 
-public interface IStyleBuilder<out T>
+public interface IStyleBuilder<out T> where T: IStyleBuilder<T>
 {
     T Background(Color color);
     T Color(Color color);
@@ -14,8 +14,15 @@ public interface ICssBuilder: IStyleBuilder<ICssBuilder>, IPseudoBuilder;
 
 public interface IInsidePseudoCssBuilder: IStyleBuilder<IInsidePseudoCssBuilder>;
 
-public abstract class BaseStyleBuilder<T>: IStyleBuilder<T>
+public abstract class BaseStyleBuilder<T>: IStyleBuilder<T> where T: IStyleBuilder<T>
 {
+    private protected string? Theme { get; }
+
+    private protected BaseStyleBuilder(string? theme)
+    {
+        Theme = theme;
+    }
+
     protected internal abstract void AddClass(UtilityClass c);
 
     protected abstract T ReturnSelf();
@@ -43,6 +50,10 @@ internal class InternalCssBuilder: BaseStyleBuilder<ICssBuilder>, ICssBuilder
 {
     private readonly List<string> _classNames = [];
 
+    internal InternalCssBuilder(string? theme) : base(theme)
+    {
+    }
+
     protected internal override void AddClass(UtilityClass c)
     {
         _classNames.Add(c.ClassName);
@@ -57,7 +68,7 @@ internal class InternalCssBuilder: BaseStyleBuilder<ICssBuilder>, ICssBuilder
 
     public IPseudoBuilder Pseudo(string pseudoPrefix, Action<IInsidePseudoCssBuilder> pseudoBuilder)
     {
-        IInsidePseudoCssBuilder builder = new InsidePseudoBuilder(this, pseudoPrefix);
+        IInsidePseudoCssBuilder builder = new InsidePseudoBuilder(this, pseudoPrefix, Theme);
         pseudoBuilder(builder);
         return ReturnSelf();
     }
@@ -72,7 +83,7 @@ internal class InsidePseudoBuilder : BaseStyleBuilder<IInsidePseudoCssBuilder>, 
     private readonly InternalCssBuilder _parentBuilder;
     private readonly string _pseudo;
 
-    public InsidePseudoBuilder(InternalCssBuilder parentBuilder, string pseudo)
+    public InsidePseudoBuilder(InternalCssBuilder parentBuilder, string pseudo, string? theme): base(theme)
     {
         _parentBuilder = parentBuilder;
         _pseudo = pseudo;
@@ -80,7 +91,9 @@ internal class InsidePseudoBuilder : BaseStyleBuilder<IInsidePseudoCssBuilder>, 
 
     protected internal override void AddClass(UtilityClass c)
     {
-        _parentBuilder.AddClass(c.AddPseudo(_pseudo));
+        _parentBuilder.AddClass(
+            c.AddPseudo(_pseudo)
+                .AddTheme(Theme));
     }
 
     protected override IInsidePseudoCssBuilder ReturnSelf() => this;
@@ -88,7 +101,11 @@ internal class InsidePseudoBuilder : BaseStyleBuilder<IInsidePseudoCssBuilder>, 
 
 public static class CssBuilder
 {
-    public static ICssBuilder Css => new InternalCssBuilder();
+    public static ICssBuilder Css => new InternalCssBuilder(null);
+
+    public static ICssBuilder Dark => Theme("dark");
+
+    public static ICssBuilder Theme(string theme) => new InternalCssBuilder($"theme-{theme}");
 }
 
 public interface IPseudoBuilder

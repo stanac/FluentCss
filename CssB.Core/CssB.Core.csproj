@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="CssB" />
+		<InternalsVisibleTo Include="CssB.Core.Tests" />
 	</ItemGroup>
 
 </Project>

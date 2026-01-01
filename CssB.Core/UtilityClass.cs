@@ -1,17 +1,38 @@
-﻿namespace CssB.Core;
+﻿using System.Text;
+
+namespace CssB.Core;
 
 public class UtilityClass
 {
     private readonly string _classNameNoPseudo;
+    
+    public string ClassName
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(field))
+            {
+                return field!;
+            }
 
-    public string ClassName =>
-        string.IsNullOrWhiteSpace(Pseudo)
-            ? _classNameNoPseudo
-            : $"{Pseudo}:{_classNameNoPseudo}";
+            string className = string.IsNullOrWhiteSpace(Pseudo)
+                ? _classNameNoPseudo
+                : $"{Pseudo}:{_classNameNoPseudo}";
+            
+            if (!string.IsNullOrWhiteSpace(Theme))
+            {
+                className = $"{Theme}:{className}";
+            }
+
+            field = className;
+            return className;
+        }
+    }
 
     public string Property { get; }
     public string Value { get; }
     public string? Pseudo { get; private set; }
+    public string? Theme { get; private set; }
 
     public UtilityClass(string className, string property, string value)
     {
@@ -20,11 +41,26 @@ public class UtilityClass
         _classNameNoPseudo = className;
     }
 
-    public UtilityClass AddPseudo(string pseudo)
+    internal UtilityClass AddPseudo(string pseudo)
     {
-        return new UtilityClass(ClassName, Property, Value)
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
-            Pseudo = pseudo.Trim(':')
+            Pseudo = pseudo.Trim(':'),
+            Theme = Theme
+        };
+    }
+
+    internal UtilityClass AddTheme(string? theme)
+    {
+        if (string.IsNullOrWhiteSpace(theme))
+        {
+            return this;
+        }
+
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
+        {
+            Pseudo = Pseudo,
+            Theme = theme
         };
     }
 
@@ -35,7 +71,7 @@ public class UtilityClass
     public override bool Equals(object? obj)
     {
         if (obj == null) return false;
-        
+
         if (obj is UtilityClass c)
         {
             return c.ClassName == ClassName;
@@ -59,11 +95,33 @@ public class UtilityClass
 
     private string BuildCssString()
     {
-        if (string.IsNullOrWhiteSpace(Pseudo))
+        StringBuilder sb = StringBuilderBag.TakeOrNew();
+
+        sb.Append('.');
+
+        if (!string.IsNullOrWhiteSpace(Theme))
         {
-            return $".{ClassName} {{ {Property}: {Value}; }}";
+            sb.Append(Theme).Append(" .").Append(Theme).Append("\\:");
         }
 
-        return $".{Pseudo}\\:{_classNameNoPseudo}:{Pseudo} {{ {Property}: {Value} }}";
+        if (!string.IsNullOrWhiteSpace(Pseudo))
+        {
+            sb.Append(Pseudo).Append("\\:");
+        }
+
+        sb.Append(_classNameNoPseudo);
+
+        if (!string.IsNullOrWhiteSpace(Pseudo))
+        {
+            sb.Append(':').Append(Pseudo);
+        }
+
+        sb.Append(" { ").Append(Property).Append(": ").Append(Value).Append(" } ");
+
+        string css = sb.ToString();
+
+        StringBuilderBag.ClearAndReturn(sb);
+
+        return css;
     }
 }
