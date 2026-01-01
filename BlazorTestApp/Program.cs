@@ -1,4 +1,7 @@
 using BlazorTestApp.Components;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BlazorTestApp
 {

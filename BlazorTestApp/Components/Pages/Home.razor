@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@inject IJSRuntime Js
+
 @using CssB.Core
 
 <PageTitle>Home</PageTitle>
@@ -9,6 +11,26 @@
 Welcome to your new app.
 
 <p class="
-    @Css.Background(Color.Slate400).Color(Color.Green400).Hover(h => h.Background(Color.Black).Color(Color.White))" >
+   @Css.Background(Color.Slate400).Color(Color.Green400).Hover(h => h.Background(Color.Black).Color(Color.White))
+   @Dark.Background(Color.Black).Color(Color.White).Hover(h => h.Background(Color.Red300).Color(Color.Red800))" 
+>
     Test
 </p>
+
+<p>
+    <button onclick="document.documentElement.classList.toggle('theme-dark')">Toggle theme</button>
+</p>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Init completed");
+    }
+
+    async Task ToggleTheme()
+    {
+        Console.WriteLine("123123()");
+        await Js.InvokeVoidAsync("toggleTheme");
+    }
+
+}

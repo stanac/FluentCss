@@ -29,19 +29,19 @@ public abstract class BaseStyleBuilder<T>: IStyleBuilder<T> where T: IStyleBuild
 
     public T Background(Color color)
     {
-        AddClass(new UtilityClass($"bg-{color.Name}", "background-color", color.Value));
+        AddClass(new UtilityClass($"bg-{color.Name}", "background-color", color.Value).AddTheme(Theme));
         return ReturnSelf();
     }
 
     public T Color(Color color)
     {
-        AddClass(new UtilityClass($"text-{color.Name}", "color", color.Value));
+        AddClass(new UtilityClass($"text-{color.Name}", "color", color.Value).AddTheme(Theme));
         return ReturnSelf();
     }
 
     public T Border(Color color)
     {
-        AddClass(new UtilityClass($"border-{color.Name}", "border-color", color.Value));
+        AddClass(new UtilityClass($"border-{color.Name}", "border-color", color.Value).AddTheme(Theme));
         return ReturnSelf();
     }
 }
@@ -56,6 +56,11 @@ internal class InternalCssBuilder: BaseStyleBuilder<ICssBuilder>, ICssBuilder
 
     protected internal override void AddClass(UtilityClass c)
     {
+        if (!string.IsNullOrWhiteSpace(Theme) && string.IsNullOrWhiteSpace(c.Theme))
+        {
+            c = c.AddTheme(Theme);
+        }
+
         _classNames.Add(c.ClassName);
         ClassRegistry.DefaultRegistry.Add(c);
     }
