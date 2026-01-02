@@ -15,17 +15,29 @@ public class UtilityClass
                 return field!;
             }
 
-            string className = string.IsNullOrWhiteSpace(Pseudo)
-                ? _classNameNoPseudo
-                : $"{Pseudo}:{_classNameNoPseudo}";
-            
-            if (!string.IsNullOrWhiteSpace(Theme))
+            var sb = StringBuilderBag.TakeOrNew();
+
+            if (!string.IsNullOrWhiteSpace(MediaPrefix))
             {
-                className = $"{Theme}:{className}";
+                sb.Append(MediaPrefix).Append(':');
             }
 
-            field = className;
-            return className;
+            if (!string.IsNullOrWhiteSpace(Theme))
+            {
+                sb.Append(Theme).Append(':');
+            }
+
+            if (!string.IsNullOrWhiteSpace(Pseudo))
+            {
+                sb.Append(Pseudo).Append(':');
+            }
+
+            sb.Append(_classNameNoPseudo);
+
+            field = sb.ToString();
+            StringBuilderBag.ClearAndReturn(sb);
+
+            return field!;
         }
     }
 
@@ -33,6 +45,11 @@ public class UtilityClass
     public string Value { get; }
     public string? Pseudo { get; private set; }
     public string? Theme { get; private set; }
+    public string? MediaQuery { get; private set; }
+    public string? MediaPrefix { get; private set; }
+
+    private string? _cssString;
+    public string CssString => _cssString ??= BuildCssString();
 
     public UtilityClass(string className, string property, string value)
     {
@@ -46,7 +63,9 @@ public class UtilityClass
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
             Pseudo = pseudo.Trim(':'),
-            Theme = Theme
+            Theme = Theme,
+            MediaPrefix = MediaPrefix,
+            MediaQuery = MediaQuery
         };
     }
 
@@ -60,48 +79,72 @@ public class UtilityClass
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
             Pseudo = Pseudo,
-            Theme = theme
+            Theme = theme,
+            MediaPrefix = MediaPrefix,
+            MediaQuery = MediaQuery
         };
     }
 
-    public string CssString => field ??= BuildCssString();
+    internal UtilityClass AddMedia(string? query, string? prefix)
+    {
+        if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(prefix)) return this;
+
+        query = query!.Trim();
+
+        if (!query.StartsWith("(") || !query.EndsWith(")"))
+        {
+            query = $"({query})";
+        }
+
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
+        {
+            Pseudo = Pseudo,
+            Theme = Theme,
+            MediaPrefix = prefix,
+            MediaQuery = query
+        };
+    }
 
     public override int GetHashCode() => ClassName.GetHashCode();
 
     public override bool Equals(object? obj)
     {
-        if (obj == null) return false;
-
-        if (obj is UtilityClass c)
-        {
-            return c.ClassName == ClassName;
-        }
-
-        return false;
+        return obj is UtilityClass c && c.ClassName == ClassName;
     }
 
     public static bool operator ==(UtilityClass? c1, UtilityClass? c2)
     {
         if (c1 is null && c2 is null) return true;
         if (c1 is null || c2 is null) return false;
-
         return c1.ClassName == c2.ClassName;
     }
 
-    public static bool operator !=(UtilityClass? c1, UtilityClass? c2)
-    {
-        return !(c1 == c2);
-    }
+    public static bool operator !=(UtilityClass? c1, UtilityClass? c2) => !(c1 == c2);
 
     private string BuildCssString()
     {
         StringBuilder sb = StringBuilderBag.TakeOrNew();
 
-        sb.Append('.');
+        if (!string.IsNullOrWhiteSpace(MediaQuery))
+        {
+            sb.Append("@media ").Append(MediaQuery).Append(" { ");
+        }
 
         if (!string.IsNullOrWhiteSpace(Theme))
         {
-            sb.Append(Theme).Append(" .").Append(Theme).Append("\\:");
+            sb.Append('.').Append(Theme).Append(' ');
+        }
+
+        sb.Append('.');
+
+        if (!string.IsNullOrWhiteSpace(MediaPrefix))
+        {
+            sb.Append(MediaPrefix).Append("\\:");
+        }
+
+        if (!string.IsNullOrWhiteSpace(Theme))
+        {
+            sb.Append(Theme).Append("\\:");
         }
 
         if (!string.IsNullOrWhiteSpace(Pseudo))
@@ -118,8 +161,12 @@ public class UtilityClass
 
         sb.Append(" { ").Append(Property).Append(": ").Append(Value).Append(" } ");
 
-        string css = sb.ToString();
+        if (!string.IsNullOrWhiteSpace(MediaQuery))
+        {
+            sb.Append('}');
+        }
 
+        string css = sb.ToString();
         StringBuilderBag.ClearAndReturn(sb);
 
         return css;

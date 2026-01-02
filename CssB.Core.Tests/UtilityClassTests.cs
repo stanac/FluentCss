@@ -170,4 +170,129 @@ public class UtilityClassTests
         (u1 == u3).Should().BeFalse();
         (u3 == u1).Should().BeFalse();
     }
+
+    [Fact]
+    public void AddMedia_Should_ReturnNewInstance_And_UpdateClassName()
+    {
+        // Arrange
+        var sut = new UtilityClass("flex", "display", "flex");
+
+        // Act
+        var result = sut.AddMedia("(min-width: 768px)", "md");
+
+        // Assert
+        result.Should().NotBeSameAs(sut);
+        result.MediaPrefix.Should().Be("md");
+        result.MediaQuery.Should().Be("(min-width: 768px)");
+        result.ClassName.Should().Be("md:flex");
+    }
+
+    [Fact]
+    public void AddMedia_NoBrackets_Should_ReturnNewInstance_And_UpdateClassName()
+    {
+        // Arrange
+        var sut = new UtilityClass("flex", "display", "flex");
+
+        // Act
+        var result = sut.AddMedia("min-width: 768px", "md");
+
+        // Assert
+        result.Should().NotBeSameAs(sut);
+        result.MediaPrefix.Should().Be("md");
+        result.MediaQuery.Should().Be("(min-width: 768px)");
+        result.ClassName.Should().Be("md:flex");
+    }
+
+    [Fact]
+    public void BuildCssString_Should_Wrap_In_MediaBlock()
+    {
+        // Arrange
+        var sut = new UtilityClass("p-4", "padding", "1rem")
+            .AddMedia("(min-width: 768px)", "md");
+
+        // Act
+        var css = sut.CssString;
+
+        // Assert
+        // Logic: @media query { .prefix\:class { ... } }
+        css.Should().Be("@media (min-width: 768px) { .md\\:p-4 { padding: 1rem } }");
+    }
+
+    [Fact]
+    public void AddMedia_Then_AddPseudo_Should_Combine_Correctly()
+    {
+        // Arrange
+        var sut = new UtilityClass("bg-red", "background-color", "red")
+            .AddMedia("(min-width: 1024px)", "lg")
+            .AddPseudo("hover");
+
+        // Act
+        var css = sut.CssString;
+
+        // Assert
+        // ClassName: lg:hover:bg-red
+        sut.ClassName.Should().Be("lg:hover:bg-red");
+
+        // CSS: @media ... { .lg\:hover\:bg-red:hover { ... } }
+        css.Should().Be("@media (min-width: 1024px) { .lg\\:hover\\:bg-red:hover { background-color: red } }");
+    }
+
+    [Fact]
+    public void AddMedia_Then_AddTheme_Should_Combine_Correctly()
+    {
+        // Arrange
+        var sut = new UtilityClass("text-sm", "font-size", "0.875rem")
+            .AddMedia("(min-width: 640px)", "sm")
+            .AddTheme("dark");
+
+        // Act
+        var css = sut.CssString;
+
+        // Assert
+        // ClassName: sm:dark:text-sm
+        sut.ClassName.Should().Be("sm:dark:text-sm");
+
+        // CSS: @media ... { .dark .sm\:dark\:text-sm { ... } }
+        // Note: Theme selector (.dark) is scoped inside the media query
+        css.Should().Be("@media (min-width: 640px) { .dark .sm\\:dark\\:text-sm { font-size: 0.875rem } }");
+    }
+
+    [Fact]
+    public void Full_Stack_Media_Theme_Pseudo_Should_Order_Correctly()
+    {
+        // Arrange
+        // Order of calls shouldn't matter for the final string generation logic, 
+        // but here we simulate a chain: Media -> Theme -> Pseudo
+        var sut = new UtilityClass("opacity-0", "opacity", "0")
+            .AddMedia("(min-width: 1280px)", "xl")
+            .AddTheme("dark")
+            .AddPseudo("focus");
+
+        // Act
+        var css = sut.CssString;
+
+        // Assert
+        // ClassName Logic: media:theme:pseudo:class -> xl:dark:focus:opacity-0
+        sut.ClassName.Should().Be("xl:dark:focus:opacity-0");
+
+        // CSS Logic: 
+        // 1. @media (xl)
+        // 2. .dark (theme scope)
+        // 3. .xl\:dark\:focus\:opacity-0 (escaped selector)
+        // 4. :focus (pseudo state)
+        css.Should().Be("@media (min-width: 1280px) { .dark .xl\\:dark\\:focus\\:opacity-0:focus { opacity: 0 } }");
+    }
+
+    [Fact]
+    public void Equals_Should_ReturnFalse_For_Different_Media()
+    {
+        // Arrange
+        var u1 = new UtilityClass("flex", "display", "flex").AddMedia("(a)", "sm");
+        var u2 = new UtilityClass("flex", "display", "flex").AddMedia("(b)", "md");
+        var u3 = new UtilityClass("flex", "display", "flex"); // No media
+
+        // Act & Assert
+        u1.Should().NotBe(u2);
+        u1.Should().NotBe(u3);
+    }
 }
