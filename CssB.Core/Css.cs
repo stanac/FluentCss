@@ -118,12 +118,18 @@ public abstract class BaseStyleBuilder<T>: IStyleBuilder<T>
     }
 
     public override string ToString() => string.Join(" ", _classNames);
+
+    protected void AddClassName(string className)
+    {
+        _classNames.Add(className);
+    }
 }
 
 internal class OnlyStyleBuilder : BaseStyleBuilder<IOnlyStyleBuilder>, IOnlyStyleBuilder
 {
     private readonly ClassRegistry _registry;
     private readonly string _pseudo;
+    private readonly List<string> _classNames = [];
 
     internal OnlyStyleBuilder(ClassRegistry registry, string? theme, string? mediaQuery, string? mediaPrefix, string pseudo) 
         : base(theme, mediaQuery, mediaPrefix)
@@ -135,10 +141,13 @@ internal class OnlyStyleBuilder : BaseStyleBuilder<IOnlyStyleBuilder>, IOnlyStyl
     protected internal override void AddClass(UtilityClass c)
     {
         c = c.AddTheme(Theme).AddMedia(MediaQuery, MediaPrefix).AddPseudo(_pseudo);
+        _classNames.Add(c.ClassName);
         _registry.Add(c);
     }
 
     protected override IOnlyStyleBuilder ReturnSelf() => this;
+
+    public override string ToString() => string.Join(" ", _classNames);
 }
 
 internal class InternalCssBuilder : BaseStyleBuilder<ICssBuilder>, ICssBuilder
@@ -168,6 +177,7 @@ internal class InternalCssBuilder : BaseStyleBuilder<ICssBuilder>, ICssBuilder
     {
         IOnlyStyleBuilder builder = new OnlyStyleBuilder(_registry, Theme, MediaQuery, MediaPrefix, pseudoPrefix);
         pseudoBuilderAction(builder);
+        base.AddClassName(builder.ToString());
         return ReturnSelf();
     }
 }
@@ -200,6 +210,7 @@ internal class InternalRootCssBuilder : InternalCssBuilder, IRootCssBuilder
     {
         InternalRootCssBuilder builder = new InternalRootCssBuilder(_registry, Theme, query, classPrefix);
         cssBuilderAction(builder);
+        AddClassName(builder.ToString());
         return this;
     }
 }
