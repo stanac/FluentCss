@@ -447,6 +447,11 @@ public interface IStyleBuilder<out T>
     T Shadow();
 
     /// <summary>
+    /// Sets box-shadow to small
+    /// </summary>
+    T ShadowSm();
+
+    /// <summary>
     /// Sets box-shadow to medium
     /// </summary>
     T ShadowMd();

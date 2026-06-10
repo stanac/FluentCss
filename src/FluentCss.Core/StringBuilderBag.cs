@@ -6,16 +6,16 @@ namespace FluentCss.Core;
 
 internal static class StringBuilderBag
 {
-    private static readonly Stack<StringBuilder> _items = new();
-    private static readonly object _sync = new();
+    private static readonly Stack<StringBuilder> Items = new();
+    private static readonly object Sync = new();
 
     public static StringBuilder TakeOrNew()
     {
-        lock (_sync)
+        lock (Sync)
         {
-            if (_items.Any())
+            if (Items.Any())
             {
-                return _items.Pop();
+                return Items.Pop();
             }
 
             return new StringBuilder();
@@ -26,11 +26,11 @@ internal static class StringBuilderBag
     {
         sb.Clear();
 
-        lock (_sync)
+        lock (Sync)
         {
-            if (_items.Count < 12)
+            if (Items.Count < 12)
             {
-                _items.Push(sb);
+                Items.Push(sb);
             }
         }
     }

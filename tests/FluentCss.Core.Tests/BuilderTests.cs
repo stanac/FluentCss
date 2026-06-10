@@ -10,7 +10,7 @@ public class BuilderTests
     public void Builder_Should_Add_Simple_Class_To_Registry()
     {
         // Arrange
-        var sut = new InternalFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalFluentCssBuilder(_registry, null, null, null);
 
         // Act
         sut.Background(Color.Red50);
@@ -25,7 +25,7 @@ public class BuilderTests
     public void Builder_Chaining_Should_Add_Multiple_Classes()
     {
         // Arrange
-        var sut = new InternalFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalFluentCssBuilder(_registry, null, null, null);
 
         // Act
         // .Background returns 'this', allowing chaining
@@ -44,7 +44,7 @@ public class BuilderTests
     public void Hover_Should_Add_Pseudo_Class_To_Registry()
     {
         // Arrange
-        var sut = new InternalFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalFluentCssBuilder(_registry, null, null, null);
 
         // Act
         sut.Hover(x => x.Background(Color.Red100));
@@ -60,7 +60,7 @@ public class BuilderTests
     {
         // Arrange
         // Simulate FluentCssBuilder.Theme("dark")
-        var sut = new InternalFluentCssuilder(_registry, "dark", null, null);
+        var sut = new InternalFluentCssBuilder(_registry, "dark", null, null);
 
         // Act
         sut.BorderColor(Color.Black);
@@ -75,7 +75,7 @@ public class BuilderTests
     public void Nested_Pseudo_Inside_Theme_Should_Work()
     {
         // Arrange
-        var sut = new InternalFluentCssuilder(_registry, "dark", null, null);
+        var sut = new InternalFluentCssBuilder(_registry, "dark", null, null);
 
         // Act
         sut.Focus(x => x.Color(Color.Red200));
@@ -91,7 +91,7 @@ public class BuilderTests
     public void Custom_Pseudo_Should_Work()
     {
         // Arrange
-        var sut = new InternalFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalFluentCssBuilder(_registry, null, null, null);
 
         // Act
         sut.Pseudo("nth-child(2)", x => x.Background(Color.White));

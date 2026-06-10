@@ -1,16 +1,41 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
+@{
+    string mainDivCss = $"""
+                         {Css.Flex(FlexDirection.Col)}
+                         {Css.MinMd(md => md.Flex(FlexDirection.Row)).HScreen()}
+                         """;
+
+    string divCss = $"""
+                     {Css.Background(Color.Slate800).Color(Color.Slate100)}
+                     {Css.MinMd(md => md.W(64).HScreen().Sticky().Top(0))}
+                     {Css.P(4).Flex(FlexDirection.Col)}
+                     """;
+
+    string headerCss = $"""
+                        {Css.Flex(FlexDirection.Row, Justify.End, Align.Center).H(14).Px(6)}
+                        {Css.Background(Color.Slate50).Border().BorderColor(Color.Slate200)}
+                        {Css.Sticky().Top(0).Z(10)}
+                        """;
+
+    string mainCss = Css.Grow().OverflowAuto().Flex(FlexDirection.Col).ToString()!;
+}
+
+<div class="@mainDivCss">
+    <div class="@divCss">
         <NavMenu />
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <main class="@mainCss">
+        <header class="@headerCss">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank"
+               class="@Css.Color(Color.Slate600).NoUnderline().TextSm()
+                         .Hover(h => h.Underline().Color(Color.Slate900))">
+                About
+            </a>
+        </header>
 
-        <article class="content px-4">
+        <article class="@Css.P(6) @Css.MinMd(md => md.P(8)).Grow()">
             @Body
         </article>
     </main>

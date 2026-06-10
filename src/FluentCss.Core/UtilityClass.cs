@@ -15,7 +15,7 @@ public class UtilityClass
                 return field!;
             }
 
-            var sb = StringBuilderBag.TakeOrNew();
+            StringBuilder sb = StringBuilderBag.TakeOrNew();
 
             if (!string.IsNullOrWhiteSpace(MediaPrefix))
             {

@@ -139,6 +139,7 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
     public T RoundedFull() => AddInternal(new UtilityClass("rounded-full", "border-radius", "9999px"));
 
     public T Shadow() => AddInternal(new UtilityClass("shadow", "box-shadow", "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)"));
+    public T ShadowSm() => AddInternal(new UtilityClass("shadow-sm", "box-shadow", "0 1px 2px 0 rgb(0 0 0 / 0.05)"));
     public T ShadowMd() => AddInternal(new UtilityClass("shadow-md", "box-shadow", "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"));
     public T ShadowLg() => AddInternal(new UtilityClass("shadow-lg", "box-shadow", "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"));
 

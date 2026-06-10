@@ -2,11 +2,11 @@ using System;
 
 namespace FluentCss.Core;
 
-internal class InternalFluentCssuilder : BaseStyleBuilder<IFluentCssuilder>, IFluentCssuilder
+internal class InternalFluentCssBuilder : BaseStyleBuilder<IFluentCssBuilder>, IFluentCssBuilder
 {
     private readonly ClassRegistry _registry;
 
-    internal InternalFluentCssuilder(ClassRegistry registry, string? theme, string? mediaQuery, string? mediaPrefix) : base(theme, mediaQuery, mediaPrefix)
+    internal InternalFluentCssBuilder(ClassRegistry registry, string? theme, string? mediaQuery, string? mediaPrefix) : base(theme, mediaQuery, mediaPrefix)
     {
         _registry = registry;
     }
@@ -17,15 +17,15 @@ internal class InternalFluentCssuilder : BaseStyleBuilder<IFluentCssuilder>, IFl
         _registry.Add(c);
     }
 
-    protected override IFluentCssuilder ReturnSelf() => this;
+    protected override IFluentCssBuilder ReturnSelf() => this;
 
-    public IFluentCssuilder Hover(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("hover", pseudoBuilderAction);
+    public IFluentCssBuilder Hover(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("hover", pseudoBuilderAction);
 
-    public IFluentCssuilder Active(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("active", pseudoBuilderAction);
+    public IFluentCssBuilder Active(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("active", pseudoBuilderAction);
 
-    public IFluentCssuilder Focus(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("focus", pseudoBuilderAction);
+    public IFluentCssBuilder Focus(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("focus", pseudoBuilderAction);
 
-    public IFluentCssuilder Pseudo(string pseudoPrefix, Action<IOnlyStyleBuilder> pseudoBuilderAction)
+    public IFluentCssBuilder Pseudo(string pseudoPrefix, Action<IOnlyStyleBuilder> pseudoBuilderAction)
     {
         IOnlyStyleBuilder builder = new OnlyStyleBuilder(_registry, Theme, MediaQuery, MediaPrefix, pseudoPrefix);
         pseudoBuilderAction(builder);

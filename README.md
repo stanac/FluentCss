@@ -50,6 +50,13 @@ Add `<CssStyles />` to your layout (e.g., `App.razor` or `MainLayout.razor`):
 
 **Important!!: during development place `<CssStyles />` at the end of the layout file!**
 
+Optionally, include the Tailwind CSS reset (preflight) to normalize browser defaults:
+
+```razor
+<link rel="stylesheet" href="_content/FluentCss/preflight.css" />
+```
+Preflight is licensed by Tailwind under MIT license.
+
 Then build classes anywhere in your components using the shorthand `@Css` and `@Dark`:
 
 ```razor
@@ -95,6 +102,22 @@ and use it as
     Test
 </p>
 ```
+
+> **⚠️ Important:** The inline `@Css.Chain().Method()` syntax only works on **HTML elements** (`<div>`, `<p>`, `<a>`, etc.).
+> **Blazor components** (`<NavLink>`, `<InputText>`, etc.) do not support complex C# expressions in their attributes.
+> For component attributes, precompute the class string in a `@code` block or a static class (as shown above) and pass a simple variable:
+>
+> ```razor
+> @* ❌ Does NOT work on components *@
+> <NavLink class="@Css.Background(Color.Blue500).Color(Color.White)">...</NavLink>
+>
+> @* ✅ Works on components *@
+> <NavLink class="@NavLinkClass">...</NavLink>
+>
+> @code {
+>     private static string NavLinkClass = Css.Background(Color.Blue500).Color(Color.White).ToString();
+> }
+> ```
 
 ### 2. Non-Blazor / Any .NET App
 

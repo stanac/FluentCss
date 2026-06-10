@@ -17,7 +17,7 @@ public class RootBuilderTests
     public void MinMd_Should_Apply_Media_Query()
     {
         // Arrange
-        var sut = new InternalRootFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalRootFluentCssBuilder(_registry, null, null, null);
 
         // Act
         sut.MinMd(x => x.Background(Color.Black));
@@ -34,7 +34,7 @@ public class RootBuilderTests
     public void Media_Nesting_Should_Work_With_Action_Delegates()
     {
         // Arrange
-        var sut = new InternalRootFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalRootFluentCssBuilder(_registry, null, null, null);
 
         // Act
         // We cannot nest Media inside Media via fluent API, but we can pass a builder action
@@ -60,7 +60,7 @@ public class RootBuilderTests
     public void RootBuilder_ToString_Should_Aggregate_Child_Builder_Classes()
     {
         // Arrange
-        var sut = new InternalRootFluentCssuilder(_registry, null, null, null);
+        var sut = new InternalRootFluentCssBuilder(_registry, null, null, null);
 
         // Act
         sut.Background(Color.Red50);
