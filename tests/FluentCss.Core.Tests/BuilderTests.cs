@@ -59,7 +59,7 @@ public class BuilderTests
     public void Theme_Builder_Should_Prefix_Classes()
     {
         // Arrange
-        // Simulate FluentCssuilder.Theme("dark")
+        // Simulate FluentCssBuilder.Theme("dark")
         var sut = new InternalFluentCssuilder(_registry, "dark", null, null);
 
         // Act

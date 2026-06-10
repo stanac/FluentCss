@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace FluentCss.Core;
 
-internal class ClassRegistry: IEnumerable<UtilityClass>
+public class ClassRegistry: IEnumerable<UtilityClass>
 {
     public event EventHandler<UtilityClass>? OnClassAdded;
     private readonly object _sync = new();

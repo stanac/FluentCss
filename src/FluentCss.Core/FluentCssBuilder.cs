@@ -1,6 +1,6 @@
 namespace FluentCss.Core;
 
-public static class FluentCssuilder
+public static class FluentCssBuilder
 {
     public static IRootFluentCssuilder Css => new InternalRootFluentCssuilder(ClassRegistry.DefaultRegistry, null, null, null);
 

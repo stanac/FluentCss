@@ -6,15 +6,15 @@
 
 ## Overview
 
-FluentCss lets you build CSS utility classes directly in C# using a fluent, chainable API. Instead of writing CSS by hand or copying Tailwind class strings, you compose styles with type-safe method calls — and FluentCss automatically generates the CSS and class names.
+FluentCss lets you build CSS utility classes directly in `.razor`/`.cshtml` files using a fluent, chainable API. Instead of writing CSS by hand, you compose styles with type-safe method calls — and FluentCss automatically generates the CSS and class names.
 
 - **Fluent builder API** — chain methods like `.Background(Color.Red500).Color(Color.White).P(4)`
-- **Full color palette** — 22 color families (red, blue, green, slate, etc.), 11 shades each, plus black/white
+- **Full color palette** — 22 color families (red, blue, green, slate, etc.), 11 shades each, plus black/white (taken from TailwindCss)
 - **Pseudo-classes** — `Hover(...)`, `Focus(...)`, `Active(...)`, and custom `Pseudo("...", ...)`
-- **Theming / dark mode** — `FluentCssuilder.Dark` or `FluentCssuilder.Theme("dark")`
+- **Theming / dark mode** — `FluentCssBuilder.Dark` or `FluentCssBuilder.Theme("dark")`
 - **Responsive design** — `MinMd(...)`, `MaxMd(...)`, and custom `Media(...)` queries
-- **Automatic CSS output** — classes are deduplicated and the final CSS string is always available
-- **Blazor integration** — drop `<CssStyles />` into your layout and get live CSS injection
+- **Automatic CSS output** — classes are deduplicated and the final CSS is available as Css, build artifact or Razor component
+- **Blazor/Razor integration** — drop `<CssStyles />` into your layout and get live CSS injection
 
 ## Packages
 
@@ -34,20 +34,21 @@ dotnet add package FluentCss         # if using Blazor
 
 ### 1. Blazor (Razor Components)
 
-Add `<CssStyles />` to your layout (e.g., `App.razor` or `MainLayout.razor`):
-
-```razor
-@using FluentCss.Core
-
-<CssStyles />
-```
 
 Add the following directives to your `_Imports.razor` for a cleaner syntax:
 
 ```razor
-@using static FluentCss.Core.FluentCssuilder
+@using static FluentCss.Core.FluentCssBuilder
 @using FluentCss.Core
 ```
+
+Add `<CssStyles />` to your layout (e.g., `App.razor` or `MainLayout.razor`):
+
+```razor
+<CssStyles />
+```
+
+**Important!!: during development place `<CssStyles />` at the end of the layout file!**
 
 Then build classes anywhere in your components using the shorthand `@Css` and `@Dark`:
 
@@ -70,13 +71,38 @@ bg-slate-400 text-green-400 hover:bg-black hover:text-white max-md:text-green-80
 
 And FluentCss automatically emits the corresponding CSS into the page.
 
+Alternativly you can place styles inside a class:
+
+```csharp
+using FluentCss.Core;
+using static FluentCss.Core.FluentCssBuilder;
+
+public static class MyStyles
+{
+    public static string MyElement { get; } =
+        $"""
+         {Css.Background(Color.Slate400).Color(Color.Green400).Hover(h => h.Background(Color.Black).Color(Color.White))}
+         {Css.MinMd(md => md.Color(Color.Green800).Hover(h => h.Color(Color.Gray400)))}
+         {Dark.Background(Color.Black).Color(Color.White).Hover(h => h.Background(Color.Red300).Color(Color.Red800))}
+         """;
+}
+```
+
+and use it as 
+
+```razor:
+<p class="@MyStyles.MyElement">
+    Test
+</p>
+```
+
 ### 2. Non-Blazor / Any .NET App
 
 ```csharp
 using FluentCss.Core;
 
 // Create a root builder (registers classes in the default registry)
-var classes = FluentCssuilder.Css
+var classes = FluentCssBuilder.Css
     .Background(Color.Emerald500)
     .Color(Color.White)
     .Flex(FlexDirection.Row, Justify.Between, Align.Center)
@@ -96,9 +122,9 @@ string css = ClassRegistry.DefaultRegistry.Css;
 ### Entry Points
 
 ```csharp
-FluentCssuilder.Css         // standard builder
-FluentCssuilder.Dark        // dark theme builder (prefix: "dark:")
-FluentCssuilder.Theme(name) // custom theme builder (prefix: "theme-{name}:")
+FluentCssBuilder.Css         // standard builder
+FluentCssBuilder.Dark        // dark theme builder (prefix: "dark:")
+FluentCssBuilder.Theme(name) // custom theme builder (prefix: "theme-{name}:")
 ```
 
 ### Layout
@@ -228,7 +254,7 @@ Examples: `Color.Red50`, `Color.Blue700`, `Color.Emerald400`, `Color.Slate950`.
 ### Media Queries (responsive)
 
 ```csharp
-FluentCssuilder.Css
+FluentCssBuilder.Css
     .Background(Color.Red500)
     .MinMd(m => m.Background(Color.Blue500))    // @media (width > 48rem)
     .MaxMd(m => m.Background(Color.Green500));  // @media (width < 48rem)
@@ -248,14 +274,14 @@ Custom media queries:
 
 ```csharp
 // Use the dark theme entry point
-string darkClasses = FluentCssuilder.Dark
+string darkClasses = FluentCssBuilder.Dark
     .Background(Color.Slate800)
     .Color(Color.Slate100)
     .ToString();
 // => "dark:bg-slate-800 dark:text-slate-100"
 
 // Or inline theming
-string themeClasses = FluentCssuilder.Theme("halloween")
+string themeClasses = FluentCssBuilder.Theme("halloween")
     .Background(Color.Orange500)
     .ToString();
 // => "theme-halloween:bg-orange-500"
@@ -296,11 +322,13 @@ Examples:
 
 [BSD Zero Clause License](https://opensource.org/licenses/0BSD) (0BSD) — a public-domain-equivalent license with no restrictions.
 
-Color values adapted from [Tailwind CSS](https://tailwindcss.com) (MIT licensed).
+Color values ~~adapted~~ stolen from [Tailwind CSS](https://tailwindcss.com) (MIT licensed).
 
 ## Contributing
 
-Issues and pull requests are welcome! The project structure:
+Issues and pull requests are welcome! By submitting a pull request, you agree that your contribution will be licensed under the [BSD Zero Clause License](https://opensource.org/licenses/0BSD) (0BSD).
+
+The project structure:
 
 ```
 FluentCss/
