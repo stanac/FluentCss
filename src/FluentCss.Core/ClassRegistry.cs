@@ -1,67 +1,57 @@
 using System.Collections;
+using System.Text;
 
 namespace FluentCss.Core;
 
-public class ClassRegistry: IEnumerable<UtilityClass>
+public class ClassRegistry : IEnumerable<UtilityClass>
 {
     public event EventHandler<UtilityClass>? OnClassAdded;
-    private readonly object _sync = new();
-    private readonly HashSet<UtilityClass> _classes = [];
-    private string _css = "";
+    private readonly ConcurrentSet<UtilityClass> _classes = new();
+    private readonly StringBuilder _cssBuilder = new();
+    private readonly object _cssBuilderLock = new();
+    private readonly ConcurrentLazyObject<string> _cssObject;
+    private readonly ConcurrentLazyObject<byte[]> _bytesObject;
 
-    public string Css
-    {
-        get
-        {
-            lock (_sync)
-            {
-                return _css;
-            }
-        }
-    }
+    public string Css => _cssObject.Get();
+    public byte[] CssUtf8 => _bytesObject.Get();
 
     public static ClassRegistry DefaultRegistry { get; } = new();
 
+    public ClassRegistry()
+    {
+        _cssObject = new(() =>
+        {
+            lock (_cssBuilderLock)
+            {
+                return _cssBuilder.ToString();
+            }
+        });
+        _bytesObject = new(() => Encoding.UTF8.GetBytes(Css));
+    }
+
     public bool Add(UtilityClass c)
     {
-        bool added;
-
-        lock (_sync)
+        if (!_classes.TryAdd(c))
         {
-            added = _classes.Add(c);
-
-            if (added)
-            {
-                _css += $"\n{c.CssString}";
-            }
+            return false;
         }
 
-        if (added)
+        lock (_cssBuilderLock)
         {
-            EventHandler<UtilityClass>? handler = OnClassAdded;
-            handler?.Invoke(this, c);
-        }
-
-        return added;
-    }
-
-    public IEnumerator<UtilityClass> GetEnumerator()
-    {
-        List<UtilityClass> classes;
-
-        lock (_sync)
-        {
-            classes = _classes.ToList();
+            _cssBuilder.Append('\n');
+            _cssBuilder.Append(c.CssString);
         }
         
-        foreach (UtilityClass c in classes)
-        {
-            yield return c;
-        }
+        _cssObject.Invalidate();
+        _bytesObject.Invalidate();
+
+        EventHandler<UtilityClass>? handler = OnClassAdded;
+        handler?.Invoke(this, c);
+
+        return true;
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    public IEnumerator<UtilityClass> GetEnumerator() => _classes.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

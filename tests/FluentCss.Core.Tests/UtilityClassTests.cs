@@ -1,6 +1,3 @@
-using AwesomeAssertions;
-using Xunit;
-
 namespace FluentCss.Core.Tests;
 
 public class UtilityClassTests

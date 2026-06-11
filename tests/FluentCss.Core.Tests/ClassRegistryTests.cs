@@ -1,5 +1,3 @@
-using AwesomeAssertions;
-
 namespace FluentCss.Core.Tests;
 
 public class ClassRegistryTests

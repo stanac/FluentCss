@@ -3,6 +3,7 @@ namespace FluentCss.Core;
 public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
 {
     private readonly List<string> _classNames = [];
+    private string? _cachedToString;
 
     protected internal string? MediaQuery { get; }
     protected internal string? MediaPrefix { get; }
@@ -24,6 +25,7 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
         c = c.AddTheme(Theme).AddMedia(MediaQuery, MediaPrefix);
         AddClass(c);
         _classNames.Add(c.ClassName);
+        _cachedToString = null;
         return ReturnSelf();
     }
 
@@ -250,10 +252,16 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
         return ReturnSelf();
     }
 
-    public override string ToString() => string.Join(" ", _classNames);
+    public override string ToString()
+    {
+        if (_cachedToString != null) return _cachedToString;
+        _cachedToString = string.Join(" ", _classNames);
+        return _cachedToString;
+    }
 
     protected void AddClassName(string className)
     {
         _classNames.Add(className);
+        _cachedToString = null;
     }
 }

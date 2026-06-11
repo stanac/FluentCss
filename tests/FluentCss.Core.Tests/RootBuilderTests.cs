@@ -1,17 +1,8 @@
-using System.Linq;
-using AwesomeAssertions;
-using Xunit;
-
 namespace FluentCss.Core.Tests;
 
 public class RootBuilderTests
 {
-    private readonly ClassRegistry _registry;
-
-    public RootBuilderTests()
-    {
-        _registry = new ClassRegistry();
-    }
+    private readonly ClassRegistry _registry = new();
 
     [Fact]
     public void MinMd_Should_Apply_Media_Query()
@@ -25,9 +16,9 @@ public class RootBuilderTests
         // Assert
         var added = _registry.Single();
         // Based on implementation: Media("width > 48rem", "max-md", ...)
-        added.MediaPrefix.Should().Be("max-md");
+        added.MediaPrefix.Should().Be("min-md");
         added.MediaQuery.Should().Be("(width > 48rem)");
-        added.ClassName.Should().Be("max-md:bg-black");
+        added.ClassName.Should().Be("min-md:bg-black");
     }
 
     [Fact]
@@ -73,6 +64,6 @@ public class RootBuilderTests
         classes.Should().Contain("bg-red-50");
 
         // Should contain the class generated inside the media action
-        classes.Should().Contain("max-md:text-black");
+        classes.Should().Contain("min-md:text-black");
     }
 }
