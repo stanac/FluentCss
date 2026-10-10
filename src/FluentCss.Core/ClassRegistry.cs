@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace FluentCss.Core;
@@ -25,9 +26,14 @@ public class ClassRegistry : IEnumerable<UtilityClass>
     private readonly object _cssBuilderLock = new();
     private readonly ConcurrentLazyObject<string> _cssObject;
     private readonly ConcurrentLazyObject<byte[]> _bytesObject;
+    private readonly ConcurrentLazyObject<byte[]> _sha256Object;
+    private readonly ConcurrentLazyObject<string> _sha256HexObject;
 
     public string Css => _cssObject.Get();
+
     public byte[] CssUtf8 => _bytesObject.Get();
+    public byte[] Sha256 => _sha256Object.Get();
+    public string Sha256Hex => _sha256HexObject.Get();
 
     public static ClassRegistry DefaultRegistry { get; } = new();
 
@@ -58,6 +64,8 @@ public class ClassRegistry : IEnumerable<UtilityClass>
             }
         });
         _bytesObject = new(() => Encoding.UTF8.GetBytes(Css));
+        _sha256Object = new(() => ComputeSha256(CssUtf8));
+        _sha256HexObject = new(() => ToHex(Sha256));
     }
 
     public bool Add(UtilityClass c)
@@ -77,12 +85,23 @@ public class ClassRegistry : IEnumerable<UtilityClass>
 
         _cssObject.Invalidate();
         _bytesObject.Invalidate();
+        _sha256Object.Invalidate();
+        _sha256HexObject.Invalidate();
 
         EventHandler<UtilityClass>? handler = OnClassAdded;
         handler?.Invoke(this, c);
 
         return true;
     }
+
+    private static byte[] ComputeSha256(byte[] bytes)
+    {
+        using SHA256 sha = SHA256.Create();
+        return sha.ComputeHash(bytes);
+    }
+
+    private static string ToHex(byte[] bytes) =>
+        BitConverter.ToString(bytes).Replace("-", string.Empty).ToLowerInvariant();
 
     private static int BucketIndex(UtilityClass c)
     {

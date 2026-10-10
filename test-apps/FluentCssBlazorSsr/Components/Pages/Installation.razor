@@ -100,7 +100,7 @@
 
     private const string InstallBlazor =
         """
-        dotnet add package FluentCss.PureBlazorClient
+        dotnet add package FluentCss.Blazor
         """;
 
     private const string Imports =
@@ -117,12 +117,12 @@
         <header>...</header>
         <main>@Body</main>
 
-        <FluentCss.PureBlazorClient.CssStyles />
+        <FluentCss.Blazor.CssStyles />
         """;
 
     private const string Preflight =
         """
-        <link rel="stylesheet" href="_content/FluentCss.PureBlazorClient/preflight.css" />
+        <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
         """;
 
     private const string NonBlazor =

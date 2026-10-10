@@ -1,6 +1,6 @@
-using FluentCssWeb.Components;
+using FluentCssBlazorSsr.Components;
 
-namespace FluentCssWeb
+namespace FluentCssBlazorSsr
 {
     public class Program
     {

@@ -1,4 +1,4 @@
-namespace FluentCssWeb.Components;
+namespace FluentCssBlazorWasmStandalone.Components;
 
 public sealed record NavItem(string Title, string Href);
 

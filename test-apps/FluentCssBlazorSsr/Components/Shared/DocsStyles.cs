@@ -1,7 +1,7 @@
 using FluentCss.Core;
 using static FluentCss.Core.FluentCssBuilder;
 
-namespace FluentCssWeb.Components.Shared;
+namespace FluentCssBlazorSsr.Components.Shared;
 
 /// <summary>
 /// Every class string used by the documentation site is produced by the FluentCss

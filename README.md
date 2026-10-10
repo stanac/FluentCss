@@ -357,9 +357,10 @@ The project structure:
 FluentCss/
 ├── src/
 │   ├── FluentCss.Core/       # Core library (netstandard2.0)
-│   └── FluentCss/            # Blazor component (net10.0)
+│   └── FluentCss.Blazor/     # Blazor component (net10.0)
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/
-    └── FluentCssWeb/   # Documentation site
+    ├── FluentCssBlazorSsr/             # Documentation site (static SSR)
+    └── FluentCssBlazorWasmStandalone/  # Documentation site (WASM standalone)
 ```
