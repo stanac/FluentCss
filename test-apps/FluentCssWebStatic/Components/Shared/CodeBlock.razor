@@ -1,5 +1,24 @@
-<pre class="@DocsStyles.CodeBlock"><code>@Code</code></pre>
+@inject IJSRuntime JS
+
+<pre class="@DocsStyles.CodeBlock"><code @ref="_codeElement" class="language-@Language">@Code</code></pre>
 
 @code {
     [Parameter] public string Code { get; set; } = "";
+    [Parameter] public string Language { get; set; } = "csharp";
+
+    private ElementReference _codeElement;
+    private string? _highlighted;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var key = $"{Language}\n{Code}";
+
+        if (_highlighted == key)
+        {
+            return;
+        }
+
+        _highlighted = key;
+        await JS.InvokeVoidAsync("fcHighlightElement", _codeElement);
+    }
 }

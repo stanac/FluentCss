@@ -31,13 +31,13 @@
 
 <h2 class="@DocsStyles.H2">1. Add the package</h2>
 
-<CodeBlock Code="@InstallCore" />
+<CodeBlock Code="@InstallCore" Language="bash" />
 
 <p class="@DocsStyles.P">
     If you are building a Blazor application you also want the Razor component package:
 </p>
 
-<CodeBlock Code="@InstallBlazor" />
+<CodeBlock Code="@InstallBlazor" Language="bash" />
 
 <h2 class="@DocsStyles.H2">2. Import the namespaces</h2>
 
@@ -47,7 +47,7 @@
     or <code class="@DocsStyles.InlineCode">Dark</code> directly.
 </p>
 
-<CodeBlock Code="@Imports" />
+<CodeBlock Code="@Imports" Language="cshtml" />
 
 <h2 class="@DocsStyles.H2">3. Render the generated CSS</h2>
 
@@ -57,7 +57,7 @@
     registered while the page is built.
 </p>
 
-<CodeBlock Code="@LayoutUsage" />
+<CodeBlock Code="@LayoutUsage" Language="cshtml" />
 
 <Callout Kind="CalloutKind.Warning" Title="Placement matters">
     Put <code class="@DocsStyles.InlineCode">CssStyles</code> near the end of the layout, after the page content.
@@ -70,7 +70,7 @@
     borders and fonts:
 </p>
 
-<CodeBlock Code="@Preflight" />
+<CodeBlock Code="@Preflight" Language="cshtml" />
 
 <h2 class="@DocsStyles.H2">4. Using it without Blazor</h2>
 

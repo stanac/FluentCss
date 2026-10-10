@@ -1,4 +1,5 @@
 @inject NavigationManager Navigation
+@implements IDisposable
 
 <nav>
     <a href="/" data-enhance-nav="false" class="@DocsStyles.Brand">
@@ -21,6 +22,16 @@
 </nav>
 
 @code {
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     private string GetLinkClass(string href) =>
         IsActive(href) ? DocsStyles.NavActive : DocsStyles.NavLink;
 
@@ -40,5 +51,10 @@
 
         return path.Equals(href, StringComparison.OrdinalIgnoreCase)
             || path.StartsWith(href + "/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

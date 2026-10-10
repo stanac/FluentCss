@@ -1,0 +1,80 @@
+/* Dark token palette for Prism, scoped to the dark site theme.
+   The code block background is switched by FluentCss (slate-100 in light mode,
+   slate-950 in dark mode). The default Prism theme is light, so these overrides
+   only need to apply when <html class="theme-dark"> is present.
+   Singleton Prism JS is theme independent; only CSS changes here. */
+
+.theme-dark code[class*="language-"],
+.theme-dark pre[class*="language-"] {
+    color: #e2e8f0;
+    text-shadow: none;
+}
+
+.theme-dark .token.comment,
+.theme-dark .token.prolog,
+.theme-dark .token.doctype,
+.theme-dark .token.cdata {
+    color: #64748b;
+}
+
+.theme-dark .token.punctuation {
+    color: #94a3b8;
+}
+
+.theme-dark .token.namespace {
+    opacity: .7;
+}
+
+.theme-dark .token.property,
+.theme-dark .token.tag,
+.theme-dark .token.boolean,
+.theme-dark .token.number,
+.theme-dark .token.constant,
+.theme-dark .token.symbol,
+.theme-dark .token.deleted {
+    color: #f472b6;
+}
+
+.theme-dark .token.selector,
+.theme-dark .token.attr-name,
+.theme-dark .token.string,
+.theme-dark .token.char,
+.theme-dark .token.builtin,
+.theme-dark .token.inserted {
+    color: #86efac;
+}
+
+.theme-dark .token.operator,
+.theme-dark .token.entity,
+.theme-dark .token.url,
+.theme-dark .language-css .token.string,
+.theme-dark .style .token.string {
+    color: #7dd3fc;
+    background: none;
+}
+
+.theme-dark .token.atrule,
+.theme-dark .token.attr-value,
+.theme-dark .token.keyword {
+    color: #93c5fd;
+}
+
+.theme-dark .token.function,
+.theme-dark .token.class-name {
+    color: #fde68a;
+}
+
+.theme-dark .token.regex,
+.theme-dark .token.important,
+.theme-dark .token.variable {
+    color: #fdba74;
+}
+
+.theme-dark .token.important,
+.theme-dark .token.bold {
+    font-weight: 700;
+}
+
+.theme-dark .token.italic {
+    font-style: italic;
+}

@@ -5,9 +5,10 @@
     </div>
 }
 
-<CodeBlock Code="@Code" />
+<CodeBlock Code="@Code" Language="@Language" />
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Code { get; set; } = "";
+    [Parameter] public string Language { get; set; } = "cshtml";
 }

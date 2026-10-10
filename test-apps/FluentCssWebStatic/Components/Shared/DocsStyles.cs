@@ -50,10 +50,10 @@ public static class DocsStyles
         $"{Dark.Hover(h => h.Background(Color.Slate700))}";
 
     public static string ThemeLightIcon { get; } =
-        $"{Css.Block()} {Dark.Hidden()}";
+        $"{Css.W(5).H(5).Block()} {Dark.Hidden()}";
 
     public static string ThemeDarkIcon { get; } =
-        $"{Css.Hidden()} {Dark.Block()}";
+        $"{Css.W(5).H(5).Hidden()} {Dark.Block()}";
 
     public static string MenuButton { get; } =
         $"{Css.InlineBlock().Px(3).Py(2).RoundedMd().CursorPointer().FontBold().Color(Color.Slate600)} " +
@@ -145,9 +145,9 @@ public static class DocsStyles
         $"{Dark.Background(Color.Slate800).Color(Color.Pink300)}";
 
     public static string CodeBlock { get; } =
-        $"{Css.Background(Color.Slate900).Color(Color.Slate100).P(4).RoundedLg()} " +
+        $"{Css.Background(Color.Slate100).Color(Color.Slate800).P(4).RoundedLg()} " +
         $"{Css.OverflowAuto().TextSm().Leading(6).Mb(6)} " +
-        $"{Dark.Background(Color.Black)}";
+        $"{Dark.Background(Color.Black).Color(Color.Slate100)}";
 
     public static string Ul { get; } =
         $"{Css.Mb(4)}";
