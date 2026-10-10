@@ -1,0 +1,22 @@
+@page "/contact"
+
+<PageTitle>Contact - FluentCss SSR</PageTitle>
+
+<h1 class="@Css.Text2Xl().FontBold().Mb(4) @Dark.Color(Color.White)">Contact</h1>
+<p class="@Css.Color(Color.Slate600).Mb(6) @Dark.Color(Color.Slate300)">
+    A static form for layout testing. It does not submit anywhere.
+</p>
+
+<div class="@Css.MaxW(Size.Md).P(6).RoundedLg().Border().BorderColor(Color.Slate200).Background(Color.White) @Dark.BorderColor(Color.Slate800) @Dark.Background(Color.Slate900)">
+    <div class="@Css.Mb(4)">
+        <label class="@Css.Block().TextSm().FontBold().Color(Color.Slate700).Mb(1) @Dark.Color(Color.Slate300)">Name</label>
+        <input class="@Css.WFull().Px(3).Py(2).RoundedMd().Border().BorderColor(Color.Slate300) @Dark.Background(Color.Slate800) @Dark.BorderColor(Color.Slate700)" />
+    </div>
+    <div class="@Css.Mb(4)">
+        <label class="@Css.Block().TextSm().FontBold().Color(Color.Slate700).Mb(1) @Dark.Color(Color.Slate300)">Email</label>
+        <input class="@Css.WFull().Px(3).Py(2).RoundedMd().Border().BorderColor(Color.Slate300) @Dark.Background(Color.Slate800) @Dark.BorderColor(Color.Slate700)" />
+    </div>
+    <button type="button" class="@Css.Px(6).Py(3).RoundedLg().Background(Color.Blue600).Color(Color.White).FontBold().CursorPointer().Hover(h => h.Background(Color.Blue700))">
+        Send
+    </button>
+</div>

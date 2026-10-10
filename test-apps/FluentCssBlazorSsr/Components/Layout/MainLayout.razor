@@ -1,31 +1,63 @@
 @inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@implements IDisposable
 
-<div class="@DocsStyles.Shell">
-    <aside id="fc-sidebar" class="@DocsStyles.Sidebar">
-        <NavMenu />
-    </aside>
-
-    <div class="@DocsStyles.ContentWrap">
-        <header class="@DocsStyles.Header">
-            <div class="@DocsStyles.HeaderLeft">
-                <button type="button" class="@DocsStyles.MenuButton"
-                        onclick="document.getElementById('fc-sidebar').classList.toggle('hidden')">
-                    Menu
-                </button>
-                <span class="@DocsStyles.Small">FluentCss documentation</span>
+<div class="@Css.MinH(Size.ScreenH).Flex(FlexDirection.Col).Background(Color.Slate50) @Dark.Background(Color.Slate950)">
+    <header class="@Css.WFull().Border().BorderColor(Color.Slate200).Background(Color.White) @Dark.BorderColor(Color.Slate800) @Dark.Background(Color.Slate900)">
+        <nav class="@Css.MaxW(Size.Lg).MxAuto().Px(6).H(16).Flex(FlexDirection.Row, Justify.Between, Align.Center)">
+            <a href="/" class="@Css.TextLg().FontBold().NoUnderline().Color(Color.Blue600) @Dark.Color(Color.Blue400)">
+                FluentCss SSR
+            </a>
+            <div class="@Css.Flex(FlexDirection.Row, gap: 2)">
+                <a href="/" class="@GetLinkClass("/")">Home</a>
+                <a href="/about" class="@GetLinkClass("/about")">About</a>
+                <a href="/contact" class="@GetLinkClass("/contact")">Contact</a>
             </div>
-            <div class="@DocsStyles.HeaderLeft">
-                <a href="https://github.com/stanac/FluentCss" target="_blank" rel="noreferrer" class="@DocsStyles.HeaderLink">
-                    GitHub
-                </a>
-                <ThemeToggle />
-            </div>
-        </header>
+        </nav>
+    </header>
 
-        <main class="@DocsStyles.Content">
-            <article class="@DocsStyles.Article">
-                @Body
-            </article>
-        </main>
-    </div>
+    <main class="@Css.Grow().WFull().MaxW(Size.Lg).MxAuto().P(6)">
+        @Body
+    </main>
+
+    <footer class="@Css.Border().BorderColor(Color.Slate200).P(6).TextCenter().TextSm().Color(Color.Slate500) @Dark.BorderColor(Color.Slate800) @Dark.Color(Color.Slate400)">
+        &copy; @DateTime.Now.Year FluentCss SSR test site
+    </footer>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetLinkClass(string href) =>
+        (IsActive(href)
+            ? Css.Px(3).Py(2).RoundedMd().NoUnderline().FontBold().Background(Color.Blue100).Color(Color.Blue700)
+            : Css.Px(3).Py(2).RoundedMd().NoUnderline().Color(Color.Slate600).Hover(h => h.Background(Color.Slate100)))
+        .ToString() ?? string.Empty;
+
+    private bool IsActive(string href)
+    {
+        var path = "/" + Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        if (path.Length > 1 && path.EndsWith('/'))
+        {
+            path = path.TrimEnd('/');
+        }
+
+        return href == "/"
+            ? path == "/"
+            : path.Equals(href, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

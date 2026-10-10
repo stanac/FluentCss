@@ -1,76 +1,16 @@
 @page "/"
 
-<PageTitle>FluentCss - Utility-first CSS for .NET</PageTitle>
+<PageTitle>Home - FluentCss SSR</PageTitle>
 
-<section class="@Css.Mb(12)">
-    <span class="@DocsStyles.Badge">Utility-first CSS for .NET</span>
-
-    <h1 class="@Css.Text3Xl().FontBold().Color(Color.Slate900).Mt(4).Mb(4) @Dark.Color(Color.White)">
-        Build CSS from C#,<br />
-        one fluent call at a time.
+<section class="@Css.Py(12).TextCenter()">
+    <h1 class="@Css.Text3Xl().FontBold().Color(Color.Slate900).Mb(4) @Dark.Color(Color.White)">
+        Static SSR test site
     </h1>
-
-    <p class="@Css.TextLg().Color(Color.Slate600).Mb(8).MaxW(Size.Lg) @Dark.Color(Color.Slate400)">
-        FluentCss lets you compose Tailwind-inspired utility classes with a type-safe,
-        chainable API. You write C#, the library generates the class names and the CSS.
+    <p class="@Css.TextLg().Color(Color.Slate600).MaxW(Size.Md).MxAuto() @Dark.Color(Color.Slate400)">
+        A tiny three-page site used to observe how FluentCss emits and re-renders its stylesheet
+        during server-side rendering.
     </p>
-
-    <div class="@Css.Flex(FlexDirection.Row, gap: 4)">
-        <a href="/installation" data-enhance-nav="false" class="@DocsStyles.ButtonPrimary">Get started</a>
-        <a href="/utility-classes" data-enhance-nav="false" class="@DocsStyles.ButtonSecondary">Browse utilities</a>
-    </div>
+    <a href="/about" class="@Css.InlineBlock().Mt(6).Px(6).Py(3).RoundedLg().Background(Color.Blue600).Color(Color.White).FontBold().NoUnderline().Hover(h => h.Background(Color.Blue700))">
+        Learn more
+    </a>
 </section>
-
-<Example Code="@QuickExample">
-    <div class="@Css.P(6).RoundedLg().Background(Color.Emerald500).Color(Color.White).FontBold()
-                    @Css.Hover(h => h.Background(Color.Emerald600))">
-        Generated entirely from C#
-    </div>
-</Example>
-
-<h2 class="@DocsStyles.H2">Why FluentCss</h2>
-
-<div class="@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md => md.GridCols(2))">
-    @foreach (var feature in Features)
-    {
-        <div class="@DocsStyles.Card @DocsStyles.CardHover">
-            <h3 class="@DocsStyles.CardTitle">@feature.Title</h3>
-            <p class="@DocsStyles.P">@feature.Body</p>
-        </div>
-    }
-</div>
-
-<h2 class="@DocsStyles.H2">Explore the documentation</h2>
-
-<div class="@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md => md.GridCols(3))">
-    @foreach (var group in DocsNavigation.Sections)
-    {
-        <a href="@group.Items[0].Href" data-enhance-nav="false" class="@DocsStyles.PageLinkCard">
-            <p class="@DocsStyles.SourceTag">@group.Title</p>
-            <p class="@DocsStyles.CardTitle">@group.Items[0].Title</p>
-            <p class="@DocsStyles.Small">@group.Items.Count topics</p>
-        </a>
-    }
-</div>
-
-@code {
-    private static readonly (string Title, string Body)[] Features =
-    [
-        ("Type-safe", "Every utility is a method. Rename, refactor and navigate styles with the same tooling you already use for C#."),
-        ("Tailwind palette", "22 color families with 11 shades each (50 to 950), plus black and white, ready to use."),
-        ("States and responsive", "Compose hover, focus and active states, then layer responsive min/md and max/md variants on top."),
-        ("Dark mode built in", "Use the Dark builder for theme-aware styles, or Theme() for any custom theme name."),
-        ("Automatic CSS", "Classes are deduplicated in a registry that emits the final CSS for you."),
-        ("Blazor ready", "Drop the CssStyles component into your layout and the stylesheet updates as you build."),
-    ];
-
-    private const string QuickExample =
-        """
-        <div class="@Css.P(6).RoundedLg()
-                        .Background(Color.Emerald500)
-                        .Color(Color.White).FontBold()
-                        .Hover(h => h.Background(Color.Emerald600))">
-            Generated entirely from C#
-        </div>
-        """;
-}

@@ -1,41 +1,10 @@
 @page "/Error"
-@using System.Diagnostics
 
-<PageTitle>Error - FluentCss</PageTitle>
+<PageTitle>Error - FluentCss SSR</PageTitle>
 
-<DocHeader Title="Something went wrong"
-           Description="An error occurred while processing your request." />
-
-@if (ShowRequestId)
-{
-    <Callout Kind="CalloutKind.Warning" Title="Request ID">
-        <code class="@DocsStyles.InlineCode">@RequestId</code>
-    </Callout>
-}
-
-<h2 class="@DocsStyles.H2">Development mode</h2>
-
-<p class="@DocsStyles.P">
-    Swapping to the <span class="@DocsStyles.Strong">Development</span> environment will display more
-    detailed information about the error that occurred.
-</p>
-
-<p class="@DocsStyles.P">
-    The <span class="@DocsStyles.Strong">Development</span> environment should not be enabled for
-    deployed applications, because it can display sensitive information from exceptions to end users.
-    For local debugging, set the
-    <code class="@DocsStyles.InlineCode">ASPNETCORE_ENVIRONMENT</code> environment variable to
-    <code class="@DocsStyles.InlineCode">Development</code> and restart the app.
-</p>
-
-@code {
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
-
-    private string? RequestId { get; set; }
-
-    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-    protected override void OnInitialized() =>
-        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-}
+<div class="@Css.TextCenter().Py(12)">
+    <h1 class="@Css.Text2Xl().FontBold().Color(Color.Slate900).Mb(2) @Dark.Color(Color.White)">Something went wrong</h1>
+    <p class="@Css.Color(Color.Slate600) @Dark.Color(Color.Slate300)">
+        An unexpected error occurred while processing your request.
+    </p>
+</div>

@@ -1,0 +1,28 @@
+@page "/about"
+
+<PageTitle>About - FluentCss SSR</PageTitle>
+
+<h1 class="@Css.Text2Xl().FontBold().Mb(4) @Dark.Color(Color.White)">About</h1>
+<p class="@Css.Color(Color.Slate600).Leading(7).Mb(6) @Dark.Color(Color.Slate300)">
+    This project is a minimal static-server-rendered Blazor site. Every element is styled with the
+    fluent builder, so loading a page registers new utility classes in the process-wide registry.
+</p>
+
+<div class="@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md => md.GridCols(3))">
+    @foreach (var fact in Facts)
+    {
+        <div class="@Css.P(5).RoundedLg().Border().BorderColor(Color.Slate200).Background(Color.White) @Dark.BorderColor(Color.Slate800) @Dark.Background(Color.Slate900)">
+            <p class="@Css.FontBold().Color(Color.Slate900).Mb(1) @Dark.Color(Color.White)">@fact.Title</p>
+            <p class="@Css.TextSm().Color(Color.Slate500) @Dark.Color(Color.Slate400)">@fact.Body</p>
+        </div>
+    }
+</div>
+
+@code {
+    private static readonly (string Title, string Body)[] Facts =
+    [
+        ("Server rendered", "No circuit and no WASM; HTML is produced on the server."),
+        ("Stateless pages", "Each request renders once and the response is sent."),
+        ("Shared registry", "Classes are collected and deduplicated across requests."),
+    ];
+}

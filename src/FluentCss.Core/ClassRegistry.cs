@@ -29,6 +29,10 @@ public class ClassRegistry : IEnumerable<UtilityClass>
     private readonly ConcurrentLazyObject<byte[]> _sha256Object;
     private readonly ConcurrentLazyObject<string> _sha256HexObject;
 
+#if DEBUG
+    private static int _rerenderCounter;
+#endif
+
     public string Css => _cssObject.Get();
 
     public byte[] CssUtf8 => _bytesObject.Get();
@@ -50,6 +54,11 @@ public class ClassRegistry : IEnumerable<UtilityClass>
         {
             lock (_cssBuilderLock)
             {
+#if DEBUG
+                int rerenderCount = Interlocked.Increment(ref _rerenderCounter);
+                Console.WriteLine($"Rerender CSS counter: {rerenderCount}");
+#endif
+
                 StringBuilder result = StringBuilderBag.TakeOrNew();
 
                 for (int i = 0; i < BucketCount; i++)
