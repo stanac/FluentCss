@@ -324,10 +324,12 @@ Tailwind's behavior in practice.
 - **[conflict] `box-shadow` collisions.** `Shadow*` and `Ring` both set the
   `box-shadow` property. They cannot be composed; whichever utility was
   registered first (globally) wins for every element using either class.
-- **[conflict] Duplicate-property utilities.** Any two utilities that target
-  the same CSS property (for example two `Background(...)` calls) are emitted
-  as separate rules, and the globally first-registered one wins instead of the
-  last one used on the element.
+- **[conflict] Duplicate base utilities.** Two base utilities that target the
+  same CSS property (for example two `Background(...)` calls on one element) are
+  emitted as separate rules, and the globally first-registered one wins instead
+  of the value written last on the element. Variant rules (pseudo, theme, media)
+  are emitted after base rules, so one base value plus one variant value behaves
+  as expected.
 - **[mutable] Cached class name.** `UtilityClass.ClassName` lazily caches into a
   mutable field, so a utility instance is not purely immutable on first read.
 - **[missing] Raw CSS escape hatch.** There is no way to attach arbitrary CSS
