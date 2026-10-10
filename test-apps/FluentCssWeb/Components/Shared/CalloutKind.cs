@@ -1,4 +1,4 @@
-namespace BlazorTestApp.Components.Shared;
+namespace FluentCssWeb.Components.Shared;
 
 public enum CalloutKind
 {

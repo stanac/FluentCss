@@ -361,5 +361,5 @@ FluentCss/
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/
-    └── BlazorTestApp/   # Test Blazor application
+    └── FluentCssWeb/   # Documentation site
 ```

@@ -1,7 +1,7 @@
 using FluentCss.Core;
 using static FluentCss.Core.FluentCssBuilder;
 
-namespace BlazorTestApp.Components.Shared;
+namespace FluentCssWeb.Components.Shared;
 
 /// <summary>
 /// Every class string used by the documentation site is produced by the FluentCss

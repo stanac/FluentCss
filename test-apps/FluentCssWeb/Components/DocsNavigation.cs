@@ -1,4 +1,4 @@
-namespace BlazorTestApp.Components;
+namespace FluentCssWeb.Components;
 
 public sealed record NavItem(string Title, string Href);
 

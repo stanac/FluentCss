@@ -14,22 +14,17 @@ Legend:
 
 ---
 
-## Core concepts and tooling
+## Core concepts
 
 - **[missing] Theme variables / design tokens.** There are no CSS custom
-  properties and no `@theme` equivalent, so palettes, spacing, radii and fonts
-  cannot be re-themed at runtime.
+  properties and no theme-variable equivalent, so palettes, spacing, radii and
+  fonts cannot be re-themed at runtime.
 - **[missing] Configuration and customization.** There is no config file or API
   to extend or replace the color palette, spacing scale, breakpoints, fonts or
   container sizes.
-- **[missing] Functions and directives.** No `@apply`, `@layer`, `@utility`,
-  `@variant`, `@custom-variant`, `@source`, `@config`, `@plugin`, `--alpha()`,
-  `--spacing()` or similar.
-- **[missing] Detecting classes in source files.** There is no content scanner
-  and no on-demand JIT compilation. Utilities are emitted at runtime by the
-  builder, not extracted from markup.
-- **[missing] Arbitrary values and properties.** No `p-[13px]`,
-  `bg-[#123456]` or `[mask-type:luminance]` syntax.
+- **[missing] Arbitrary values and properties.** The builder only accepts the
+  predefined scales and `Color`/`Size` values. There is no generic way to pass
+  an arbitrary CSS value such as a custom length or raw color.
 - **[missing] Important modifier.** No `!` prefix/suffix.
 - **[missing] Negative values.** No `-mt-4`, `-left-2`, etc.
 - **[missing] Opacity modifier on colors.** No `bg-red-500/50` or
@@ -57,10 +52,6 @@ Legend:
 - **[missing] Dark mode strategies.** Only an ancestor class theme
   (`theme-dark`) is supported. There is no `prefers-color-scheme` media
   strategy and no data-attribute strategy.
-- **[missing] Editor setup / IntelliSense.** No VS Code/Visual Studio extension
-  or language server for class completion.
-- **[missing] Build tooling.** No CLI, PostCSS plugin, Vite plugin or
-  standalone build/extraction step.
 
 ---
 
@@ -317,8 +308,9 @@ Tailwind's behavior in practice.
   process-wide and never resets. Utilities registered while rendering one
   request remain visible to every other request, which grows unbounded in a
   long-running server and makes per-request CSS isolation impossible.
-- **[runtime] No CSS extraction for production.** CSS is generated at runtime,
-  so there is no build-time tree-shaking and no static stylesheet artifact.
+- **[runtime] Runtime-generated stylesheet.** CSS is assembled per process and
+  served from the registry instead of being emitted as a static asset, so there
+  is no content-hashed stylesheet for long-lived caching.
 - **[runtime] No class name prefixing / scoping.** You cannot namespace the
   generated classes for embedding in an existing design system.
 - **[conflict] `box-shadow` collisions.** `Shadow*` and `Ring` both set the

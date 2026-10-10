@@ -1,14 +1,15 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="backup.bat" />
+    <File Path="missing-features.md" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/FluentCss.Core/FluentCss.Core.csproj" />
-    <Project Path="src/FluentCss/FluentCss.csproj" />
+    <Project Path="src/FluentCss.PureBlazorClient/FluentCss.PureBlazorClient.csproj" />
   </Folder>
   <Folder Name="/test-apps/">
-    <Project Path="test-apps/BlazorTestApp/BlazorTestApp.csproj" />
+    <Project Path="test-apps/FluentCssWeb/FluentCssWeb.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FluentCss.Core.Tests/FluentCss.Core.Tests.csproj" />

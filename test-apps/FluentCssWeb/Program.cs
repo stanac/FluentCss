@@ -1,6 +1,6 @@
-using BlazorTestApp.Components;
+using FluentCssWeb.Components;
 
-namespace BlazorTestApp
+namespace FluentCssWeb
 {
     public class Program
     {
