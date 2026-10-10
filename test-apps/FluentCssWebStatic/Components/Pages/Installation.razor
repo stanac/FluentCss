@@ -1,0 +1,145 @@
+@page "/installation"
+
+<PageTitle>Installation - FluentCss</PageTitle>
+
+<DocHeader Title="Installation"
+           Description="Add FluentCss to a Blazor app or any other .NET project, wire it up once and start composing styles." />
+
+<h2 class="@DocsStyles.H2">Packages</h2>
+
+<table class="@DocsStyles.Table">
+    <thead class="@DocsStyles.Thead">
+        <tr>
+            <th class="@DocsStyles.Th">Package</th>
+            <th class="@DocsStyles.Th">Target</th>
+            <th class="@DocsStyles.Th">Use it for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Core</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">netstandard2.0</code></td>
+            <td class="@DocsStyles.Td">The builder, registry and every utility. Works in any .NET project.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">net10.0</code></td>
+            <td class="@DocsStyles.Td">The Blazor <code class="@DocsStyles.InlineCode">CssStyles</code> component and preflight stylesheet.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 class="@DocsStyles.H2">1. Add the package</h2>
+
+<CodeBlock Code="@InstallCore" />
+
+<p class="@DocsStyles.P">
+    If you are building a Blazor application you also want the Razor component package:
+</p>
+
+<CodeBlock Code="@InstallBlazor" />
+
+<h2 class="@DocsStyles.H2">2. Import the namespaces</h2>
+
+<p class="@DocsStyles.P">
+    For the shortest syntax add the following to your <code class="@DocsStyles.InlineCode">_Imports.razor</code>.
+    Importing the static builder means you can start a chain with <code class="@DocsStyles.InlineCode">Css</code>
+    or <code class="@DocsStyles.InlineCode">Dark</code> directly.
+</p>
+
+<CodeBlock Code="@Imports" />
+
+<h2 class="@DocsStyles.H2">3. Render the generated CSS</h2>
+
+<p class="@DocsStyles.P">
+    Drop the <code class="@DocsStyles.InlineCode">CssStyles</code> component somewhere in your layout.
+    It renders a <code class="@DocsStyles.InlineCode">&lt;style&gt;</code> block that contains every class
+    registered while the page is built.
+</p>
+
+<CodeBlock Code="@LayoutUsage" />
+
+<Callout Kind="CalloutKind.Warning" Title="Placement matters">
+    Put <code class="@DocsStyles.InlineCode">CssStyles</code> near the end of the layout, after the page content.
+    While the page renders, utilities are registered into the registry. If the component runs too early the
+    stylesheet will be incomplete on the first response.
+</Callout>
+
+<p class="@DocsStyles.P">
+    Optionally include the Tailwind preflight reset to normalize browser defaults such as margins,
+    borders and fonts:
+</p>
+
+<CodeBlock Code="@Preflight" />
+
+<h2 class="@DocsStyles.H2">4. Using it without Blazor</h2>
+
+<p class="@DocsStyles.P">
+    The core package does not depend on ASP.NET Core. You can build classes and read the generated CSS
+    from any .NET application:
+</p>
+
+<CodeBlock Code="@NonBlazor" />
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">ToString()</code> returns the space separated class names for your
+    <code class="@DocsStyles.InlineCode">class</code> attribute, while
+    <code class="@DocsStyles.InlineCode">ClassRegistry.DefaultRegistry.Css</code> gives you the stylesheet.
+</p>
+
+<p class="@DocsStyles.P">
+    Next, read <a href="/how-it-works" data-enhance-nav="false" class="@DocsStyles.Link">How it works</a>
+    to understand what happens behind the scenes.
+</p>
+
+@code {
+    private const string InstallCore =
+        """
+        dotnet add package FluentCss.Core
+        """;
+
+    private const string InstallBlazor =
+        """
+        dotnet add package FluentCss.PureBlazorClient
+        """;
+
+    private const string Imports =
+        """
+        @using static FluentCss.Core.FluentCssBuilder
+        @using FluentCss.Core
+        """;
+
+    private const string LayoutUsage =
+        """
+        <!-- MainLayout.razor -->
+        @inherits LayoutComponentBase
+
+        <header>...</header>
+        <main>@Body</main>
+
+        <FluentCss.PureBlazorClient.CssStyles />
+        """;
+
+    private const string Preflight =
+        """
+        <link rel="stylesheet" href="_content/FluentCss.PureBlazorClient/preflight.css" />
+        """;
+
+    private const string NonBlazor =
+        """
+        using FluentCss.Core;
+
+        var classes = FluentCssBuilder.Css
+            .Background(Color.Emerald500)
+            .Color(Color.White)
+            .Px(6)
+            .Py(3)
+            .RoundedMd();
+
+        // "bg-emerald-500 text-white px-6 py-3 rounded-md"
+        string classAttr = classes.ToString();
+
+        // The complete, deduplicated stylesheet
+        string css = ClassRegistry.DefaultRegistry.Css;
+        """;
+}

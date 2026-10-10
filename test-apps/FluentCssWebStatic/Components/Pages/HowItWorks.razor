@@ -1,0 +1,130 @@
+@page "/how-it-works"
+
+<PageTitle>How it works - FluentCss</PageTitle>
+
+<DocHeader Title="How it works"
+           Description="FluentCss turns method calls into utility classes, collects them in a registry and emits a single stylesheet." />
+
+<h2 class="@DocsStyles.H2">The pipeline</h2>
+
+<ol class="@DocsStyles.Ul">
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">1.</span>
+        <span>You call a fluent method such as <code class="@DocsStyles.InlineCode">.Background(Color.Red500)</code>.</span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">2.</span>
+        <span>A <code class="@DocsStyles.InlineCode">UtilityClass</code> is created: a CSS property, a value and a generated class name.</span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">3.</span>
+        <span>The class is added to a <code class="@DocsStyles.InlineCode">ClassRegistry</code>. Duplicates are ignored.</span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">4.</span>
+        <span>The registry appends the CSS rule and invalidates its cached output.</span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">5.</span>
+        <span><code class="@DocsStyles.InlineCode">ToString()</code> on the builder returns the class names for your markup.</span>
+    </li>
+</ol>
+
+<h2 class="@DocsStyles.H2">A utility class</h2>
+
+<p class="@DocsStyles.P">
+    Every call produces one utility. The builder keeps the class names in order, so the string returned
+    by <code class="@DocsStyles.InlineCode">ToString()</code> matches the order in which you composed it.
+</p>
+
+<CodeBlock Code="@UtilityExample" />
+
+<h2 class="@DocsStyles.H2">Class name format</h2>
+
+<p class="@DocsStyles.P">
+    A generated class name is assembled from the active variants, in this order:
+</p>
+
+<p class="@Css.Mb(6)"><code class="@DocsStyles.InlineCode">[media]:[theme]:[pseudo]:utility</code></p>
+
+<ApiTable Rows="@NameFormat" />
+
+<p class="@DocsStyles.P">
+    The same information drives the selector. Variant prefixes are escaped with a backslash so the
+    colon can appear inside a CSS class name.
+</p>
+
+<CodeBlock Code="@CssOutput" />
+
+<h2 class="@DocsStyles.H2">The registry</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">ClassRegistry.DefaultRegistry</code> is a process wide collection.
+    Because a utility is only added once, calling the same method from several components produces a single
+    CSS rule. The registry also exposes the final output:
+</p>
+
+<CodeBlock Code="@RegistryExample" />
+
+<Callout Kind="CalloutKind.Info" Title="Rendering in Blazor">
+    The <code class="@DocsStyles.InlineCode">CssStyles</code> component subscribes to
+    <code class="@DocsStyles.InlineCode">OnClassAdded</code>. In an interactive render mode it re-renders
+    as new classes appear. In static server rendering it reads the registry once, after the page has
+    finished rendering, which is why it belongs at the end of the layout.
+</Callout>
+
+<p class="@DocsStyles.P">
+    Now that you know the mechanics, learn how to
+    <a href="/utility-classes" data-enhance-nav="false" class="@DocsStyles.Link">style with utility classes</a>.
+</p>
+
+@code {
+    private static readonly (string Utility, string Css)[] NameFormat =
+    [
+        ("bg-red-500", "no variant"),
+        ("hover:bg-red-600", "pseudo state"),
+        ("theme-dark:text-white", "theme (dark mode)"),
+        ("min-md:flex", "media query"),
+        ("theme-dark:hover:bg-slate-700", "theme and pseudo"),
+        ("min-md:theme-dark:focus:opacity-0", "media, theme and pseudo"),
+    ];
+
+    private const string UtilityExample =
+        """
+        var button = FluentCssBuilder.Css
+            .Background(Color.Blue500)
+            .Color(Color.White)
+            .Px(6)
+            .Py(3)
+            .RoundedMd();
+
+        string classes = button.ToString();
+        // bg-blue-500 text-white px-6 py-3 rounded-md
+        """;
+
+    private const string CssOutput =
+        """
+        .bg-blue-500 { background-color: oklch(0.623 0.214 259.815) }
+        .text-white { color: #fff }
+        .px-6 { padding-inline: 1.5rem }
+        .py-3 { padding-block: 0.75rem }
+        .rounded-md { border-radius: 0.375rem }
+
+        /* variants are escaped and scoped */
+        .hover\:bg-blue-600:hover { background-color: oklch(0.546 0.245 262.881) }
+        @media (width > 48rem) { .min-md\:flex { display: flex } }
+        .theme-dark .theme-dark\:text-white { color: #fff }
+        """;
+
+    private const string RegistryExample =
+        """
+        // Add through the builder (recommended)
+        FluentCssBuilder.Css.Background(Color.Red500);
+
+        // Read the generated stylesheet
+        string css = ClassRegistry.DefaultRegistry.Css;
+
+        // UTF-8 bytes, handy for writing a file or streaming
+        byte[] bytes = ClassRegistry.DefaultRegistry.CssUtf8;
+        """;
+}

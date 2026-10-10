@@ -9,6 +9,7 @@
     <Project Path="src/FluentCss.PureBlazorClient/FluentCss.PureBlazorClient.csproj" />
   </Folder>
   <Folder Name="/test-apps/">
+    <Project Path="test-apps/FluentCssWebStatic/FluentCssWebStatic.csproj" Id="2eee7f44-8fc8-424d-b982-22eb8c486e2c" />
     <Project Path="test-apps/FluentCssWeb/FluentCssWeb.csproj" />
   </Folder>
   <Folder Name="/tests/">

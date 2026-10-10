@@ -1,0 +1,148 @@
+@page "/flexbox-grid"
+
+<PageTitle>Flexbox &amp; grid - FluentCss</PageTitle>
+
+<DocHeader Title="Flexbox and grid"
+           Description="Lay out with flexbox and CSS grid. A composite Flex helper covers the common container setup, while grid utilities handle the rest." />
+
+<h2 class="@DocsStyles.H2">Flex containers</h2>
+
+<p class="@DocsStyles.P">
+    The composite <code class="@DocsStyles.InlineCode">Flex</code> method sets the display, direction and
+    any of the optional justify, align, wrap and gap values in one call.
+</p>
+
+<CodeBlock Code="@FlexComposite" />
+
+<Example Code="@FlexExample">
+    <div class="@Css.Flex(FlexDirection.Row, Justify.Between, Align.Center, gap: 4)
+                    @Css.P(4).RoundedLg().Background(Color.Slate100) @Dark.Background(Color.Slate800)">
+        <div class="@Css.Px(4).Py(2).RoundedMd().Background(Color.Blue500).Color(Color.White)">Start</div>
+        <div class="@Css.Px(4).Py(2).RoundedMd().Background(Color.Indigo500).Color(Color.White)">Middle</div>
+        <div class="@Css.Px(4).Py(2).RoundedMd().Background(Color.Violet500).Color(Color.White)">End</div>
+    </div>
+</Example>
+
+<h3 class="@DocsStyles.H3">Direction</h3>
+<ApiTable Rows="@DirectionUtilities" />
+
+<h3 class="@DocsStyles.H3">Justify content</h3>
+<ApiTable Rows="@JustifyUtilities" />
+
+<h3 class="@DocsStyles.H3">Align items</h3>
+<ApiTable Rows="@AlignUtilities" />
+
+<h3 class="@DocsStyles.H3">Wrap, grow and gap</h3>
+<ApiTable Rows="@OtherFlexUtilities" />
+
+<Example Code="@GrowExample">
+    <div class="@Css.Flex(FlexDirection.Row, gap: 2)">
+        <div class="@Css.P(3).RoundedMd().Background(Color.Emerald500).Color(Color.White)">Fixed</div>
+        <div class="@Css.Grow().P(3).RoundedMd().Background(Color.Teal500).Color(Color.White)">Grow</div>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Grid</h2>
+
+<ApiTable Rows="@GridUtilities" />
+
+<Example Code="@GridExample">
+    <div class="@Css.Grid().GridCols(4).Gap(3)">
+        <div class="@Css.ColSpan(2).P(3).RoundedMd().Background(Color.Blue500).Color(Color.White)">span 2</div>
+        <div class="@Css.P(3).RoundedMd().Background(Color.Indigo500).Color(Color.White)">1</div>
+        <div class="@Css.P(3).RoundedMd().Background(Color.Violet500).Color(Color.White)">1</div>
+        <div class="@Css.P(3).RoundedMd().Background(Color.Purple500).Color(Color.White)">1</div>
+        <div class="@Css.ColStart(3).P(3).RoundedMd().Background(Color.Fuchsia500).Color(Color.White)">start 3</div>
+    </div>
+</Example>
+
+<p class="@DocsStyles.P">
+    Continue with <a href="/spacing" data-enhance-nav="false" class="@DocsStyles.Link">spacing</a>.
+</p>
+
+@code {
+    private static readonly (string Utility, string Css)[] DirectionUtilities =
+    [
+        ("FlexRow()", "flex-direction: row"),
+        ("FlexCol()", "flex-direction: column"),
+        ("Flex(FlexDirection.RowReverse)", "flex-direction: row-reverse"),
+        ("Flex(FlexDirection.ColReverse)", "flex-direction: column-reverse"),
+    ];
+
+    private static readonly (string Utility, string Css)[] JustifyUtilities =
+    [
+        ("JustifyStart()", "justify-content: flex-start"),
+        ("JustifyEnd()", "justify-content: flex-end"),
+        ("JustifyCenter()", "justify-content: center"),
+        ("JustifyBetween()", "justify-content: space-between"),
+        ("Flex(..., Justify.Around)", "justify-content: space-around"),
+        ("Flex(..., Justify.Evenly)", "justify-content: space-evenly"),
+    ];
+
+    private static readonly (string Utility, string Css)[] AlignUtilities =
+    [
+        ("ItemsStart()", "align-items: flex-start"),
+        ("ItemsEnd()", "align-items: flex-end"),
+        ("ItemsCenter()", "align-items: center"),
+        ("Flex(..., align: Align.Baseline)", "align-items: baseline"),
+        ("Flex(..., align: Align.Stretch)", "align-items: stretch"),
+    ];
+
+    private static readonly (string Utility, string Css)[] OtherFlexUtilities =
+    [
+        ("FlexWrap()", "flex-wrap: wrap"),
+        ("Flex(..., wrap: FlexWrapValue.NoWrap)", "flex-wrap: nowrap"),
+        ("Grow()", "flex-grow: 1"),
+        ("Shrink()", "flex-shrink: 1"),
+        ("Gap(4)", "gap: 1rem"),
+        ("GapX(4)", "column-gap: 1rem"),
+        ("GapY(4)", "row-gap: 1rem"),
+    ];
+
+    private static readonly (string Utility, string Css)[] GridUtilities =
+    [
+        ("GridCols(3)", "grid-template-columns: repeat(3, minmax(0, 1fr))"),
+        ("GridRows(2)", "grid-template-rows: repeat(2, minmax(0, 1fr))"),
+        ("ColSpan(2)", "grid-column: span 2 / span 2"),
+        ("RowSpan(2)", "grid-row: span 2 / span 2"),
+        ("ColStart(3)", "grid-column-start: 3"),
+    ];
+
+    private const string FlexComposite =
+        """
+        Css.Flex(
+            FlexDirection.Row,
+            justify: Justify.Between,
+            align: Align.Center,
+            gap: 4,
+            wrap: FlexWrapValue.Wrap);
+        """;
+
+    private const string FlexExample =
+        """
+        <div class="@Css.Flex(FlexDirection.Row, Justify.Between, Align.Center, gap: 4)">
+            <div>Start</div>
+            <div>Middle</div>
+            <div>End</div>
+        </div>
+        """;
+
+    private const string GrowExample =
+        """
+        <div class="@Css.Flex(FlexDirection.Row, gap: 2)">
+            <div>Fixed</div>
+            <div class="@Css.Grow()">Grow</div>
+        </div>
+        """;
+
+    private const string GridExample =
+        """
+        <div class="@Css.Grid().GridCols(4).Gap(3)">
+            <div class="@Css.ColSpan(2)">span 2</div>
+            <div>1</div>
+            <div>1</div>
+            <div>1</div>
+            <div class="@Css.ColStart(3)">start 3</div>
+        </div>
+        """;
+}

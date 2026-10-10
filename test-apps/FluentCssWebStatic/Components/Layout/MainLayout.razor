@@ -1,0 +1,33 @@
+@inherits LayoutComponentBase
+
+<div class="@DocsStyles.Shell">
+    <aside id="fc-sidebar" class="@DocsStyles.Sidebar">
+        <NavMenu />
+    </aside>
+
+    <div class="@DocsStyles.ContentWrap">
+        <header class="@DocsStyles.Header">
+            <div class="@DocsStyles.HeaderLeft">
+                <button type="button" class="@DocsStyles.MenuButton"
+                        onclick="document.getElementById('fc-sidebar').classList.toggle('hidden')">
+                    Menu
+                </button>
+                <span class="@DocsStyles.Small">FluentCss documentation</span>
+            </div>
+            <div class="@DocsStyles.HeaderLeft">
+                <a href="https://github.com/stanac/FluentCss" target="_blank" rel="noreferrer" class="@DocsStyles.HeaderLink">
+                    GitHub
+                </a>
+                <ThemeToggle />
+            </div>
+        </header>
+
+        <main class="@DocsStyles.Content">
+            <article class="@DocsStyles.Article">
+                @Body
+            </article>
+        </main>
+    </div>
+</div>
+
+<FluentCss.PureBlazorClient.CssStyles />

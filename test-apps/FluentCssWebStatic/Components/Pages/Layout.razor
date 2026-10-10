@@ -1,0 +1,159 @@
+@page "/layout"
+
+<PageTitle>Layout - FluentCss</PageTitle>
+
+<DocHeader Title="Layout"
+           Description="Control how elements participate in the flow: display, positioning, stacking, overflow and aspect ratio." />
+
+<h2 class="@DocsStyles.H2">Display</h2>
+
+<ApiTable Rows="@DisplayUtilities" />
+
+<Example Code="@DisplayExample">
+    <div class="@Css.Flex(FlexDirection.Col, gap: 3)">
+        <div class="@Css.Block().Background(Color.Blue100).Color(Color.Blue800).P(3).RoundedMd()">Block</div>
+        <div>
+            <span class="@Css.InlineBlock().Background(Color.Emerald100).Color(Color.Emerald800).P(3).RoundedMd()">Inline block</span>
+            <span class="@Css.Inline().Background(Color.Amber100).Color(Color.Amber800).P(1)">Inline</span>
+        </div>
+        <div class="@Css.Hidden().Background(Color.Red100)">Hidden</div>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Position</h2>
+
+<ApiTable Rows="@PositionUtilities" />
+
+<p class="@DocsStyles.P">
+    Combine a position with the offset helpers. Offsets use the spacing scale, so
+    <code class="@DocsStyles.InlineCode">Top(4)</code> is <code class="@DocsStyles.InlineCode">1rem</code>.
+</p>
+
+<ApiTable Rows="@OffsetUtilities" />
+
+<Example Code="@PositionExample">
+    <div class="@Css.Relative().H(32).RoundedLg().Background(Color.Slate100)
+                    @Dark.Background(Color.Slate800)">
+        <div class="@Css.Absolute().Top(2).Right(2).Px(3).Py(1).RoundedFull().TextXs().FontBold()
+                        @Css.Background(Color.Red500).Color(Color.White)">
+            New
+        </div>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Stacking</h2>
+
+<ApiTable Rows="@ZUtilities" />
+
+<h2 class="@DocsStyles.H2">Overflow</h2>
+
+<ApiTable Rows="@OverflowUtilities" />
+
+<Example Code="@OverflowExample">
+    <div class="@Css.OverflowAuto().H(24).P(3).RoundedMd().Background(Color.Slate100)
+                    @Dark.Background(Color.Slate800)">
+        <p class="@Css.Mb(2)">Scrollable content.</p>
+        <p class="@Css.Mb(2)">Scrollable content.</p>
+        <p class="@Css.Mb(2)">Scrollable content.</p>
+        <p class="@Css.Mb(2)">Scrollable content.</p>
+        <p>Scrollable content.</p>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Object fit and aspect ratio</h2>
+
+<ApiTable Rows="@ObjectUtilities" />
+
+<Example Code="@AspectExample">
+    <div class="@Css.Grid().GridCols(2).Gap(4)">
+        <div class="@Css.AspectSquare().RoundedMd().Background(Color.Indigo500)"></div>
+        <div class="@Css.AspectVideo().RoundedMd().Background(Color.Violet500)"></div>
+    </div>
+</Example>
+
+@code {
+    private static readonly (string Utility, string Css)[] DisplayUtilities =
+    [
+        ("Block()", "display: block"),
+        ("InlineBlock()", "display: inline-block"),
+        ("Inline()", "display: inline"),
+        ("Flex()", "display: flex"),
+        ("Grid()", "display: grid"),
+        ("Hidden()", "display: none"),
+    ];
+
+    private static readonly (string Utility, string Css)[] PositionUtilities =
+    [
+        ("Relative()", "position: relative"),
+        ("Absolute()", "position: absolute"),
+        ("Fixed()", "position: fixed"),
+        ("Sticky()", "position: sticky"),
+    ];
+
+    private static readonly (string Utility, string Css)[] OffsetUtilities =
+    [
+        ("Inset(4)", "inset: 1rem"),
+        ("Top(4)", "top: 1rem"),
+        ("Right(4)", "right: 1rem"),
+        ("Bottom(4)", "bottom: 1rem"),
+        ("Left(4)", "left: 1rem"),
+        ("Z(10)", "z-index: 10"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ZUtilities =
+    [
+        ("Z(0)", "z-index: 0"),
+        ("Z(10)", "z-index: 10"),
+        ("Z(50)", "z-index: 50"),
+    ];
+
+    private static readonly (string Utility, string Css)[] OverflowUtilities =
+    [
+        ("OverflowAuto()", "overflow: auto"),
+        ("OverflowHidden()", "overflow: hidden"),
+        ("OverflowScroll()", "overflow: scroll"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ObjectUtilities =
+    [
+        ("ObjectCover()", "object-fit: cover"),
+        ("ObjectContain()", "object-fit: contain"),
+        ("AspectSquare()", "aspect-ratio: 1 / 1"),
+        ("AspectVideo()", "aspect-ratio: 16 / 9"),
+    ];
+
+    private const string DisplayExample =
+        """
+        <div class="@Css.Block().Background(Color.Blue100).P(3)">Block</div>
+        <span class="@Css.InlineBlock().Background(Color.Emerald100).P(3)">Inline block</span>
+        <span class="@Css.Inline().Background(Color.Amber100).P(1)">Inline</span>
+        <div class="@Css.Hidden()">Hidden</div>
+        """;
+
+    private const string PositionExample =
+        """
+        <div class="@Css.Relative().H(32).RoundedLg().Background(Color.Slate100)">
+            <div class="@Css.Absolute().Top(2).Right(2).Px(3).Py(1)
+                            .RoundedFull().TextXs().FontBold()
+                            .Background(Color.Red500).Color(Color.White)">
+                New
+            </div>
+        </div>
+        """;
+
+    private const string OverflowExample =
+        """
+        <div class="@Css.OverflowAuto().H(24).P(3).RoundedMd()">
+            <p>Scrollable content.</p>
+            ...
+        </div>
+        """;
+
+    private const string AspectExample =
+        """
+        <div class="@Css.Grid().GridCols(2).Gap(4)">
+            <div class="@Css.AspectSquare().RoundedMd().Background(Color.Indigo500)"></div>
+            <div class="@Css.AspectVideo().RoundedMd().Background(Color.Violet500)"></div>
+        </div>
+        """;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <title>FluentCss - Utility-first CSS for .NET</title>
+    <link rel="preload" id="webassembly" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="_content/FluentCss.PureBlazorClient/preflight.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <script type="importmap"></script>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('fluentcss-theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('theme-dark');
+                }
+            } catch (e) { }
+        })();
+
+        function fcToggleTheme() {
+            var root = document.documentElement;
+            root.classList.toggle('theme-dark');
+            try {
+                localStorage.setItem('fluentcss-theme', root.classList.contains('theme-dark') ? 'dark' : 'light');
+            } catch (e) { }
+        }
+
+        function fcSetBodyClasses(classes) {
+            document.body.className = classes;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+</body>
+
+</html>
