@@ -5,13 +5,14 @@
 <div class="@Css.MinH(Size.ScreenH).Flex(FlexDirection.Col).Background(Color.Slate50) @Dark.Background(Color.Slate950)">
     <header class="@Css.WFull().Border().BorderColor(Color.Slate200).Background(Color.White) @Dark.BorderColor(Color.Slate800) @Dark.Background(Color.Slate900)">
         <nav class="@Css.MaxW(Size.Lg).MxAuto().Px(6).H(16).Flex(FlexDirection.Row, Justify.Between, Align.Center)">
-            <a href="/" class="@Css.TextLg().FontBold().NoUnderline().Color(Color.Blue600) @Dark.Color(Color.Blue400)">
+            <a href="/" data-enhance-nav="true" class="@Css.TextLg().FontBold().NoUnderline().Color(Color.Blue600) @Dark.Color(Color.Blue400)">
                 FluentCss SSR
             </a>
-            <div class="@Css.Flex(FlexDirection.Row, gap: 2)">
-                <a href="/" class="@GetLinkClass("/")">Home</a>
-                <a href="/about" class="@GetLinkClass("/about")">About</a>
-                <a href="/contact" class="@GetLinkClass("/contact")">Contact</a>
+            <div class="@Css.Flex(FlexDirection.Row, align: Align.Center, gap: 2)">
+                <a href="/" data-enhance-nav="true" class="@GetLinkClass("/")">Home</a>
+                <a href="/about" data-enhance-nav="true" class="@GetLinkClass("/about")">About</a>
+                <a href="/contact" data-enhance-nav="true" class="@GetLinkClass("/contact")">Contact</a>
+                <ThemeToggle />
             </div>
         </nav>
     </header>

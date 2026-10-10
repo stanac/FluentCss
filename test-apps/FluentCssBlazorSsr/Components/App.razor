@@ -12,21 +12,22 @@
     <HeadOutlet />
     <FluentCss.Blazor.CssStyles/>
     <script>
-        (function () {
+        function fcApplyTheme() {
             try {
                 var saved = localStorage.getItem('fluentcss-theme');
                 var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (saved === 'dark' || (!saved && prefersDark)) {
-                    document.documentElement.classList.add('theme-dark');
-                }
+                var dark = saved === 'dark' || (!saved && prefersDark);
+                document.documentElement.classList.toggle('theme-dark', dark);
             } catch (e) { }
-        })();
+        }
+
+        fcApplyTheme();
 
         function fcToggleTheme() {
             var root = document.documentElement;
-            root.classList.toggle('theme-dark');
+            var dark = root.classList.toggle('theme-dark');
             try {
-                localStorage.setItem('fluentcss-theme', root.classList.contains('theme-dark') ? 'dark' : 'light');
+                localStorage.setItem('fluentcss-theme', dark ? 'dark' : 'light');
             } catch (e) { }
         }
     </script>
@@ -35,6 +36,14 @@
 <body class="@BodyClass">
     <Routes />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script>
+        // Enhanced navigation events are dispatched through the Blazor event
+        // registry (Blazor.addEventListener), not the DOM. The merge of the new
+        // page can reset the <html> class, so re-apply the theme after each swap.
+        if (window.Blazor) {
+            Blazor.addEventListener('enhancedload', fcApplyTheme);
+        }
+    </script>
 </body>
 
 </html>
