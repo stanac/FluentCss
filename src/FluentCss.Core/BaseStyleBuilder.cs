@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace FluentCss.Core;
 
 public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
@@ -32,7 +34,7 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
     protected string GetSpacingValue(int scale)
     {
         if (scale == 0) return "0px";
-        return $"{scale * 0.25d:0.##}rem";
+        return (scale * 0.25d).ToString("0.##", CultureInfo.InvariantCulture) + "rem";
     }
 
     public T Background(Color color) => AddInternal(new UtilityClass($"bg-{color.Name}", "background-color", color.Value));
@@ -145,7 +147,7 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
     public T ShadowMd() => AddInternal(new UtilityClass("shadow-md", "box-shadow", "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"));
     public T ShadowLg() => AddInternal(new UtilityClass("shadow-lg", "box-shadow", "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"));
 
-    public T Opacity(int val) => AddInternal(new UtilityClass($"opacity-{val}", "opacity", (val / 100.0).ToString("0.##")));
+    public T Opacity(int val) => AddInternal(new UtilityClass($"opacity-{val}", "opacity", (val / 100.0).ToString("0.##", CultureInfo.InvariantCulture)));
     public T CursorPointer() => AddInternal(new UtilityClass("cursor-pointer", "cursor", "pointer"));
 
     

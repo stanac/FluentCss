@@ -1,0 +1,171 @@
+@page "/utility-classes"
+
+<PageTitle>Utility classes - FluentCss</PageTitle>
+
+<DocHeader Title="Styling with utility classes"
+           Description="A utility class maps one small piece of CSS. Combine them to build any design without leaving C#." />
+
+<h2 class="@DocsStyles.H2">Compose instead of names</h2>
+
+<p class="@DocsStyles.P">
+    A utility does one thing: set a background, a padding, a display mode, and so on. Instead of inventing
+    a class name for every component, you chain a handful of utilities together.
+</p>
+
+<Example Code="@ComposedExample">
+    <div class="@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200).ShadowSm()
+                    @Css.Background(Color.White) @Dark.Background(Color.Slate800)
+                    @Css.Hover(h => h.ShadowLg())">
+        <p class="@Css.FontBold().Color(Color.Slate900) @Dark.Color(Color.White)">Card title</p>
+        <p class="@Css.TextSm().Color(Color.Slate500) @Dark.Color(Color.Slate400)">A few chained utilities.</p>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Entry points</h2>
+
+<p class="@DocsStyles.P">
+    Every chain starts with one of three roots. The root decides the variant prefix applied to the
+    whole chain.
+</p>
+
+<ApiTable Rows="@EntryPoints" />
+
+<h2 class="@DocsStyles.H2">Chaining</h2>
+
+<p class="@DocsStyles.P">
+    Utility methods return the builder, so calls can be chained or spread over several statements.
+    Each call registers a class immediately.
+</p>
+
+<CodeBlock Code="@Chaining" />
+
+<h2 class="@DocsStyles.H2">Using the result in Razor</h2>
+
+<p class="@DocsStyles.P">
+    On a plain HTML element you can call the builder inline. FluentCss returns an object whose
+    <code class="@DocsStyles.InlineCode">ToString()</code> is the class attribute value.
+</p>
+
+<Example Code="@HtmlExample">
+    <p class="@Css.Background(Color.Slate100).Color(Color.Slate800).P(4).RoundedMd()
+               @Dark.Background(Color.Slate800).Color(Color.Slate100)">
+        Styled inline on an HTML element.
+    </p>
+</Example>
+
+<Callout Kind="CalloutKind.Warning" Title="Blazor components need a variable">
+    Blazor does not allow complex C# expressions in the attributes of a component. The inline chain
+    below will not compile. Precompute the class string and pass a simple variable instead.
+</Callout>
+
+<CodeBlock Code="@ComponentExample" />
+
+<p class="@DocsStyles.P">
+    A common pattern is to keep reusable class strings in a static class. Because the builder works
+    anywhere, the strings can be cached and shared.
+</p>
+
+<CodeBlock Code="@StaticStyles" />
+
+<p class="@DocsStyles.P">
+    Inside a component the result can also be interpolated with other expressions:
+</p>
+
+<CodeBlock Code="@StaticUsage" />
+
+<h2 class="@DocsStyles.H2">Deduplication</h2>
+
+<p class="@DocsStyles.P">
+    Registering the same utility twice only emits one CSS rule. The registry compares classes by their
+    generated name, so the more often a utility is used the more the stylesheet is reused.
+</p>
+
+<CodeBlock Code="@Dedup" />
+
+@code {
+    private static readonly (string Utility, string Css)[] EntryPoints =
+    [
+        ("Css", "no prefix, theme-neutral styles"),
+        ("Dark", "theme-dark: prefix, applies inside the dark theme"),
+        ("Theme(\"halloween\")", "theme-halloween: prefix, any custom theme"),
+    ];
+
+    private const string ComposedExample =
+        """
+        <div class="@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200).ShadowSm()
+                        @Css.Background(Color.White) @Dark.Background(Color.Slate800)
+                        @Css.Hover(h => h.ShadowLg())">
+            <p class="@Css.FontBold().Color(Color.Slate900) @Dark.Color(Color.White)">Card title</p>
+            <p class="@Css.TextSm().Color(Color.Slate500) @Dark.Color(Color.Slate400)">A few chained utilities.</p>
+        </div>
+        """;
+
+    private const string Chaining =
+        """
+        // One chain, many utilities
+        var card = FluentCssBuilder.Css
+            .P(6)
+            .RoundedLg()
+            .Background(Color.White)
+            .ShadowMd();
+
+        // Or spread over statements; they register in order
+        card = card.Color(Color.Slate900);
+        card = card.Hover(h => h.ShadowLg());
+        """;
+
+    private const string HtmlExample =
+        """
+        <p class="@Css.Background(Color.Slate100).Color(Color.Slate800).P(4).RoundedMd()
+                   @Dark.Background(Color.Slate800).Color(Color.Slate100)">
+            Styled inline on an HTML element.
+        </p>
+        """;
+
+    private const string ComponentExample =
+        """
+        @* Does not compile on a component. *@
+        <NavLink class="@Css.Background(Color.Blue500).Color(Color.White)">Home</NavLink>
+
+        @* Precompute the class string first. *@
+        <NavLink class="@NavLinkClass">Home</NavLink>
+
+        @code {
+            private static string NavLinkClass =
+                Css.Background(Color.Blue500).Color(Color.White).ToString()!;
+        }
+        """;
+
+    private const string StaticStyles =
+        """
+        using FluentCss.Core;
+        using static FluentCss.Core.FluentCssBuilder;
+
+        public static class MyStyles
+        {
+            public static string PrimaryButton { get; } =
+                Css.InlineBlock().Px(6).Py(3).RoundedMd().FontBold()
+                   .Background(Color.Blue600).Color(Color.White)
+                   .Hover(h => h.Background(Color.Blue700))
+                   .Focus(f => f.Ring(3, Color.Blue300).OutlineHidden())
+                   .ToString()!;
+        }
+        """;
+
+    private const string StaticUsage =
+        """
+        <a href="/" class="@MyStyles.PrimaryButton">Home</a>
+
+        @* Mix literals, static styles and inline chains *@
+        <span class="extra @MyStyles.PrimaryButton @Css.Mb(4)">Mixed</span>
+        """;
+
+    private const string Dedup =
+        """
+        var a = new ClassRegistry();
+        a.Add(new UtilityClass("p-4", "padding", "1rem"));
+        a.Add(new UtilityClass("p-4", "padding", "1rem")); // ignored
+
+        // a.Css contains exactly one .p-4 rule
+        """;
+}

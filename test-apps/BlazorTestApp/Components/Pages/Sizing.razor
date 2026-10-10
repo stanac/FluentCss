@@ -1,0 +1,91 @@
+@page "/sizing"
+
+<PageTitle>Sizing - FluentCss</PageTitle>
+
+<DocHeader Title="Sizing"
+           Description="Set width and height with the spacing scale, percentage keywords or the predefined Size values." />
+
+<h2 class="@DocsStyles.H2">Width and height</h2>
+
+<p class="@DocsStyles.P">
+    The numeric width and height helpers use the same scale as spacing. There are also a few named
+    keywords for common cases.
+</p>
+
+<ApiTable Rows="@SizeUtilities" />
+
+<Example Code="@SizeExample">
+    <div class="@Css.Flex(FlexDirection.Col, gap: 3)">
+        <div class="@Css.W(32).H(8).RoundedMd().Background(Color.Blue500)"></div>
+        <div class="@Css.WFull().H(8).RoundedMd().Background(Color.Indigo500)"></div>
+        <div class="@Css.W(16).HFull().RoundedMd().Background(Color.Violet500)"></div>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Minimum and maximum</h2>
+
+<p class="@DocsStyles.P">
+    Min and max helpers take a <code class="@DocsStyles.InlineCode">Size</code> value instead of a
+    number. The values cover the usual content and viewport keywords.
+</p>
+
+<ApiTable Rows="@MinMaxUtilities" />
+
+<h3 class="@DocsStyles.H3">Available sizes</h3>
+<ApiTable Rows="@SizeValues" />
+
+<Example Code="@MaxWExample">
+    <div class="@Css.MaxW(Size.Md).P(6).RoundedLg().Background(Color.Emerald500).Color(Color.White)">
+        max-width: 48rem
+    </div>
+</Example>
+
+@code {
+    private static readonly (string Utility, string Css)[] SizeUtilities =
+    [
+        ("W(4)", "width: 1rem"),
+        ("H(4)", "height: 1rem"),
+        ("WFull()", "width: 100%"),
+        ("WScreen()", "width: 100vw"),
+        ("WAuto()", "width: auto"),
+        ("HFull()", "height: 100%"),
+        ("HScreen()", "height: 100vh"),
+    ];
+
+    private static readonly (string Utility, string Css)[] MinMaxUtilities =
+    [
+        ("MaxW(Size.Md)", "max-width: 48rem"),
+        ("MinW(Size.Sm)", "min-width: 40rem"),
+        ("MaxH(Size.Lg)", "max-height: 64rem"),
+        ("MinH(Size.ScreenH)", "min-height: 100vh"),
+    ];
+
+    private static readonly (string Utility, string Css)[] SizeValues =
+    [
+        ("Size.Sm", "40rem"),
+        ("Size.Md", "48rem"),
+        ("Size.Lg", "64rem"),
+        ("Size.Xl", "80rem"),
+        ("Size.Full", "100%"),
+        ("Size.ScreenW", "100vw"),
+        ("Size.ScreenH", "100vh"),
+        ("Size.Zero", "0px"),
+        ("Size.Min", "min-content"),
+        ("Size.Max", "max-content"),
+        ("Size.Fit", "fit-content"),
+    ];
+
+    private const string SizeExample =
+        """
+        <div class="@Css.W(32).H(8)"></div>
+        <div class="@Css.WFull().H(8)"></div>
+        <div class="@Css.W(16).HFull()"></div>
+        """;
+
+    private const string MaxWExample =
+        """
+        <div class="@Css.MaxW(Size.Md).P(6)">
+            max-width: 48rem
+        </div>
+        """;
+}

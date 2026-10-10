@@ -1,0 +1,120 @@
+@page "/spacing"
+
+<PageTitle>Spacing - FluentCss</PageTitle>
+
+<DocHeader Title="Spacing"
+           Description="Padding and margin share one numeric scale. Multiply any integer by 0.25rem to get the rendered value." />
+
+<h2 class="@DocsStyles.H2">The scale</h2>
+
+<p class="@DocsStyles.P">
+    Spacing methods take an integer. The value is scaled by
+    <code class="@DocsStyles.InlineCode">0.25rem</code>, so <code class="@DocsStyles.InlineCode">P(4)</code>
+    becomes <code class="@DocsStyles.InlineCode">1rem</code>. A scale of
+    <code class="@DocsStyles.InlineCode">0</code> produces <code class="@DocsStyles.InlineCode">0px</code>.
+</p>
+
+<ApiTable Rows="@ScaleTable" />
+
+<h2 class="@DocsStyles.H2">Padding</h2>
+
+<ApiTable Rows="@PaddingUtilities" />
+
+<Example Code="@PaddingExample">
+    <div class="@Css.Flex(FlexDirection.Row, gap: 4).ItemsStart()">
+        <div class="@Css.P(2).Background(Color.Blue100).RoundedMd()">
+            <div class="@Css.P(2).Background(Color.Blue500).Color(Color.White).RoundedSm().TextXs()">P(2)</div>
+        </div>
+        <div class="@Css.P(6).Background(Color.Indigo100).RoundedMd()">
+            <div class="@Css.P(2).Background(Color.Indigo500).Color(Color.White).RoundedSm().TextXs()">P(6)</div>
+        </div>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Margin</h2>
+
+<ApiTable Rows="@MarginUtilities" />
+
+<Example Code="@MarginExample">
+    <div class="@Css.Mb(4).P(3).RoundedMd().Background(Color.Emerald500).Color(Color.White)">Margin bottom 4</div>
+    <div class="@Css.Mt(4).P(3).RoundedMd().Background(Color.Teal500).Color(Color.White)">Margin top 4</div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Auto margins</h2>
+
+<p class="@DocsStyles.P">
+    Auto margin helpers are handy for centering a block horizontally or pushing content apart.
+</p>
+
+<ApiTable Rows="@AutoUtilities" />
+
+<Example Code="@AutoExample">
+    <div class="@Css.P(4).RoundedMd().Background(Color.Slate100) @Dark.Background(Color.Slate800)">
+        <div class="@Css.W(32).MxAuto().P(3).RoundedMd().Background(Color.Blue500).Color(Color.White).TextCenter()">
+            Centered
+        </div>
+    </div>
+</Example>
+
+@code {
+    private static readonly (string Utility, string Css)[] ScaleTable =
+    [
+        ("P(0) / M(0)", "0px"),
+        ("P(1) / M(1)", "0.25rem"),
+        ("P(2) / M(2)", "0.5rem"),
+        ("P(4) / M(4)", "1rem"),
+        ("P(6) / M(6)", "1.5rem"),
+        ("P(8) / M(8)", "2rem"),
+    ];
+
+    private static readonly (string Utility, string Css)[] PaddingUtilities =
+    [
+        ("P(n)", "padding"),
+        ("Px(n)", "padding-inline"),
+        ("Py(n)", "padding-block"),
+        ("Pt(n)", "padding-top"),
+        ("Pr(n)", "padding-right"),
+        ("Pb(n)", "padding-bottom"),
+        ("Pl(n)", "padding-left"),
+    ];
+
+    private static readonly (string Utility, string Css)[] MarginUtilities =
+    [
+        ("M(n)", "margin"),
+        ("Mx(n)", "margin-inline"),
+        ("My(n)", "margin-block"),
+        ("Mt(n)", "margin-top"),
+        ("Mr(n)", "margin-right"),
+        ("Mb(n)", "margin-bottom"),
+        ("Ml(n)", "margin-left"),
+    ];
+
+    private static readonly (string Utility, string Css)[] AutoUtilities =
+    [
+        ("MxAuto()", "margin-inline: auto"),
+        ("MyAuto()", "margin-block: auto"),
+    ];
+
+    private const string PaddingExample =
+        """
+        <div class="@Css.P(2).Background(Color.Blue100)">
+            <div class="@Css.P(2)">P(2)</div>
+        </div>
+        <div class="@Css.P(6).Background(Color.Indigo100)">
+            <div class="@Css.P(2)">P(6)</div>
+        </div>
+        """;
+
+    private const string MarginExample =
+        """
+        <div class="@Css.Mb(4)">Margin bottom 4</div>
+        <div class="@Css.Mt(4)">Margin top 4</div>
+        """;
+
+    private const string AutoExample =
+        """
+        <div class="@Css.P(4)">
+            <div class="@Css.W(32).MxAuto()">Centered</div>
+        </div>
+        """;
+}

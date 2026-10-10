@@ -1,37 +1,39 @@
 @page "/Error"
 @using System.Diagnostics
 
-<PageTitle>Error</PageTitle>
+<PageTitle>Error - FluentCss</PageTitle>
 
-<h1 class="@Css.Text3Xl().FontBold().Color(Color.Red500).Mb(4)">Error.</h1>
-<h2 class="@Css.TextXl().FontBold().Color(Color.Red400).Mb(4)">An error occurred while processing your request.</h2>
+<DocHeader Title="Something went wrong"
+           Description="An error occurred while processing your request." />
 
 @if (ShowRequestId)
 {
-    <p class="@Css.Mb(6).Color(Color.Slate600)">
-        <strong class="@Css.FontBold().Color(Color.Slate800)">Request ID:</strong>
-        <code class="@Css.Background(Color.Slate100).Px(2).Py(0).RoundedSm().Color(Color.Slate800)">@RequestId</code>
-    </p>
+    <Callout Kind="CalloutKind.Warning" Title="Request ID">
+        <code class="@DocsStyles.InlineCode">@RequestId</code>
+    </Callout>
 }
 
-<h3 class="@Css.TextLg().FontBold().Color(Color.Slate800).Mb(2)">Development Mode</h3>
-<p class="@Css.Color(Color.Slate600).MaxW(Size._2Xl)">
-    Swapping to <strong class="@Css.FontBold().Color(Color.Slate800)">Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p class="@Css.Color(Color.Slate600).MaxW(Size._2Xl).Mt(2)">
-    <strong class="@Css.FontBold().Color(Color.Slate800)">The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong class="@Css.FontBold().Color(Color.Slate800)">Development</strong> environment by setting the
-    <code class="@Css.Background(Color.Slate100).Px(2).Py(0).RoundedSm().TextSm()">ASPNETCORE_ENVIRONMENT</code> environment variable to
-    <code class="@Css.Background(Color.Slate100).Px(2).Py(0).RoundedSm().TextSm()">Development</code>
-    and restarting the app.
+<h2 class="@DocsStyles.H2">Development mode</h2>
+
+<p class="@DocsStyles.P">
+    Swapping to the <span class="@DocsStyles.Strong">Development</span> environment will display more
+    detailed information about the error that occurred.
 </p>
 
-@code{
+<p class="@DocsStyles.P">
+    The <span class="@DocsStyles.Strong">Development</span> environment should not be enabled for
+    deployed applications, because it can display sensitive information from exceptions to end users.
+    For local debugging, set the
+    <code class="@DocsStyles.InlineCode">ASPNETCORE_ENVIRONMENT</code> environment variable to
+    <code class="@DocsStyles.InlineCode">Development</code> and restart the app.
+</p>
+
+@code {
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
 
     private string? RequestId { get; set; }
+
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
     protected override void OnInitialized() =>

@@ -1,0 +1,21 @@
+<table class="@DocsStyles.Table">
+    <thead class="@DocsStyles.Thead">
+        <tr>
+            <th class="@DocsStyles.Th">Utility</th>
+            <th class="@DocsStyles.Th">Generated CSS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Rows)
+        {
+            <tr class="@DocsStyles.Tr">
+                <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">@row.Utility</code></td>
+                <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">@row.Css</code></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public IEnumerable<(string Utility, string Css)> Rows { get; set; } = [];
+}
