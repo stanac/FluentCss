@@ -1,0 +1,22 @@
+@page
+@model FluentCssRazorPages.Pages.ContactModel
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<h1 class="@Styles.PageTitle">Contact</h1>
+<p class="@Styles.Subtitle">
+    A form for layout testing. It does not submit anywhere.
+</p>
+
+<div class="@Styles.FormPanel">
+    <div class="@Styles.Field">
+        <label class="@Styles.Label">Name</label>
+        <input class="@Styles.Input" />
+    </div>
+    <div class="@Styles.Field">
+        <label class="@Styles.Label">Email</label>
+        <input class="@Styles.Input" />
+    </div>
+    <button type="button" class="@Styles.ButtonPrimary">Send</button>
+</div>

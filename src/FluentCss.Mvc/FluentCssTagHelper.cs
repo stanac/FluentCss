@@ -4,21 +4,27 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace FluentCss.Mvc;
 
 /// <summary>
-/// Renders the FluentCss stylesheet link and a small script that keeps it in
-/// sync with the registry.
+/// Renders everything FluentCss needs in the document head: the stylesheet link
+/// and a small script that keeps it in sync with the registry.
 /// </summary>
 /// <remarks>
+/// <para>Usage: <c>&lt;fluent-css /&gt;</c>.</para>
+/// <para>
 /// The link is written while the layout is rendering, before the body has
 /// registered its classes, so its hash can be stale. The script re-reads the
 /// current hash once the document has loaded and also watches for nodes added
 /// later (for example an AJAX partial view), updating the link when the
 /// stylesheet changes. It is self contained and adds nothing to the page.
+/// </para>
+/// <para>
+/// A custom element is used rather than an attribute on <c>&lt;link&gt;</c>
+/// because the helper emits two elements. If the tag helper is not registered
+/// the raw element is inert, instead of a link that silently loads nothing.
+/// </para>
 /// </remarks>
-[HtmlTargetElement("link", Attributes = AttributeName)]
+[HtmlTargetElement("fluent-css")]
 public sealed class FluentCssTagHelper : TagHelper
 {
-    public const string AttributeName = "fluent-css";
-
     private const string PathPrefix = "/fluentcss";
 
 #if DEBUG
@@ -33,16 +39,10 @@ public sealed class FluentCssTagHelper : TagHelper
     {
         var hash = ClassRegistry.DefaultRegistry.Sha256Hex;
 
-        output.TagName = "link";
-        output.TagMode = TagMode.SelfClosing;
-
-        output.Attributes.RemoveAll(AttributeName);
-        output.Attributes.SetAttribute("rel", "stylesheet");
-        output.Attributes.SetAttribute("href", $"{PathPrefix}/{hash}.css");
-        output.Attributes.SetAttribute("id", "fluentcss");
-        output.Attributes.SetAttribute("data-fluentcss-hash", hash);
-
-        output.PostElement.AppendHtml($"<script>{Script.Value}</script>");
+        output.TagName = null;
+        output.Content.SetHtmlContent(
+            $"<link rel=\"stylesheet\" href=\"{PathPrefix}/{hash}.css\" id=\"fluentcss\" data-fluentcss-hash=\"{hash}\" />" +
+            $"<script>{Script.Value}</script>");
     }
 
     private static string LoadScript()

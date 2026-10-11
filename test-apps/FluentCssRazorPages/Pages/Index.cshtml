@@ -1,0 +1,14 @@
+@page
+@model FluentCssRazorPages.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="@Styles.Hero">
+    <h1 class="@Styles.HeroTitle">Razor Pages test site</h1>
+    <p class="@Styles.HeroLead">
+        A tiny three-page Razor Pages site used to observe how FluentCss serves its
+        stylesheet from middleware, keyed by the registry hash.
+    </p>
+    <a href="/About" class="@Styles.ButtonCta">Learn more</a>
+</section>

@@ -1,0 +1,10 @@
+@* Loaded over AJAX. Uses classes that are not part of the page's initial stylesheet. *@
+<div class="@PartialStyles.Card">
+    <p class="@PartialStyles.Title">Loaded from a partial view</p>
+    <p class="@PartialStyles.Body">
+        These classes were registered while this partial rendered on the server, after the
+        page's stylesheet link had already been written. The observer script should detect
+        the injected nodes and refresh the stylesheet.
+    </p>
+    <button type="button" class="@PartialStyles.Button">New classes</button>
+</div>

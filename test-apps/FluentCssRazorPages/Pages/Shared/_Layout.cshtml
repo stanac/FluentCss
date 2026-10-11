@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FluentCss Razor Pages</title>
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('fluentcss-theme') === 'dark') {
+                    document.documentElement.classList.add('theme-dark');
+                }
+            } catch (e) { }
+        })();
+        function fcToggleTheme() {
+            var dark = document.documentElement.classList.toggle('theme-dark');
+            try { localStorage.setItem('fluentcss-theme', dark ? 'dark' : 'light'); } catch (e) { }
+        }
+    </script>
+    <link rel="stylesheet" href="/_content/FluentCss.Mvc/preflight.css" />
+    <fluent-css />
+</head>
+<body class="@Styles.Shell">
+    <header class="@Styles.Header">
+        <nav class="@Styles.Nav">
+            <a href="/" class="@Styles.Brand">FluentCss Razor Pages</a>
+            <div class="@Styles.NavLinks">
+                <a href="/" class="@GetLinkClass("/")">Home</a>
+                <a href="/About" class="@GetLinkClass("/About")">About</a>
+                <a href="/Contact" class="@GetLinkClass("/Contact")">Contact</a>
+                <button type="button" class="@Styles.ThemeButton" onclick="fcToggleTheme()">Theme</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="@Styles.Main">
+        @RenderBody()
+    </main>
+
+    <footer class="@Styles.Footer">
+        &copy; @DateTime.Now.Year FluentCss Razor Pages test site
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+@functions {
+    private string GetLinkClass(string path)
+    {
+        var current = ViewContext.HttpContext.Request.Path.Value ?? "/";
+        var isActive = path == "/"
+            ? current == "/"
+            : current.StartsWith(path, StringComparison.OrdinalIgnoreCase);
+
+        return isActive ? Styles.NavLinkActive : Styles.NavLink;
+    }
+}
