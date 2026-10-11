@@ -1,0 +1,15 @@
+# Git and IDE metadata
+.git
+.gitignore
+.vs
+**/*.user
+
+# Build output (the Dockerfile restores/publishes inside the image)
+**/bin
+**/obj
+
+# Image archives produced by build-save-docker.sh
+**/*.tar
+**/*.tar.gz
+
+backup.bat

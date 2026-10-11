@@ -351,3 +351,5 @@ MigrationBackup/
 .ionide/
 
 nugets-output/
+# Docker image archives produced by test-apps/FluentCssBlazorSsr/build-save-docker.sh
+test-apps/FluentCssBlazorSsr/fluentcssdocs-*.tar

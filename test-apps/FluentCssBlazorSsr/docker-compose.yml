@@ -1,0 +1,20 @@
+# docker compose for the FluentCss static-SSR documentation site.
+#
+# Local build:        docker compose up -d --build
+# On a server:        docker load --input fluentcssdocs-latest.tar
+#                     docker compose up -d
+#
+# The image is built from the repository root so the SSR app can see src/* and
+# the shared FluentCss.Docs Razor Class Library.
+services:
+  fluentcssdocs:
+    image: fluentcssdocs:latest
+    container_name: fluentcssdocs
+    build:
+      context: ../..
+      dockerfile: test-apps/FluentCssBlazorSsr/Dockerfile
+    ports:
+      - "61238:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    restart: unless-stopped
