@@ -3,89 +3,149 @@
 <PageTitle>Installation - FluentCss</PageTitle>
 
 <DocHeader Title="Installation"
-           Description="Add FluentCss to a Blazor app or any other .NET project, wire it up once and start composing styles." />
+           Description="Pick the package for your hosting model, wire FluentCss up once and start composing styles." />
 
-<h2 class="@DocsStyles.H2">Packages</h2>
+<h2 class="@DocsStyles.H2">Choose a package</h2>
+
+<p class="@DocsStyles.P">
+    There is one integration package per hosting model. Install the one that matches your app.
+    You never install <code class="@DocsStyles.InlineCode">FluentCss.Core</code> yourself.
+</p>
 
 <table class="@DocsStyles.Table">
     <thead class="@DocsStyles.Thead">
         <tr>
             <th class="@DocsStyles.Th">Package</th>
-            <th class="@DocsStyles.Th">Target</th>
-            <th class="@DocsStyles.Th">Use it for</th>
+            <th class="@DocsStyles.Th">Hosting model</th>
+            <th class="@DocsStyles.Th">What it gives you</th>
         </tr>
     </thead>
     <tbody>
         <tr class="@DocsStyles.Tr">
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Core</code></td>
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">netstandard2.0</code></td>
-            <td class="@DocsStyles.Td">The builder, registry and every utility. Works in any .NET project.</td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Blazor</code></td>
+            <td class="@DocsStyles.Td">Blazor</td>
+            <td class="@DocsStyles.Td">
+                The <code class="@DocsStyles.InlineCode">CssStyles</code> component and the preflight stylesheet.
+                Use it for Blazor static SSR, Blazor Server (interactive server) and Blazor WebAssembly
+                (standalone).
+            </td>
         </tr>
         <tr class="@DocsStyles.Tr">
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss</code></td>
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">net10.0</code></td>
-            <td class="@DocsStyles.Td">The Blazor <code class="@DocsStyles.InlineCode">CssStyles</code> component and preflight stylesheet.</td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.MvcRazor</code></td>
+            <td class="@DocsStyles.Td">ASP.NET Core MVC and Razor Pages</td>
+            <td class="@DocsStyles.Td">
+                The <code class="@DocsStyles.InlineCode">&lt;fluent-css /&gt;</code> tag helper, the stylesheet
+                middleware and the preflight stylesheet.
+            </td>
         </tr>
     </tbody>
 </table>
 
-<h2 class="@DocsStyles.H2">1. Add the package</h2>
+<Callout Kind="CalloutKind.Tip" Title="FluentCss.Core comes with them">
+    Both integration packages depend on <code class="@DocsStyles.InlineCode">FluentCss.Core</code> and bring it in
+    automatically. That is where the builder, the registry and every utility live, and it is a transitive
+    dependency: do not add it to your project on its own.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Blazor</h2>
+
+<p class="@DocsStyles.P">Add the Blazor package:</p>
+
+<CodeBlock Code="@InstallBlazor" Language="bash" />
+
+<p class="@DocsStyles.P">
+    For the shortest syntax add the following to your <code class="@DocsStyles.InlineCode">_Imports.razor</code>.
+    Importing the static builder means you can start a chain with <code class="@DocsStyles.InlineCode">Css</code> or
+    <code class="@DocsStyles.InlineCode">Dark</code> directly.
+</p>
+
+<CodeBlock Code="@ImportsBlazor" Language="cshtml" />
+
+<p class="@DocsStyles.P">
+    Drop the <code class="@DocsStyles.InlineCode">CssStyles</code> component into your layout. It renders a
+    <code class="@DocsStyles.InlineCode">&lt;style&gt;</code> block with every class registered while the page is
+    built.
+</p>
+
+<CodeBlock Code="@LayoutBlazor" Language="cshtml" />
+
+<Callout Kind="CalloutKind.Warning" Title="Placement matters">
+    Put <code class="@DocsStyles.InlineCode">CssStyles</code> near the end of the layout, after the page content.
+    Utilities are registered while the page renders, so if the component runs too early the stylesheet will be
+    incomplete on the first response.
+</Callout>
+
+<p class="@DocsStyles.P">
+    Optionally include the Tailwind preflight reset to normalize browser defaults such as margins, borders and
+    fonts:
+</p>
+
+<CodeBlock Code="@PreflightBlazor" Language="cshtml" />
+
+<h2 class="@DocsStyles.H2">MVC and Razor Pages</h2>
+
+<p class="@DocsStyles.P">Add the MVC/Razor Pages package:</p>
+
+<CodeBlock Code="@InstallMvcRazor" Language="bash" />
+
+<p class="@DocsStyles.P">
+    Register the middleware in <code class="@DocsStyles.InlineCode">Program.cs</code>. It serves the current hash at
+    <code class="@DocsStyles.InlineCode">/fluentcss/hash</code> and the stylesheet at
+    <code class="@DocsStyles.InlineCode">/fluentcss/{hash}.css</code>, with gzip and an ETag.
+</p>
+
+<CodeBlock Code="@ProgramMvcRazor" Language="csharp" />
+
+<p class="@DocsStyles.P">
+    Razor Pages apps map their pages instead with <code class="@DocsStyles.InlineCode">app.MapRazorPages()</code>;
+    the middleware and the tag helper are identical for both models.
+</p>
+
+<p class="@DocsStyles.P">
+    Register the tag helper and the namespaces in <code class="@DocsStyles.InlineCode">_ViewImports.cshtml</code>
+    (or <code class="@DocsStyles.InlineCode">Pages/_ViewImports.cshtml</code>):
+</p>
+
+<CodeBlock Code="@ImportsMvcRazor" Language="cshtml" />
+
+<p class="@DocsStyles.P">
+    Finally add the tag helper and the preflight stylesheet to your layout. The tag helper renders the
+    stylesheet <code class="@DocsStyles.InlineCode">&lt;link&gt;</code> and a small script that keeps it in sync
+    after client-side DOM changes, such as a partial view loaded over AJAX.
+</p>
+
+<CodeBlock Code="@LayoutMvcRazor" Language="cshtml" />
+
+<Callout Kind="CalloutKind.Info" Title="You do not manage the hash">
+    The tag helper resolves the current hash when the layout renders, but classes can still be registered after
+    that point. The injected script re-reads <code class="@DocsStyles.InlineCode">/fluentcss/hash</code> on load and
+    watches the document for later changes, swapping the stylesheet when it changes.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Client-side interactivity (work in progress)</h2>
+
+<Callout Kind="CalloutKind.Warning" Title="Not supported yet">
+    A Blazor Web App using the Interactive WebAssembly or Auto render mode registers classes on the client, which
+    is not supported yet. Static SSR, standalone Blazor WebAssembly and Blazor Server (interactive server) are
+    supported today with <code class="@DocsStyles.InlineCode">FluentCss.Blazor</code>.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Any other .NET project</h2>
+
+<p class="@DocsStyles.P">
+    Outside of Blazor and MVC/Razor Pages there is no integration package, so add the core library directly:
+</p>
 
 <CodeBlock Code="@InstallCore" Language="bash" />
 
 <p class="@DocsStyles.P">
-    If you are building a Blazor application you also want the Razor component package:
-</p>
-
-<CodeBlock Code="@InstallBlazor" Language="bash" />
-
-<h2 class="@DocsStyles.H2">2. Import the namespaces</h2>
-
-<p class="@DocsStyles.P">
-    For the shortest syntax add the following to your <code class="@DocsStyles.InlineCode">_Imports.razor</code>.
-    Importing the static builder means you can start a chain with <code class="@DocsStyles.InlineCode">Css</code>
-    or <code class="@DocsStyles.InlineCode">Dark</code> directly.
-</p>
-
-<CodeBlock Code="@Imports" Language="cshtml" />
-
-<h2 class="@DocsStyles.H2">3. Render the generated CSS</h2>
-
-<p class="@DocsStyles.P">
-    Drop the <code class="@DocsStyles.InlineCode">CssStyles</code> component somewhere in your layout.
-    It renders a <code class="@DocsStyles.InlineCode">&lt;style&gt;</code> block that contains every class
-    registered while the page is built.
-</p>
-
-<CodeBlock Code="@LayoutUsage" Language="cshtml" />
-
-<Callout Kind="CalloutKind.Warning" Title="Placement matters">
-    Put <code class="@DocsStyles.InlineCode">CssStyles</code> near the end of the layout, after the page content.
-    While the page renders, utilities are registered into the registry. If the component runs too early the
-    stylesheet will be incomplete on the first response.
-</Callout>
-
-<p class="@DocsStyles.P">
-    Optionally include the Tailwind preflight reset to normalize browser defaults such as margins,
-    borders and fonts:
-</p>
-
-<CodeBlock Code="@Preflight" Language="cshtml" />
-
-<h2 class="@DocsStyles.H2">4. Using it without Blazor</h2>
-
-<p class="@DocsStyles.P">
-    The core package does not depend on ASP.NET Core. You can build classes and read the generated CSS
-    from any .NET application:
-</p>
-
-<CodeBlock Code="@NonBlazor" />
-
-<p class="@DocsStyles.P">
+    You can then build classes and read the generated CSS from any .NET application.
     <code class="@DocsStyles.InlineCode">ToString()</code> returns the space separated class names for your
     <code class="@DocsStyles.InlineCode">class</code> attribute, while
     <code class="@DocsStyles.InlineCode">ClassRegistry.DefaultRegistry.Css</code> gives you the stylesheet.
 </p>
+
+<CodeBlock Code="@NonBlazor" />
 
 <p class="@DocsStyles.P">
     Next, read <a href="/how-it-works" data-enhance-nav="false" class="@DocsStyles.Link">How it works</a>
@@ -93,23 +153,18 @@
 </p>
 
 @code {
-    private const string InstallCore =
-        """
-        dotnet add package FluentCss.Core
-        """;
-
     private const string InstallBlazor =
         """
         dotnet add package FluentCss.Blazor
         """;
 
-    private const string Imports =
+    private const string ImportsBlazor =
         """
         @using static FluentCss.Core.FluentCssBuilder
         @using FluentCss.Core
         """;
 
-    private const string LayoutUsage =
+    private const string LayoutBlazor =
         """
         <!-- MainLayout.razor -->
         @inherits LayoutComponentBase
@@ -120,9 +175,47 @@
         <FluentCss.Blazor.CssStyles />
         """;
 
-    private const string Preflight =
+    private const string PreflightBlazor =
         """
         <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
+        """;
+
+    private const string InstallMvcRazor =
+        """
+        dotnet add package FluentCss.MvcRazor
+        """;
+
+    private const string ProgramMvcRazor =
+        """
+        var app = builder.Build();
+
+        app.UseRouting();
+        app.UseFluentCssMvcRazor();   // serve /fluentcss/hash and /fluentcss/{hash}.css
+        app.UseAuthorization();
+
+        app.MapStaticAssets();
+        app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+        """;
+
+    private const string ImportsMvcRazor =
+        """
+        @using static FluentCss.Core.FluentCssBuilder
+        @using FluentCss.Core
+        @addTagHelper *, FluentCss.MvcRazor
+        """;
+
+    private const string LayoutMvcRazor =
+        """
+        <head>
+            ...
+            <link rel="stylesheet" href="/_content/FluentCss.MvcRazor/preflight.css" />
+            <fluent-css />
+        </head>
+        """;
+
+    private const string InstallCore =
+        """
+        dotnet add package FluentCss.Core
         """;
 
     private const string NonBlazor =

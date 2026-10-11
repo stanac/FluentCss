@@ -7,7 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/FluentCss.Blazor/FluentCss.Blazor.csproj" />
     <Project Path="src/FluentCss.Core/FluentCss.Core.csproj" />
-    <Project Path="src/FluentCss.Mvc/FluentCss.Mvc.csproj" />
+    <Project Path="src/FluentCss.MvcRazor/FluentCss.MvcRazor.csproj" />
   </Folder>
   <Folder Name="/test-apps/">
     <Project Path="test-apps/FluentCss.Docs/FluentCss.Docs.csproj" />

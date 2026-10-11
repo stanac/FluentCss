@@ -358,7 +358,7 @@ FluentCss/
 ├── src/
 │   ├── FluentCss.Core/       # Core library (netstandard2.0)
 │   ├── FluentCss.Blazor/     # Blazor component (net10.0)
-│   └── FluentCss.Mvc/        # ASP.NET Core Razor integration (tag helper + middleware)
+│   └── FluentCss.MvcRazor/   # MVC + Razor Pages integration (tag helper + middleware)
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/
