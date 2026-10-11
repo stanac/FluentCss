@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace FluentCss.Mvc;
 
 /// <summary>
-/// Renders the FluentCss stylesheet link and a small script that re-synchronises
-/// it after the page finishes loading.
+/// Renders the FluentCss stylesheet link and a small script that keeps it in
+/// sync with the registry.
 /// </summary>
 /// <remarks>
 /// The link is written while the layout is rendering, before the body has
-/// registered its classes, so its hash can be stale. The script asks the
-/// middleware for the latest hash once the document has loaded and swaps the
-/// link if the stylesheet changed. This closes the gap without buffering the
-/// response.
+/// registered its classes, so its hash can be stale. The script re-reads the
+/// current hash once the document has loaded and also watches for nodes added
+/// later (for example an AJAX partial view), updating the link when the
+/// stylesheet changes. It is self contained and adds nothing to the page.
 /// </remarks>
 [HtmlTargetElement("link", Attributes = AttributeName)]
 public sealed class FluentCssTagHelper : TagHelper
@@ -21,8 +21,13 @@ public sealed class FluentCssTagHelper : TagHelper
 
     private const string PathPrefix = "/fluentcss";
 
-    private const string ScriptTemplate =
-        """<script>(function(){function r(){var l=document.getElementById('fluentcss');if(!l)return;fetch('__PREFIX__/hash',{cache:'no-store'}).then(function(x){return x.ok?x.text():null}).then(function(h){if(!h)return;h=h.trim();if(h&&h!==l.getAttribute('data-fluentcss-hash')){l.setAttribute('data-fluentcss-hash',h);l.setAttribute('href','__PREFIX__/'+h+'.css');}}).catch(function(){});}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',r);}else{r();}})();</script>""";
+#if DEBUG
+    private const string ScriptFileName = "fluentcss.js";
+#else
+    private const string ScriptFileName = "fluentcss.min.js";
+#endif
+
+    private static readonly Lazy<string> Script = new(LoadScript);
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
@@ -37,9 +42,23 @@ public sealed class FluentCssTagHelper : TagHelper
         output.Attributes.SetAttribute("id", "fluentcss");
         output.Attributes.SetAttribute("data-fluentcss-hash", hash);
 
-        output.PostElement.AppendHtml(BuildScript());
+        output.PostElement.AppendHtml($"<script>{Script.Value}</script>");
     }
 
-    private static string BuildScript() =>
-        ScriptTemplate.Replace("__PREFIX__", PathPrefix);
+    private static string LoadScript()
+    {
+        var assembly = typeof(FluentCssTagHelper).Assembly;
+        var name = assembly
+            .GetManifestResourceNames()
+            .FirstOrDefault(n => n.EndsWith("." + ScriptFileName, StringComparison.OrdinalIgnoreCase));
+
+        if (name is null)
+        {
+            return string.Empty;
+        }
+
+        using var stream = assembly.GetManifestResourceStream(name)!;
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
 }

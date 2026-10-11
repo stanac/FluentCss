@@ -67,7 +67,7 @@ public class ClassRegistry : IEnumerable<UtilityClass>
 
                 StringBuilder result = StringBuilderBag.TakeOrNew();
 
-                result.Append(GeneratedHeader);
+                result.AppendLine(GeneratedHeader);
 
                 for (int i = 0; i < BucketCount; i++)
                 {

@@ -12,6 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="fluentcss.js" />
+    <EmbeddedResource Include="fluentcss.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FluentCss.Core\FluentCss.Core.csproj" />
   </ItemGroup>
 
