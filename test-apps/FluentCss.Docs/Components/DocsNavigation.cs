@@ -17,6 +17,7 @@ public static class DocsNavigation
             new("Overview", "/"),
             new("Installation", "/installation"),
             new("How it works", "/how-it-works"),
+            new("Performance", "/performance"),
         ]),
         new("Core concepts",
         [

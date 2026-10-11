@@ -1,0 +1,198 @@
+@page "/performance"
+
+<PageTitle>Performance - FluentCss</PageTitle>
+
+<DocHeader Title="Performance"
+           Description="FluentCss is designed so the common case is cheap. This page explains where the cost actually lives and the few habits that keep a large app fast." />
+
+<h2 class="@DocsStyles.H2">Where the cost is</h2>
+
+<p class="@DocsStyles.P">
+    There are three distinct costs, and they behave very differently:
+</p>
+
+<ol class="@DocsStyles.Ul">
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">1.</span>
+        <span>
+            <strong class="@DocsStyles.Strong">Building the class string.</strong>
+            Every time a chain such as <code class="@DocsStyles.InlineCode">Css.Px(4).Py(2)</code> is evaluated,
+            the builder creates a <code class="@DocsStyles.InlineCode">UtilityClass</code> per utility, builds
+            each class name, collects them and joins the result. This runs on <em>every render</em> where the
+            expression appears.
+        </span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">2.</span>
+        <span>
+            <strong class="@DocsStyles.Strong">Adding to the registry.</strong>
+            Each utility is looked up in <code class="@DocsStyles.InlineCode">ClassRegistry.DefaultRegistry</code>.
+            If it is already known, the call is a dictionary lookup and nothing else happens.
+        </span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">3.</span>
+        <span>
+            <strong class="@DocsStyles.Strong">Generating the stylesheet.</strong>
+            Only a <em>new</em> class appends a rule and invalidates the cached
+            <code class="@DocsStyles.InlineCode">Css</code> string. Once every class is known, the stylesheet is
+            never rebuilt again.
+        </span>
+    </li>
+</ol>
+
+<Callout Kind="CalloutKind.Info" Title="The short version">
+    The registry and the generated CSS settle down after warm-up. The only cost that keeps repeating on
+    every render is building the class strings.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Precompute class strings</h2>
+
+<p class="@DocsStyles.P">
+    Define styles once in a <code class="@DocsStyles.InlineCode">static</code> field or get-only property and
+    use the resulting string in markup. The builder then runs once per process, and every render becomes a
+    field read.
+</p>
+
+<CodeBlock Code="@Precomputed" />
+
+<p class="@DocsStyles.P">
+    This is the single most valuable habit. It keeps the per-utility object, string and list allocations,
+    plus the registry lookup, out of the render path entirely. This documentation is built the same way:
+    all of the class strings you see here are precomputed once.
+</p>
+
+<h2 class="@DocsStyles.H2">Select between precomputed variants</h2>
+
+<p class="@DocsStyles.P">
+    When a style depends on state, build each variant once and choose between them. Do not rebuild the chain
+    inside the selection.
+</p>
+
+<CodeBlock Code="@Variants" />
+
+<h2 class="@DocsStyles.H2">Keep builders out of loops</h2>
+
+<p class="@DocsStyles.P">
+    A chain written inside an <code class="@DocsStyles.InlineCode">@@foreach</code> or
+    <code class="@DocsStyles.InlineCode">@@for</code> loop is evaluated for every iteration. When the set of
+    variants is modest, build the strings once (for example into a
+    <code class="@DocsStyles.InlineCode">static readonly</code> array) and index into them.
+</p>
+
+<CodeBlock Code="@Loops" />
+
+<h2 class="@DocsStyles.H2">Keep the set of classes bounded</h2>
+
+<p class="@DocsStyles.P">
+    The registry is process wide and never evicts entries. Every distinct class is retained for the life of
+    the process and, the first time it is seen, triggers a full rebuild of the stylesheet. Utilities that
+    accept arbitrary integers (<code class="@DocsStyles.InlineCode">P(n)</code>,
+    <code class="@DocsStyles.InlineCode">W(n)</code>, <code class="@DocsStyles.InlineCode">Z(n)</code>,
+    <code class="@DocsStyles.InlineCode">Opacity(n)</code>, ...) can therefore grow memory and CPU without
+    bound when the values come from user input or computed layout.
+</p>
+
+<Callout Kind="CalloutKind.Warning" Title="Keep values on a scale">
+    Prefer the fixed Tailwind scale over arbitrary values. Treat any utility value derived from user input as
+    a potential memory leak: the class, its CSS rule and its contribution to the stylesheet are never
+    released.
+</Callout>
+
+<h2 class="@DocsStyles.H2">What you do not need to worry about</h2>
+
+<ul class="@DocsStyles.Ul">
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">•</span>
+        <span>
+            <strong class="@DocsStyles.Strong">Calling the same utility many times.</strong>
+            A repeated <code class="@DocsStyles.InlineCode">Add</code> is a dictionary lookup. Do not cache or
+            batch registrations by hand.
+        </span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">•</span>
+        <span>
+            <strong class="@DocsStyles.Strong">The one-time startup burst.</strong>
+            The first page that introduces many new classes pays for a stylesheet rebuild per new class, but
+            only once per process and only for pages that have not been seen before.
+        </span>
+    </li>
+    <li class="@DocsStyles.Li">
+        <span class="@DocsStyles.Bullet">•</span>
+        <span>
+            <strong class="@DocsStyles.Strong">A handful of inline chains outside loops.</strong>
+            A few builder calls per component are negligible next to Blazor's own rendering work.
+        </span>
+    </li>
+</ul>
+
+<h2 class="@DocsStyles.H2">Order of magnitude</h2>
+
+<p class="@DocsStyles.P">
+    For reference, on a desktop-class CPU registering 500 utilities takes on the order of a few tens of
+    microseconds when the classes are new, and roughly half that when they are already known. Per utility that
+    is well under a microsecond. The numbers only start to matter when a builder runs on every render of every
+    row of a large list, which is exactly what precomputing avoids.
+</p>
+
+<h2 class="@DocsStyles.H2">Checklist</h2>
+
+<ul class="@DocsStyles.Ul">
+    <li class="@DocsStyles.Li"><span class="@DocsStyles.Bullet">✓</span><span>Precompute class strings as <code class="@DocsStyles.InlineCode">static</code> members.</span></li>
+    <li class="@DocsStyles.Li"><span class="@DocsStyles.Bullet">✓</span><span>Choose between precomputed variants instead of rebuilding.</span></li>
+    <li class="@DocsStyles.Li"><span class="@DocsStyles.Bullet">✓</span><span>Move builder chains out of <code class="@DocsStyles.InlineCode">@@foreach</code> and <code class="@DocsStyles.InlineCode">@@for</code> loops.</span></li>
+    <li class="@DocsStyles.Li"><span class="@DocsStyles.Bullet">✓</span><span>Keep utility values on a bounded scale.</span></li>
+</ul>
+
+<p class="@DocsStyles.P">
+    Next, learn how to <a href="/utility-classes" data-enhance-nav="false" class="@DocsStyles.Link">style with utility classes</a>.
+</p>
+
+@code {
+    private const string Precomputed =
+        """
+        public static class Styles
+        {
+            public static string Button { get; } =
+                $"{Css.Px(6).Py(3)
+                     .Background(Color.Blue600)
+                     .Color(Color.White)
+                     .FontBold()
+                     .Hover(h => h.Background(Color.Blue700))}";
+        }
+
+        // Rendered as many times as you like, the builder only ran once.
+        <button class="@Styles.Button">Save</button>
+        """;
+
+    private const string Variants =
+        """
+        private static readonly string NavLink =
+            $"{Css.Px(3).Py(2).RoundedMd()
+                 .Color(Color.Slate600)
+                 .Hover(h => h.Background(Color.Slate100))}";
+
+        private static readonly string NavLinkActive =
+            $"{Css.Px(3).Py(2).RoundedMd()
+                 .FontBold()
+                 .Background(Color.Blue100)
+                 .Color(Color.Blue700)}";
+
+        // Only the selection runs per render.
+        private string ClassFor(string href) =>
+            IsActive(href) ? NavLinkActive : NavLink;
+        """;
+
+    private const string Loops =
+        """
+        private static readonly string[] Swatches =
+            [.. Shades.Select(c => $"{Css.H(8).Grow()} {Css.Background(c)}")];
+
+        // ...
+        @for (var i = 0; i < Shades.Length; i++)
+        {
+            <div class="@Swatches[i]"></div>
+        }
+        """;
+}
