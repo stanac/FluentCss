@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+
+<h1 class="@Styles.PageTitle">About</h1>
+<p class="@Styles.Lead">
+    A minimal MVC site. Every element is styled with the FluentCss builder, so rendering
+    a page registers utility classes in the process-wide registry and the middleware
+    serves the resulting stylesheet.
+</p>
+
+<div class="@Styles.FactGrid">
+    @foreach (var fact in Facts)
+    {
+        <div class="@Styles.FactCard">
+            <p class="@Styles.FactTitle">@fact.Title</p>
+            <p class="@Styles.FactBody">@fact.Body</p>
+        </div>
+    }
+</div>
+
+<h2 class="@Styles.PageTitle">Partial view demo</h2>
+<p class="@Styles.BodyText">
+    The button below fetches a partial view over AJAX. The partial registers new classes
+    while it renders on the server, after this page's stylesheet link has already been
+    written. Nothing refreshes the stylesheet for that request, so the partial is
+    unstyled the first time. Load it again (or reload the page) and the styles are there.
+</p>
+<button type="button" id="load-partial" class="@Styles.ButtonPrimary">Load partial view</button>
+<div id="partial-slot" class="@Styles.PartialSlot"></div>
+
+@section Scripts {
+    <script>
+        document.getElementById('load-partial').addEventListener('click', async function () {
+            const response = await fetch('/Home/LoadPartial');
+            document.getElementById('partial-slot').innerHTML = await response.text();
+        });
+    </script>
+}
+
+@functions {
+    private static readonly (string Title, string Body)[] Facts =
+    [
+        ("MVC", "Pages render on the server and register classes as they go."),
+        ("Tag helper", "Emits the stylesheet link and a script that re-syncs its hash."),
+        ("Middleware", "Serves the hash and the gzipped stylesheet with an ETag."),
+    ];
+}

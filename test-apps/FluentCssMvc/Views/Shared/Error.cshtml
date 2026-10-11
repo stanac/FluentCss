@@ -1,0 +1,16 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="@Styles.CenteredSection">
+    <h1 class="@Styles.ErrorCode">Error</h1>
+    <p class="@Styles.BodyText">An error occurred while processing your request.</p>
+
+    @if (Model.ShowRequestId)
+    {
+        <p class="@Styles.BodyText">
+            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        </p>
+    }
+</section>
