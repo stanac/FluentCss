@@ -2,13 +2,13 @@
 @inject NavigationManager Navigation
 @implements IDisposable
 
-<div class="@Css.MinH(Size.ScreenH).Flex(FlexDirection.Col).Background(Color.Slate50) @Dark.Background(Color.Slate950)">
-    <header class="@Css.WFull().Border().BorderColor(Color.Slate200).Background(Color.White) @Dark.BorderColor(Color.Slate800) @Dark.Background(Color.Slate900)">
-        <nav class="@Css.MaxW(Size.Lg).MxAuto().Px(6).H(16).Flex(FlexDirection.Row, Justify.Between, Align.Center)">
-            <a href="/" class="@Css.TextLg().FontBold().NoUnderline().Color(Color.Blue600) @Dark.Color(Color.Blue400)">
+<div class="@Styles.Shell">
+    <header class="@Styles.Header">
+        <nav class="@Styles.Nav">
+            <a href="/" class="@Styles.Brand">
                 FluentCss Interactive Server
             </a>
-            <div class="@Css.Flex(FlexDirection.Row, align: Align.Center, gap: 2)">
+            <div class="@Styles.NavLinks">
                 <a href="/" class="@GetLinkClass("/")">Home</a>
                 <a href="/about" class="@GetLinkClass("/about")">About</a>
                 <a href="/contact" class="@GetLinkClass("/contact")">Contact</a>
@@ -17,11 +17,11 @@
         </nav>
     </header>
 
-    <main class="@Css.Grow().WFull().MaxW(Size.Lg).MxAuto().P(6)">
+    <main class="@Styles.Main">
         @Body
     </main>
 
-    <footer class="@Css.Border().BorderColor(Color.Slate200).P(6).TextCenter().TextSm().Color(Color.Slate500) @Dark.BorderColor(Color.Slate800) @Dark.Color(Color.Slate400)">
+    <footer class="@Styles.Footer">
         &copy; @DateTime.Now.Year FluentCss Interactive Server test site
     </footer>
 </div>
@@ -48,10 +48,7 @@
     }
 
     private string GetLinkClass(string href) =>
-        (IsActive(href)
-            ? Css.Px(3).Py(2).RoundedMd().NoUnderline().FontBold().Background(Color.Blue100).Color(Color.Blue700)
-            : Css.Px(3).Py(2).RoundedMd().NoUnderline().Color(Color.Slate600).Hover(h => h.Background(Color.Slate100)))
-        .ToString() ?? string.Empty;
+        IsActive(href) ? Styles.NavLinkActive : Styles.NavLink;
 
     private bool IsActive(string href)
     {

@@ -1,7 +1,7 @@
 using FluentCss.Core;
 using static FluentCss.Core.FluentCssBuilder;
 
-namespace FluentCssBlazorWasmStandalone.Components.Shared;
+namespace FluentCss.Docs.Components.Shared;
 
 /// <summary>
 /// Every class string used by the documentation site is produced by the FluentCss
@@ -85,8 +85,6 @@ public static class DocsStyles
 
     public static string SectionTitle { get; } =
         $"{Css.TextXs().FontBold().Uppercase().Mt(6).Mb(2).Color(Color.Slate400)}";
-
-    public static string NavList { get; } = "";
 
     public static string NavLink { get; } =
         $"{Css.Block().Px(3).Py(2).RoundedMd().TextSm().NoUnderline().Color(Color.Slate600)} " +
@@ -265,6 +263,21 @@ public static class DocsStyles
     public static string CalloutBody { get; } =
         $"{Css.TextSm().Leading(6).Color(Color.Slate700)} " +
         $"{Dark.Color(Color.Slate300)}";
+
+    // ---------------------------------------------------------------------
+    // Colors (palette swatches)
+    // ---------------------------------------------------------------------
+
+    public static string ColorFamilyRow { get; } = $"{Css.Mb(3)}";
+
+    public static string ColorFamilyName { get; } =
+        $"{Css.TextXs().FontBold().Color(Color.Slate500).Mb(1)} {Dark.Color(Color.Slate400)}";
+
+    public static string ColorSwatchRow { get; } =
+        $"{Css.Flex(FlexDirection.Row).RoundedMd().OverflowHidden()}";
+
+    public static string ColorSwatch(Color shade) =>
+        $"{Css.H(8).Grow()} {Css.Background(shade)}";
 
     // ---------------------------------------------------------------------
     // Code samples (inline helpers for pages)

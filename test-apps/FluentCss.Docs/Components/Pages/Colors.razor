@@ -41,14 +41,14 @@
 
 @foreach (var family in Families)
 {
-    <div class="@Css.Mb(3)">
-        <p class="@Css.TextXs().FontBold().Color(Color.Slate500).Mb(1) @Dark.Color(Color.Slate400)">
+    <div class="@DocsStyles.ColorFamilyRow">
+        <p class="@DocsStyles.ColorFamilyName">
             @family.Family
         </p>
-        <div class="@Css.Flex(FlexDirection.Row).RoundedMd().OverflowHidden()">
+        <div class="@DocsStyles.ColorSwatchRow">
             @foreach (var shade in family.Shades)
             {
-                <div class="@Css.H(8).Grow() @Css.Background(shade)" title="@shade.Name"></div>
+                <div class="@shade.Class" title="@shade.Name"></div>
             }
         </div>
     </div>
@@ -74,9 +74,9 @@
         ("BorderColor(Color.Red500)", "border-color: <value>  ->  border-red-500"),
     ];
 
-    private static readonly (string Family, Color[] Shades)[] Families = BuildFamilies();
+    private static readonly (string Family, (string Name, string Class)[] Shades)[] Families = BuildFamilies();
 
-    private static (string Family, Color[] Shades)[] BuildFamilies()
+    private static (string Family, (string Name, string Class)[] Shades)[] BuildFamilies()
     {
         return typeof(Color)
             .GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
@@ -87,7 +87,9 @@
             .OrderBy(g => g.Key, StringComparer.Ordinal)
             .Select(g => (
                 g.Key,
-                g.OrderBy(c => int.Parse(c.Name.Split('-')[1])).ToArray()))
+                g.OrderBy(c => int.Parse(c.Name.Split('-')[1]))
+                    .Select(c => (c.Name, DocsStyles.ColorSwatch(c)))
+                    .ToArray()))
             .ToArray();
     }
 

@@ -2,15 +2,15 @@
 
 <PageTitle>Home - FluentCss Interactive Server</PageTitle>
 
-<section class="@Css.Py(12).TextCenter()">
-    <h1 class="@Css.Text3Xl().FontBold().Color(Color.Slate900).Mb(4) @Dark.Color(Color.White)">
+<section class="@Styles.Hero">
+    <h1 class="@Styles.HeroTitle">
         Interactive Server test site
     </h1>
-    <p class="@Css.TextLg().Color(Color.Slate600).MaxW(Size.Md).MxAuto() @Dark.Color(Color.Slate400)">
+    <p class="@Styles.HeroLead">
         A tiny three-page site used to observe how FluentCss emits and re-renders its stylesheet
         while components run in the interactive server render mode.
     </p>
-    <a href="/about" class="@Css.InlineBlock().Mt(6).Px(6).Py(3).RoundedLg().Background(Color.Blue600).Color(Color.White).FontBold().NoUnderline().Hover(h => h.Background(Color.Blue700))">
+    <a href="/about" class="@Styles.ButtonCta">
         Learn more
     </a>
 </section>

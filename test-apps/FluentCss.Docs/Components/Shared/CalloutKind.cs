@@ -1,4 +1,4 @@
-namespace FluentCssBlazorWasmStandalone.Components.Shared;
+namespace FluentCss.Docs.Components.Shared;
 
 public enum CalloutKind
 {

@@ -23,7 +23,8 @@ namespace FluentCssBlazorSsr
             app.UseAntiforgery();
 
             app.MapStaticAssets();
-            app.MapRazorComponents<App>();
+            app.MapRazorComponents<App>()
+                .AddAdditionalAssemblies(typeof(FluentCss.Docs.Components.DocsNavigation).Assembly);
 
             app.Run();
         }

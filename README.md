@@ -361,6 +361,8 @@ FluentCss/
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/
-    ├── FluentCssBlazorSsr/             # Documentation site (static SSR)
-    └── FluentCssBlazorWasmStandalone/  # Documentation site (WASM standalone)
+    ├── FluentCss.Docs/                  # Shared documentation UI (Razor Class Library)
+    ├── FluentCssBlazorSsr/              # Documentation site (static SSR) - hosts FluentCss.Docs
+    ├── FluentCssBlazorWasmStandalone/   # Documentation site (WASM standalone) - hosts FluentCss.Docs
+    └── FluentCssBlazorInteractiveServer/# Example site (interactive server)
 ```

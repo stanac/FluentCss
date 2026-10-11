@@ -11,6 +11,13 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        // During static SSR JS interop is unavailable; docs.js highlights all code
+        // blocks once the document has loaded instead.
+        if (!RendererInfo.IsInteractive)
+        {
+            return;
+        }
+
         var key = $"{Language}\n{Code}";
 
         if (_highlighted == key)

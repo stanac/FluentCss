@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\FluentCss.Blazor\FluentCss.Blazor.csproj" />
+	  <ProjectReference Include="..\FluentCss.Docs\FluentCss.Docs.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -5,15 +5,17 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/FluentCss.Core/FluentCss.Core.csproj" />
     <Project Path="src/FluentCss.Blazor/FluentCss.Blazor.csproj" />
+    <Project Path="src/FluentCss.Core/FluentCss.Core.csproj" />
   </Folder>
   <Folder Name="/test-apps/">
-    <Project Path="test-apps/FluentCssBlazorWasmStandalone/FluentCssBlazorWasmStandalone.csproj" Id="2eee7f44-8fc8-424d-b982-22eb8c486e2c" />
+    <Project Path="test-apps/FluentCss.Docs/FluentCss.Docs.csproj" />
     <Project Path="test-apps/FluentCssBlazorInteractiveServer/FluentCssBlazorInteractiveServer.csproj" Id="f6aef406-9621-4cc0-916b-747fb1b76481" />
     <Project Path="test-apps/FluentCssBlazorSsr/FluentCssBlazorSsr.csproj" />
+    <Project Path="test-apps/FluentCssBlazorWasmStandalone/FluentCssBlazorWasmStandalone.csproj" Id="2eee7f44-8fc8-424d-b982-22eb8c486e2c" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/FluentCss.Benchmarks/FluentCss.Benchmarks.csproj" Id="bb56fb88-6f82-49c1-94db-d5f07d986014" />
     <Project Path="tests/FluentCss.Core.Tests/FluentCss.Core.Tests.csproj" />
   </Folder>
 </Solution>
