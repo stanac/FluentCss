@@ -1,0 +1,22 @@
+@* Rendered on the client when the About page's button is clicked. Its classes live in
+   <see cref="PartialStyles"/> so they are registered only when this component renders,
+   after the initial stylesheet has already been emitted. *@
+<div class="@PartialStyles.Card @(_highlighted ? PartialStyles.Highlight : string.Empty)">
+    <p class="@PartialStyles.Title">Loaded in the browser</p>
+    <p class="@PartialStyles.Body">
+        These classes were registered while this component rendered on the client, after the
+        page's stylesheet had already been generated. The registry observer in
+        <code>CssStyles</code> picked them up and updated the stylesheet.
+    </p>
+    <button type="button" class="@PartialStyles.Button" @onclick="Toggle">
+        @(_highlighted ? "Remove extra classes" : "Add more classes")
+    </button>
+</div>
+
+@code {
+    private bool _highlighted;
+
+    // PartialStyles.Highlight is only touched once _highlighted is true, so its classes
+    // are registered even later than the rest of the card.
+    private void Toggle() => _highlighted = !_highlighted;
+}

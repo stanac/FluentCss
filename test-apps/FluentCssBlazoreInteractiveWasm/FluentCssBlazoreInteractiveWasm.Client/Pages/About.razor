@@ -1,0 +1,49 @@
+@page "/about"
+
+<PageTitle>About - FluentCss interactive client</PageTitle>
+
+<h1 class="@Styles.PageTitle">About</h1>
+<p class="@Styles.Lead">
+    A minimal Blazor Web App with interactive WebAssembly components. Every element is
+    styled with the FluentCss builder, so rendering a component registers utility classes
+    in the in-browser registry and the <code>CssStyles</code> component emits the resulting
+    stylesheet.
+</p>
+
+<div class="@Styles.FactGrid">
+    @foreach (var fact in Facts)
+    {
+        <div class="@Styles.FactCard">
+            <p class="@Styles.FactTitle">@fact.Title</p>
+            <p class="@Styles.FactBody">@fact.Body</p>
+        </div>
+    }
+</div>
+
+<h2 class="@Styles.PageTitle">Load component demo</h2>
+<p class="@Styles.BodyText">
+    The button below renders a component on the client. The component uses classes that
+    were not part of the stylesheet yet. The registry observer in <code>CssStyles</code>
+    notices them and re-emits the stylesheet, so the component is styled the moment it
+    appears, without a reload.
+</p>
+<button type="button" class="@Styles.ButtonPrimary" @onclick="LoadComponent">Load component</button>
+<div class="@Styles.PartialSlot">
+    @if (_loaded)
+    {
+        <ComponentCard />
+    }
+</div>
+
+@code {
+    private bool _loaded;
+
+    private void LoadComponent() => _loaded = true;
+
+    private static readonly (string Title, string Body)[] Facts =
+    [
+        ("Interactive client", "Components render in the browser after the initial prerender."),
+        ("CssStyles", "Subscribes to the registry and re-emits the stylesheet when classes are added."),
+        ("No reload", "The dynamically loaded component is styled without a full page refresh."),
+    ];
+}

@@ -1,0 +1,68 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<div class="@Styles.Shell">
+    <header class="@Styles.Header">
+        <nav class="@Styles.Nav">
+            <a href="/" class="@Styles.Brand">FluentCss interactive client</a>
+            <div class="@Styles.NavLinks">
+                <a href="/" class="@GetLinkClass("/")">Home</a>
+                <a href="/about" class="@GetLinkClass("/about")">About</a>
+                <a href="/contact" class="@GetLinkClass("/contact")">Contact</a>
+                <ThemeToggle />
+            </div>
+        </nav>
+    </header>
+
+    <main class="@Styles.Main">
+        @Body
+    </main>
+
+    <footer class="@Styles.Footer">
+        &copy; @DateTime.Now.Year FluentCss interactive client test site
+    </footer>
+</div>
+
+@* Renders the stylesheet on the client. It subscribes to the class registry and re-emits
+   the <style> block whenever a component registers new classes. *@
+<FluentCss.Blazor.CssStyles />
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetLinkClass(string path)
+    {
+        var current = "/" + Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        if (current.Length > 1 && current.EndsWith('/'))
+        {
+            current = current.TrimEnd('/');
+        }
+
+        var isActive = path == "/"
+            ? current == "/"
+            : current.Equals(path, StringComparison.OrdinalIgnoreCase);
+
+        return isActive ? Styles.NavLinkActive : Styles.NavLink;
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

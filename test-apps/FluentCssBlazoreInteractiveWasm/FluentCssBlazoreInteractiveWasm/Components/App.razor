@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="@(HtmlClass.Length == 0 ? null : HtmlClass)">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["FluentCssBlazoreInteractiveWasm.styles.css"]" />
+    <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
+    <ImportMap />
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+    <script>
+        // Persist the theme in a cookie so the server can render the theme class on
+        // <html> and the page never flashes the light theme. localStorage is kept as a
+        // fallback for first visits and choices made before the cookie existed.
+        (function () {
+            var theme = null;
+            try {
+                var match = /(?:^|;\s*)fluentcss-theme=([^;]+)/.exec(document.cookie);
+                theme = (match && decodeURIComponent(match[1])) || localStorage.getItem('fluentcss-theme');
+            } catch (e) { }
+
+            if (theme !== 'dark' && theme !== 'light') {
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                theme = prefersDark ? 'dark' : 'light';
+            }
+
+            document.documentElement.classList.toggle('theme-dark', theme === 'dark');
+
+            try {
+                document.cookie = 'fluentcss-theme=' + theme + ';path=/;max-age=31536000;samesite=lax';
+                localStorage.setItem('fluentcss-theme', theme);
+            } catch (e) { }
+        })();
+
+        // Called from the theme toggle button in the interactive client layout.
+        function fcToggleTheme() {
+            var theme = document.documentElement.classList.toggle('theme-dark') ? 'dark' : 'light';
+            try {
+                document.cookie = 'fluentcss-theme=' + theme + ';path=/;max-age=31536000;samesite=lax';
+                localStorage.setItem('fluentcss-theme', theme);
+            } catch (e) { }
+        }
+    </script>
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveWebAssembly" />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>
+
+@code {
+    // HttpContext is available as a cascading parameter for the statically rendered App
+    // component. Read the persisted theme cookie so the theme class is part of the
+    // server-rendered markup.
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+
+    private string HtmlClass =>
+        FluentCssTheme.GetHtmlClass(HttpContext?.Request.Cookies[FluentCssTheme.CookieName]);
+}

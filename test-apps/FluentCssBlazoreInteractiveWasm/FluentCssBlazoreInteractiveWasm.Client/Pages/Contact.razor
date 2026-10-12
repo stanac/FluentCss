@@ -1,0 +1,20 @@
+@page "/contact"
+
+<PageTitle>Contact - FluentCss interactive client</PageTitle>
+
+<h1 class="@Styles.PageTitle">Contact</h1>
+<p class="@Styles.Subtitle">
+    A small form to exercise the input classes. It does nothing; it just renders.
+</p>
+
+<div class="@Styles.FormPanel">
+    <div class="@Styles.Field">
+        <label class="@Styles.Label" for="name">Name</label>
+        <input id="name" class="@Styles.Input" placeholder="Ada Lovelace" />
+    </div>
+    <div class="@Styles.Field">
+        <label class="@Styles.Label" for="email">Email</label>
+        <input id="email" type="email" class="@Styles.Input" placeholder="ada@example.com" />
+    </div>
+    <button type="button" class="@Styles.ButtonPrimary">Send</button>
+</div>
