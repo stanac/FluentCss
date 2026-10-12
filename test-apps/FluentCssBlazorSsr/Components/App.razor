@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="@(HtmlClass.Length == 0 ? null : HtmlClass)">
 
 <head>
     <meta charset="utf-8" />
@@ -9,11 +9,15 @@
     <link rel="stylesheet" href="_content/FluentCss.Docs/css/docs.css" />
     <link rel="stylesheet" href="_content/FluentCss.Docs/libs/prism/20261010/prism.css" />
     <link rel="stylesheet" href="_content/FluentCss.Docs/libs/prism/20261010/prism-dark.css" />
-    <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
     <ImportMap />
+    <link rel="icon" type="image/svg+xml" href="_content/FluentCss.Docs/logo.svg" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
+
+    <!-- Add Tailwind CSS preflight, optional but strongly recommended -->
+    <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
     <FluentCss.Blazor.CssStyles />
+    
     <script src="_content/FluentCss.Docs/libs/prism/20261010/prism.js"></script>
     <script src="_content/FluentCss.Docs/docs.js"></script>
 </head>
@@ -26,6 +30,14 @@
 </html>
 
 @code {
+    // HttpContext is available as a cascading parameter for statically rendered
+    // components. Read the persisted theme cookie so the theme class is part of
+    // the server markup and the page does not flash the light theme first.
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+
+    private string HtmlClass =>
+        FluentCssTheme.GetHtmlClass(HttpContext?.Request.Cookies[FluentCssTheme.CookieName]);
+
     private static readonly string BodyClass =
         $"{Css.Background(Color.White).Color(Color.Slate900)} " +
         $"{Dark.Background(Color.Slate950).Color(Color.Slate100)}";

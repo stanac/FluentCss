@@ -5,16 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FluentCss Razor Pages</title>
     <script>
+        // Persist the theme in a cookie so the server can render the theme class
+        // on <html> and avoid a flash of the light theme. localStorage stays as a
+        // fallback for visitors whose stored choice predates the cookie.
         (function () {
+            var theme = null;
             try {
-                if (localStorage.getItem('fluentcss-theme') === 'dark') {
-                    document.documentElement.classList.add('theme-dark');
-                }
+                var match = /(?:^|;\s*)fluentcss-theme=([^;]+)/.exec(document.cookie);
+                theme = (match && decodeURIComponent(match[1])) || localStorage.getItem('fluentcss-theme');
+            } catch (e) { }
+
+            if (theme !== 'dark' && theme !== 'light') {
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                theme = prefersDark ? 'dark' : 'light';
+            }
+
+            document.documentElement.classList.toggle('theme-dark', theme === 'dark');
+
+            try {
+                document.cookie = 'fluentcss-theme=' + theme + ';path=/;max-age=31536000;samesite=lax';
+                localStorage.setItem('fluentcss-theme', theme);
             } catch (e) { }
         })();
+
         function fcToggleTheme() {
-            var dark = document.documentElement.classList.toggle('theme-dark');
-            try { localStorage.setItem('fluentcss-theme', dark ? 'dark' : 'light'); } catch (e) { }
+            var theme = document.documentElement.classList.toggle('theme-dark') ? 'dark' : 'light';
+            try {
+                document.cookie = 'fluentcss-theme=' + theme + ';path=/;max-age=31536000;samesite=lax';
+                localStorage.setItem('fluentcss-theme', theme);
+            } catch (e) { }
         }
     </script>
     <link rel="stylesheet" href="/_content/FluentCss.MvcRazor/preflight.css" />
