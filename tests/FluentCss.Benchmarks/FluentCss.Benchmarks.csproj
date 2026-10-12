@@ -15,8 +15,4 @@
     <ProjectReference Include="..\..\src\FluentCss.Core\FluentCss.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="BenchmarkDotNet.Artifacts\" />
-  </ItemGroup>
-
 </Project>

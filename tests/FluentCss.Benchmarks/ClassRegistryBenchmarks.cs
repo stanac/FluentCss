@@ -72,6 +72,7 @@ public class ClassRegistryBenchmarks
 }
 
 /*
+
 BenchmarkDotNet v0.15.8, Windows 11 (10.0.26300.9457)
 AMD Ryzen 5 5600X 3.70GHz, 1 CPU, 12 logical and 6 physical cores
 .NET SDK 10.0.401
@@ -84,6 +85,5 @@ AMD Ryzen 5 5600X 3.70GHz, 1 CPU, 12 logical and 6 physical cores
 |--------------------- |----------:|---------:|---------:|------:|--------:|----------:|------------:|
 | Add_NewClasses       | 123.73 us | 1.121 us | 0.936 us |  1.00 | 15.3600 | 251.39 KB |        1.00 |
 | Add_DuplicateClasses |  70.69 us | 0.154 us | 0.128 us |  0.57 |  5.6909 |  92.97 KB |        0.37 |
-
 
  */
