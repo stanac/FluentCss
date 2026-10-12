@@ -18,4 +18,17 @@
     <ProjectReference Include="..\..\src\FluentCss.Blazor\FluentCss.Blazor.csproj" />
   </ItemGroup>
 
+  <!--
+    Regenerate the client-side search index on Release builds only. Debug builds
+    use the committed wwwroot/search-index.json so day-to-day builds stay fast.
+    The indexer is a separate tool that renders the docs with HtmlRenderer; the
+    nested invocation clears the guard property so it cannot recurse.
+  -->
+  <Target Name="GenerateDocsSearchIndex"
+          AfterTargets="Build"
+          Condition="'$(Configuration)' == 'Release' and '$(SkipDocsSearchIndexGeneration)' != 'true'">
+    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)..\FluentCss.Docs.Indexer\FluentCss.Docs.Indexer.csproj&quot; --configuration Release --no-launch-profile -- &quot;$(MSBuildThisFileDirectory)wwwroot\search-index.json&quot;"
+          EnvironmentVariables="SkipDocsSearchIndexGeneration=true" />
+  </Target>
+
 </Project>

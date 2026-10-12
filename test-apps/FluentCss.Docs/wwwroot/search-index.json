@@ -1,0 +1,719 @@
+{
+  "version": 1,
+  "pages": [
+    {
+      "route": "/",
+      "title": "Overview",
+      "section": "Getting started",
+      "sections": [
+        {
+          "id": "strongly-typed-css-utility-classes-using-c-supports-blazor-razor-pages-and-mvc",
+          "heading": "Strongly-typed CSS utility classes using C# (supports Blazor, Razor Pages and MVC)",
+          "level": 1,
+          "text": "FluentCss lets you compose Tailwind-inspired utility classes with a type-safe, chainable API. You write C#, the library generates the class names and the CSS. Get started Browse utilities Generated entirely from C#",
+          "code": "\u003Cdiv class=\u0022@Css.P(6).RoundedLg() .Background(Color.Emerald500) .Color(Color.White).FontBold() .Hover(h =\u003E h.Background(Color.Emerald600))\u0022\u003E Generated entirely from C# \u003C/div\u003E"
+        },
+        {
+          "id": "why-fluentcss",
+          "heading": "Why FluentCss",
+          "level": 2,
+          "text": "",
+          "code": ""
+        },
+        {
+          "id": "type-safe",
+          "heading": "Type-safe",
+          "level": 3,
+          "text": "Every utility is a method. Rename, refactor and navigate styles with the same tooling you already use for C#.",
+          "code": ""
+        },
+        {
+          "id": "tailwind-palette",
+          "heading": "Tailwind palette",
+          "level": 3,
+          "text": "22 color families with 11 shades each (50 to 950), plus black and white, ready to use.",
+          "code": ""
+        },
+        {
+          "id": "states-and-responsive",
+          "heading": "States and responsive",
+          "level": 3,
+          "text": "Compose hover, focus and active states, then layer responsive min/md and max/md variants on top.",
+          "code": ""
+        },
+        {
+          "id": "dark-mode-built-in",
+          "heading": "Dark mode built in",
+          "level": 3,
+          "text": "Use the Dark builder for theme-aware styles, or Theme() for any custom theme name.",
+          "code": ""
+        },
+        {
+          "id": "automatic-css",
+          "heading": "Automatic CSS",
+          "level": 3,
+          "text": "Classes are deduplicated in a registry that emits the final CSS for you.",
+          "code": ""
+        },
+        {
+          "id": "blazor-ready",
+          "heading": "Blazor ready",
+          "level": 3,
+          "text": "Drop the CssStyles component into your layout and the stylesheet updates as you build.",
+          "code": ""
+        }
+      ]
+    },
+    {
+      "route": "/docs/installation",
+      "title": "Installation",
+      "section": "Getting started",
+      "sections": [
+        {
+          "id": "installation",
+          "heading": "Installation",
+          "level": 1,
+          "text": "Pick the package for your hosting model, wire FluentCss up once and start composing styles.",
+          "code": ""
+        },
+        {
+          "id": "choose-a-package",
+          "heading": "Choose a package",
+          "level": 2,
+          "text": "There is one integration package per hosting model. Install the one that matches your app. You never install yourself. Package Hosting model What it gives you Blazor The component and the preflight stylesheet. Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web Apps using the Interactive Server, Interactive WebAssembly or Auto render mode. ASP.NET Core MVC and Razor Pages The tag helper, the stylesheet middleware and the preflight stylesheet. FluentCss.Core comes with them Both integration packages depend on and bring it in automatically. That is where the builder, the registry and every utility live, and it is a transitive dependency: do not add it to your project on its own.",
+          "code": "FluentCss.Core FluentCss.Blazor CssStyles FluentCss.MvcRazor \u003Cfluent-css /\u003E FluentCss.Core"
+        },
+        {
+          "id": "blazor",
+          "heading": "Blazor",
+          "level": 2,
+          "text": "Add the Blazor package: For the shortest syntax add the following to your . Importing the static builder means you can start a chain with or directly. Drop the component into your layout. It renders a block with every class registered while the page is built. Optionally include the Tailwind preflight reset to normalize browser defaults such as margins, borders and fonts:",
+          "code": "dotnet add package FluentCss.Blazor _Imports.razor Css Dark @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core CssStyles \u003Cstyle\u003E \u003C!-- MainLayout.razor or App.razor --\u003E ... \u003Chead\u003E ... \u003C!-- Add Tailwind CSS preflight, optional but strongly recommended --\u003E \u003Clink rel=\u0022stylesheet\u0022 href=\u0022_content/FluentCss.Blazor/preflight.css\u0022 /\u003E \u003CFluentCss.Blazor.CssStyles /\u003E ... \u003C/head\u003E \u003Cbody\u003E...\u003C/body\u003E"
+        },
+        {
+          "id": "interactive-rendering",
+          "heading": "Interactive rendering",
+          "level": 3,
+          "text": "is more than a snapshot of the classes seen so far: it subscribes to the class registry and re-renders its block whenever a new class is registered. A component that renders later on the client - a dialog, a tab or anything that only appears after a click - is therefore styled as soon as it renders, with no page reload. For that to work has to live inside the interactive render boundary. In a Blazor Web App that means the layout, or anything else under , rather than the statically rendered head: Registration follows the process Classes are registered in the process that renders the component. A prerender fills the server registry; interactive WebAssembly fills one inside the browser; an interactive server circuit runs in the server process and shares its registry with the prerender. Whichever runtime is active owns a instance and re-emits the stylesheet when that runtime registers new classes. The Interactive Server, Interactive WebAssembly and Auto render modes are all supported.",
+          "code": "CssStyles \u003Cstyle\u003E CssStyles \u003CRoutes\u003E App.razor \u003C!-- App.razor: the render mode decides where interactivity runs --\u003E \u003CRoutes @rendermode=\u0022InteractiveWebAssembly\u0022 /\u003E \u003C!-- MainLayout.razor: CssStyles is part of the interactive tree --\u003E @inherits LayoutComponentBase \u003CFluentCss.Blazor.CssStyles /\u003E \u003Cmain\u003E@Body\u003C/main\u003E CssStyles"
+        },
+        {
+          "id": "mvc-and-razor-pages",
+          "heading": "MVC and Razor Pages",
+          "level": 2,
+          "text": "Add the MVC/Razor Pages package: Register the middleware in . It serves the current hash at and the stylesheet at , with gzip and an ETag. Razor Pages apps map their pages instead with ; the middleware and the tag helper are identical for both models. Register the tag helper and the namespaces in (or ): Finally add the tag helper and the preflight stylesheet to your layout. The tag helper renders the stylesheet and a small script that keeps it in sync after client-side DOM changes, such as a partial view loaded over AJAX. No need to add hash or timestamp The tag helper resolves the current hash when the layout renders, but classes can still be registered after that point. The injected script re-reads on load and watches the document for later changes, swapping the stylesheet when it changes.",
+          "code": "dotnet add package FluentCss.MvcRazor Program.cs /fluentcss/hash /fluentcss/{hash}.css var app = builder.Build(); app.UseRouting(); app.UseFluentCssMvcRazor(); // serve /fluentcss/hash and /fluentcss/{hash}.css app.UseAuthorization(); app.MapStaticAssets(); app.MapControllerRoute(\u0022default\u0022, \u0022{controller=Home}/{action=Index}/{id?}\u0022); app.MapRazorPages() _ViewImports.cshtml Pages/_ViewImports.cshtml @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core @addTagHelper *, FluentCss.MvcRazor \u003Clink\u003E \u003Chead\u003E ... \u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_content/FluentCss.MvcRazor/preflight.css\u0022 /\u003E \u003Cfluent-css /\u003E \u003C/head\u003E /fluentcss/hash"
+        },
+        {
+          "id": "any-other-net-project",
+          "heading": "Any other .NET project",
+          "level": 2,
+          "text": "Outside of Blazor and MVC/Razor Pages there is no integration package, so add the core library directly: You can then build classes and read the generated CSS from any .NET application. returns the space separated class names for your attribute, while gives you the stylesheet.",
+          "code": "dotnet add package FluentCss.Core ToString() class ClassRegistry.DefaultRegistry.Css using FluentCss.Core; var classes = FluentCssBuilder.Css .Background(Color.Emerald500) .Color(Color.White) .Px(6) .Py(3) .RoundedMd(); // \u0022bg-emerald-500 text-white px-6 py-3 rounded-md\u0022 string classAttr = classes.ToString(); // The complete, deduplicated stylesheet string css = ClassRegistry.DefaultRegistry.Css;"
+        }
+      ]
+    },
+    {
+      "route": "/docs/how-it-works",
+      "title": "How it works",
+      "section": "Getting started",
+      "sections": [
+        {
+          "id": "how-it-works",
+          "heading": "How it works",
+          "level": 1,
+          "text": "FluentCss turns method calls into utility classes, collects them in a registry and emits a single stylesheet.",
+          "code": ""
+        },
+        {
+          "id": "the-pipeline",
+          "heading": "The pipeline",
+          "level": 2,
+          "text": "1. You call a fluent method such as . 2. A is created: a CSS property, a value and a generated class name. 3. The class is added to a . Duplicates are ignored. 4. The registry appends the CSS rule and invalidates its cached output. 5. on the builder returns the class names for your markup.",
+          "code": ".Background(Color.Red500) UtilityClass ClassRegistry ToString()"
+        },
+        {
+          "id": "a-utility-class",
+          "heading": "A utility class",
+          "level": 2,
+          "text": "Every call produces one utility. The builder keeps the class names in order, so the string returned by matches the order in which you composed it.",
+          "code": "ToString() var button = FluentCssBuilder.Css .Background(Color.Blue500) .Color(Color.White) .Px(6) .Py(3) .RoundedMd(); string classes = button.ToString(); // bg-blue-500 text-white px-6 py-3 rounded-md"
+        },
+        {
+          "id": "class-name-format",
+          "heading": "Class name format",
+          "level": 2,
+          "text": "A generated class name is assembled from the active variants, in this order: Utility Generated CSS The same information drives the selector. Variant prefixes are escaped with a backslash so the colon can appear inside a CSS class name.",
+          "code": "[media]:[theme]:[pseudo]:utility bg-red-500 no variant hover:bg-red-600 pseudo state theme-dark:text-white theme (dark mode) min-md:flex media query theme-dark:hover:bg-slate-700 theme and pseudo min-md:theme-dark:focus:opacity-0 media, theme and pseudo .bg-blue-500 { background-color: oklch(0.623 0.214 259.815) } .text-white { color: #fff } .px-6 { padding-inline: 1.5rem } .py-3 { padding-block: 0.75rem } .rounded-md { border-radius: 0.375rem } /* variants are escaped and scoped */ .hover\\:bg-blue-600:hover { background-color: oklch(0.546 0.245 262.881) } @media (width \u003E 48rem) { .min-md\\:flex { display: flex } } .theme-dark .theme-dark\\:text-white { color: #fff }"
+        },
+        {
+          "id": "the-registry",
+          "heading": "The registry",
+          "level": 2,
+          "text": "is a process wide collection. Because a utility is only added once, calling the same method from several components produces a single CSS rule. The registry also exposes the final output:",
+          "code": "ClassRegistry.DefaultRegistry // Add through the builder (recommended) FluentCssBuilder.Css.Background(Color.Red500); // Read the generated stylesheet string css = ClassRegistry.DefaultRegistry.Css; // UTF-8 bytes, handy for writing a file or streaming byte[] bytes = ClassRegistry.DefaultRegistry.CssUtf8;"
+        }
+      ]
+    },
+    {
+      "route": "/docs/performance",
+      "title": "Performance",
+      "section": "Getting started",
+      "sections": [
+        {
+          "id": "performance",
+          "heading": "Performance",
+          "level": 1,
+          "text": "FluentCss is designed so the common case is cheap. This page explains where the cost actually lives and the few habits that keep a large app fast.",
+          "code": ""
+        },
+        {
+          "id": "where-the-cost-is",
+          "heading": "Where the cost is",
+          "level": 2,
+          "text": "There are three distinct costs, and they behave very differently: 1. Building the class string. Every time a chain such as is evaluated, the builder creates a per utility, builds each class name, collects them and joins the result. This runs on every render where the expression appears. 2. Adding to the registry. Each utility is looked up in . If it is already known, the call is a dictionary lookup and nothing else happens. 3. Generating the stylesheet. Only a new class appends a rule and invalidates the cached string. Once every class is known, the stylesheet is never rebuilt again. The short version The registry and the generated CSS settle down after warm-up. The only cost that keeps repeating on every render is building the class strings.",
+          "code": "Css.Px(4).Py(2) UtilityClass ClassRegistry.DefaultRegistry Css"
+        },
+        {
+          "id": "precompute-class-strings",
+          "heading": "Precompute class strings",
+          "level": 2,
+          "text": "Define styles once in a field or get-only property and use the resulting string in markup. The builder then runs once per process, and every render becomes a field read. This is the single most valuable habit. It keeps the per-utility object, string and list allocations, plus the registry lookup, out of the render path entirely. This documentation is built the same way: all of the class strings you see here are precomputed once.",
+          "code": "static public static class Styles { public static string Button { get; } = $\u0022{Css.Px(6).Py(3) .Background(Color.Blue600) .Color(Color.White) .FontBold() .Hover(h =\u003E h.Background(Color.Blue700))}\u0022; } // Rendered as many times as you like, the builder only ran once. \u003Cbutton class=\u0022@Styles.Button\u0022\u003ESave\u003C/button\u003E"
+        },
+        {
+          "id": "select-between-precomputed-variants",
+          "heading": "Select between precomputed variants",
+          "level": 2,
+          "text": "When a style depends on state, build each variant once and choose between them. Do not rebuild the chain inside the selection.",
+          "code": "private static readonly string NavLink = $\u0022{Css.Px(3).Py(2).RoundedMd() .Color(Color.Slate600) .Hover(h =\u003E h.Background(Color.Slate100))}\u0022; private static readonly string NavLinkActive = $\u0022{Css.Px(3).Py(2).RoundedMd() .FontBold() .Background(Color.Blue100) .Color(Color.Blue700)}\u0022; // Only the selection runs per render. private string ClassFor(string href) =\u003E IsActive(href) ? NavLinkActive : NavLink;"
+        },
+        {
+          "id": "keep-builders-out-of-loops",
+          "heading": "Keep builders out of loops",
+          "level": 2,
+          "text": "A chain written inside an or loop is evaluated for every iteration. When the set of variants is modest, build the strings once (for example into a array) and index into them.",
+          "code": "@foreach @for static readonly private static readonly string[] Swatches = [.. Shades.Select(c =\u003E $\u0022{Css.H(8).Grow()} {Css.Background(c)}\u0022)]; // ... @for (var i = 0; i \u003C Shades.Length; i\u002B\u002B) { \u003Cdiv class=\u0022@Swatches[i]\u0022\u003E\u003C/div\u003E }"
+        },
+        {
+          "id": "keep-the-set-of-classes-bounded",
+          "heading": "Keep the set of classes bounded",
+          "level": 2,
+          "text": "The registry is process wide and never evicts entries. Every distinct class is retained for the life of the process and, the first time it is seen, triggers a full rebuild of the stylesheet. Utilities that accept arbitrary integers ( , , , , ...) can therefore grow memory and CPU without bound when the values come from user input or computed layout. Keep values on a scale Prefer the fixed Tailwind scale over arbitrary values. Treat any utility value derived from user input as a potential memory leak: the class, its CSS rule and its contribution to the stylesheet are never released.",
+          "code": "P(n) W(n) Z(n) Opacity(n)"
+        },
+        {
+          "id": "what-you-do-not-need-to-worry-about",
+          "heading": "What you do not need to worry about",
+          "level": 2,
+          "text": "\u2022 Calling the same utility many times. A repeated is a dictionary lookup. Do not cache or batch registrations by hand. \u2022 The one-time startup burst. The first page that introduces many new classes pays for a stylesheet rebuild per new class, but only once per process and only for pages that have not been seen before. \u2022 A handful of inline chains outside loops. A few builder calls per component are negligible next to Blazor\u0027s own rendering work.",
+          "code": "Add"
+        },
+        {
+          "id": "order-of-magnitude",
+          "heading": "Order of magnitude",
+          "level": 2,
+          "text": "For reference, on a desktop-class CPU registering 500 utilities takes on the order of a few tens of microseconds when the classes are new, and roughly half that when they are already known. Per utility that is well under a microsecond. The numbers only start to matter when a builder runs on every render of every row of a large list, which is exactly what precomputing avoids.",
+          "code": ""
+        },
+        {
+          "id": "checklist",
+          "heading": "Checklist",
+          "level": 2,
+          "text": "\u2713 Precompute class strings as members. \u2713 Choose between precomputed variants instead of rebuilding. \u2713 Move builder chains out of and loops. \u2713 Keep utility values on a bounded scale.",
+          "code": "static @foreach @for"
+        }
+      ]
+    },
+    {
+      "route": "/docs/utility-classes",
+      "title": "Utility classes",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "styling-with-utility-classes",
+          "heading": "Styling with utility classes",
+          "level": 1,
+          "text": "A utility class maps one small piece of CSS. Combine them to build any design without leaving C#.",
+          "code": ""
+        },
+        {
+          "id": "compose-instead-of-names",
+          "heading": "Compose instead of names",
+          "level": 2,
+          "text": "A utility does one thing: set a background, a padding, a display mode, and so on. Instead of inventing a class name for every component, you chain a handful of utilities together. Card title A few chained utilities.",
+          "code": "\u003Cdiv class=\u0022@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200).ShadowSm() @Css.Background(Color.White) @Dark.Background(Color.Slate800) @Css.Hover(h =\u003E h.ShadowLg())\u0022\u003E \u003Cp class=\u0022@Css.FontBold().Color(Color.Slate900) @Dark.Color(Color.White)\u0022\u003ECard title\u003C/p\u003E \u003Cp class=\u0022@Css.TextSm().Color(Color.Slate500) @Dark.Color(Color.Slate400)\u0022\u003EA few chained utilities.\u003C/p\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "entry-points",
+          "heading": "Entry points",
+          "level": 2,
+          "text": "Every chain starts with one of three roots. The root decides the variant prefix applied to the whole chain. Utility Generated CSS",
+          "code": "Css no prefix, theme-neutral styles Dark theme-dark: prefix, applies inside the dark theme Theme(\u0022halloween\u0022) theme-halloween: prefix, any custom theme"
+        },
+        {
+          "id": "chaining",
+          "heading": "Chaining",
+          "level": 2,
+          "text": "Utility methods return the builder, so calls can be chained or spread over several statements. Each call registers a class immediately.",
+          "code": "// One chain, many utilities var card = FluentCssBuilder.Css .P(6) .RoundedLg() .Background(Color.White) .ShadowMd(); // Or spread over statements; they register in order card = card.Color(Color.Slate900); card = card.Hover(h =\u003E h.ShadowLg());"
+        },
+        {
+          "id": "using-the-result-in-razor",
+          "heading": "Using the result in Razor",
+          "level": 2,
+          "text": "On a plain HTML element you can call the builder inline. FluentCss returns an object whose is the class attribute value. Styled inline on an HTML element. Blazor components need a variable Blazor does not allow complex C# expressions in the attributes of a component. The inline chain below will not compile. Precompute the class string and pass a simple variable instead. A common pattern is to keep reusable class strings in a static class. Because the builder works anywhere, the strings can be cached and shared. Inside a component the result can also be interpolated with other expressions:",
+          "code": "ToString() \u003Cp class=\u0022@Css.Background(Color.Slate100).Color(Color.Slate800).P(4).RoundedMd() @Dark.Background(Color.Slate800).Color(Color.Slate100)\u0022\u003E Styled inline on an HTML element. \u003C/p\u003E @* Does not compile on a component. *@ \u003CNavLink class=\u0022@Css.Background(Color.Blue500).Color(Color.White)\u0022\u003EHome\u003C/NavLink\u003E @* Precompute the class string first. *@ \u003CNavLink class=\u0022@NavLinkClass\u0022\u003EHome\u003C/NavLink\u003E @code { private static string NavLinkClass = Css.Background(Color.Blue500).Color(Color.White).ToString()!; } using FluentCss.Core; using static FluentCss.Core.FluentCssBuilder; public static class MyStyles { public static string PrimaryButton { get; } = Css.InlineBlock().Px(6).Py(3).RoundedMd().FontBold() .Background(Color.Blue600).Color(Color.White) .Hover(h =\u003E h.Background(Color.Blue700)) .Focus(f =\u003E f.Ring(3, Color.Blue300).OutlineHidden()) .ToString()!; } \u003Ca href=\u0022/\u0022 class=\u0022@MyStyles.PrimaryButton\u0022\u003EHome\u003C/a\u003E @* Mix literals, static styles and inline chains *@ \u003Cspan class=\u0022extra @MyStyles.PrimaryButton @Css.Mb(4)\u0022\u003EMixed\u003C/span\u003E"
+        },
+        {
+          "id": "deduplication",
+          "heading": "Deduplication",
+          "level": 2,
+          "text": "Registering the same utility twice only emits one CSS rule. The registry compares classes by their generated name, so the more often a utility is used the more the stylesheet is reused.",
+          "code": "var a = new ClassRegistry(); a.Add(new UtilityClass(\u0022p-4\u0022, \u0022padding\u0022, \u00221rem\u0022)); a.Add(new UtilityClass(\u0022p-4\u0022, \u0022padding\u0022, \u00221rem\u0022)); // ignored // a.Css contains exactly one .p-4 rule"
+        }
+      ]
+    },
+    {
+      "route": "/docs/states",
+      "title": "Hover \u0026 focus",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "hover-focus-and-other-states",
+          "heading": "Hover, focus and other states",
+          "level": 1,
+          "text": "Pseudo-classes are just another fluent call. Wrap the styles you want and FluentCss prefixes the class names.",
+          "code": ""
+        },
+        {
+          "id": "built-in-states",
+          "heading": "Built-in states",
+          "level": 2,
+          "text": "Three helpers cover the common interactions. Pass an action that receives a and style the element as usual. Utility Generated CSS Blue button Green button",
+          "code": "IOnlyStyleBuilder Hover(h =\u003E ...) hover: prefix, :hover selector Focus(f =\u003E ...) focus: prefix, :focus selector Active(a =\u003E ...) active: prefix, :active selector Pseudo(\u0022first-child\u0022, x =\u003E ...) first-child: prefix with a matching selector \u003Cbutton class=\u0022@Css.Px(6).Py(3).RoundedMd().FontBold().CursorPointer() @Css.Background(Color.Blue500).Color(Color.White) @Css.Hover(h =\u003E h.Background(Color.Blue600)) @Css.Active(a =\u003E a.Background(Color.Blue700)) @Css.Focus(f =\u003E f.Ring(3, Color.Blue300).OutlineHidden())\u0022\u003E Blue button \u003C/button\u003E"
+        },
+        {
+          "id": "custom-pseudo-classes",
+          "heading": "Custom pseudo-classes",
+          "level": 2,
+          "text": "accepts any selector text. The value is trimmed of surrounding colons and then used both in the class name and in the generated selector.",
+          "code": "Pseudo Css.Pseudo(\u0022first-child\u0022, x =\u003E x.Background(Color.Slate100)); // class name: first-child:bg-slate-100 // selector: .first-child\\:bg-slate-100:first-child"
+        },
+        {
+          "id": "combining-with-a-theme",
+          "heading": "Combining with a theme",
+          "level": 2,
+          "text": "Because the theme is carried by the root builder, the same pseudo action can be used inside . The resulting class name reads from left to right: theme first, then the pseudo. Theme aware button Styles only inside a state The builder passed to , and intentionally exposes utilities but no nested states. Combine a pseudo with a responsive or theme variant from the outside instead.",
+          "code": "Dark Dark .Background(Color.Slate800) .Hover(h =\u003E h.Background(Color.Slate700)); // class names: // theme-dark:bg-slate-800 // theme-dark:hover:bg-slate-700 \u003Cbutton class=\u0022@Css.Px(6).Py(3).RoundedMd().FontBold().CursorPointer() @Css.Background(Color.Slate200).Color(Color.Slate800) @Css.Hover(h =\u003E h.Background(Color.Slate300)) @Dark.Background(Color.Slate800).Color(Color.Slate100) @Dark.Hover(h =\u003E h.Background(Color.Slate700))\u0022\u003E Theme aware button \u003C/button\u003E Hover Focus Active"
+        }
+      ]
+    },
+    {
+      "route": "/docs/responsive",
+      "title": "Responsive design",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "responsive-design",
+          "heading": "Responsive design",
+          "level": 1,
+          "text": "Wrap utilities in a media query builder. FluentCss prefixes the class names so the browser can apply them conditionally.",
+          "code": ""
+        },
+        {
+          "id": "min-and-max-helpers",
+          "heading": "Min and max helpers",
+          "level": 2,
+          "text": "FluentCss ships with one default breakpoint, , at . Use for screens at or above it and for screens below it. Utility Generated CSS One Two Three",
+          "code": "md 48rem MinMd MaxMd MinMd(md =\u003E ...) @media (width \u003E 48rem), class prefix min-md: MaxMd(md =\u003E ...) @media (width \u003C 48rem), class prefix max-md: Media(query, prefix, x =\u003E ...) any query, custom prefix \u003Cdiv class=\u0022@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md =\u003E md.GridCols(3))\u0022\u003E ... \u003C/div\u003E \u003C!-- generated classes --\u003E \u003C!-- grid grid-cols-1 gap-4 min-md:grid-cols-3 --\u003E"
+        },
+        {
+          "id": "custom-breakpoints",
+          "heading": "Custom breakpoints",
+          "level": 2,
+          "text": "The method accepts any media query and a short prefix used to build the class name. This is how you add the breakpoints your design needs. Modern range syntax The built-in helpers use the modern range syntax, for example . Make sure your target browsers support it, which all current versions of Chrome, Edge, Firefox and Safari do.",
+          "code": "Media FluentCssBuilder.Css .Grid() .GridCols(1) .Media(\u0022width \u003E 40rem\u0022, \u0022sm\u0022, x =\u003E x.GridCols(2)) .Media(\u0022width \u003E 64rem\u0022, \u0022lg\u0022, x =\u003E x.GridCols(4)); // classes: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 @media (width \u003E 48rem)"
+        },
+        {
+          "id": "combining-with-states",
+          "heading": "Combining with states",
+          "level": 2,
+          "text": "Responsive helpers take a full style builder, so states can be nested inside them. The class name lists media before pseudo.",
+          "code": "Css.Color(Color.Slate900) .MinMd(md =\u003E md.Color(Color.Blue700) .Hover(h =\u003E h.Color(Color.Blue500))); // classes: // text-slate-900 // min-md:text-blue-700 // min-md:hover:text-blue-500"
+        }
+      ]
+    },
+    {
+      "route": "/docs/dark-mode",
+      "title": "Dark mode",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "dark-mode-and-themes",
+          "heading": "Dark mode and themes",
+          "level": 1,
+          "text": "A theme is an ancestor class. Build theme-aware styles with the Dark root, or create your own with Theme(name).",
+          "code": ""
+        },
+        {
+          "id": "the-dark-root",
+          "heading": "The Dark root",
+          "level": 2,
+          "text": "is a shortcut for . It prefixes every utility in the chain with .",
+          "code": "Dark Theme(\u0022dark\u0022) theme-dark: Dark .Background(Color.Slate800) .Color(Color.Slate100) .Hover(h =\u003E h.Background(Color.Slate700)); // classes: // theme-dark:bg-slate-800 // theme-dark:text-slate-100 // theme-dark:hover:bg-slate-700"
+        },
+        {
+          "id": "how-the-selector-is-built",
+          "heading": "How the selector is built",
+          "level": 2,
+          "text": "A themed utility is scoped by an ancestor that carries the theme class. The generated selector has two parts: the theme scope and the escaped utility class. Theme class goes on an ancestor Because the selector is a descendant combinator, the element that carries must be an ancestor of the styled element. Put it on or a wrapper element, not on the same element that also uses the utilities.",
+          "code": "/* .theme-dark is the ancestor, the theme class is escaped */ .theme-dark .theme-dark\\:bg-slate-800 { background-color: oklch(0.279 0.041 260.031) } .theme-dark .theme-dark\\:text-slate-100 { color: oklch(0.968 0.007 247.896) } theme-dark \u003Chtml\u003E @Dark"
+        },
+        {
+          "id": "toggling-the-theme",
+          "heading": "Toggling the theme",
+          "level": 2,
+          "text": "Toggling is plain DOM work: add or remove the theme class. This documentation site persists the choice in a cookie and reads it on the server, so the theme class is part of the rendered element and the page never flashes the light theme first. is kept as a fallback for first visits. This card follows the theme. Use the toggle in the header to switch between light and dark.",
+          "code": "\u003Chtml\u003E localStorage // Read the saved choice. The server reads the same cookie to render the // theme class on \u003Chtml\u003E, so this only handles the first visit. var theme = readCookie(\u0027fluentcss-theme\u0027) || localStorage.getItem(\u0027fluentcss-theme\u0027); if (theme !== \u0027dark\u0027 \u0026\u0026 theme !== \u0027light\u0027) { theme = matchMedia(\u0027(prefers-color-scheme: dark)\u0027).matches ? \u0027dark\u0027 : \u0027light\u0027; } document.documentElement.classList.toggle(\u0027theme-dark\u0027, theme === \u0027dark\u0027); // Toggle it somewhere (for example a button) and persist the choice. function fcToggleTheme() { var dark = document.documentElement.classList.toggle(\u0027theme-dark\u0027); document.cookie = \u0027fluentcss-theme=\u0027 \u002B (dark ? \u0027dark\u0027 : \u0027light\u0027) \u002B \u0027;path=/;max-age=31536000;samesite=lax\u0027; } \u003Cdiv class=\u0022@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200) @Css.Background(Color.White) @Dark.Background(Color.Slate800).BorderColor(Color.Slate700)\u0022\u003E This card follows the theme. \u003C/div\u003E"
+        },
+        {
+          "id": "custom-themes",
+          "heading": "Custom themes",
+          "level": 2,
+          "text": "Anything you can pass to becomes a theme. The same mechanism can drive high-contrast modes, seasonal skins or brand variants.",
+          "code": "Theme Theme(\u0022halloween\u0022) .Background(Color.Orange500) .Color(Color.Black); // classes: theme-halloween:bg-orange-500 theme-halloween:text-black // add the class \u0022theme-halloween\u0022 to an ancestor to activate it"
+        }
+      ]
+    },
+    {
+      "route": "/docs/colors",
+      "title": "Colors",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "colors",
+          "heading": "Colors",
+          "level": 1,
+          "text": "The full Tailwind color palette is available as strongly typed Color values: 22 families, 11 shades each, plus black and white.",
+          "code": ""
+        },
+        {
+          "id": "color-utilities",
+          "heading": "Color utilities",
+          "level": 2,
+          "text": "Pass a value to one of three methods. The color name becomes part of the generated class. Utility Generated CSS Red 500 Emerald 500 White with border",
+          "code": "Color Background(Color.Red500) background-color: \u003Cvalue\u003E -\u003E bg-red-500 Color(Color.Red500) color: \u003Cvalue\u003E -\u003E text-red-500 BorderColor(Color.Red500) border-color: \u003Cvalue\u003E -\u003E border-red-500 \u003Cdiv class=\u0022@Css.P(4).RoundedMd() .Background(Color.Red500) .Color(Color.White).FontBold()\u0022\u003E Red 500 \u003C/div\u003E"
+        },
+        {
+          "id": "reading-a-color",
+          "heading": "Reading a color",
+          "level": 2,
+          "text": "Each exposes the raw value as well, which is useful when you need the value in your own code.",
+          "code": "Color Color emerald = Color.Emerald500; string name = emerald.Name; // \u0022emerald-500\u0022 string value = emerald.Value; // \u0022oklch(0.696 0.17 162.48)\u0022"
+        },
+        {
+          "id": "the-palette",
+          "heading": "The palette",
+          "level": 2,
+          "text": "Every family runs from shade 50 (lightest) to 950 (darkest). The swatches below are rendered with the builder itself. amber blue cyan emerald fuchsia gray green indigo lime neutral orange pink purple red rose sky slate stone teal violet yellow zinc",
+          "code": ""
+        },
+        {
+          "id": "black-and-white",
+          "heading": "Black and white",
+          "level": 2,
+          "text": "Black White",
+          "code": ""
+        }
+      ]
+    },
+    {
+      "route": "/docs/layout",
+      "title": "Layout",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "layout",
+          "heading": "Layout",
+          "level": 1,
+          "text": "Control how elements participate in the flow: display, positioning, stacking, overflow and aspect ratio.",
+          "code": ""
+        },
+        {
+          "id": "display",
+          "heading": "Display",
+          "level": 2,
+          "text": "Utility Generated CSS Block Inline block Inline Hidden",
+          "code": "Block() display: block InlineBlock() display: inline-block Inline() display: inline Flex() display: flex Grid() display: grid Hidden() display: none \u003Cdiv class=\u0022@Css.Block().Background(Color.Blue100).P(3)\u0022\u003EBlock\u003C/div\u003E \u003Cspan class=\u0022@Css.InlineBlock().Background(Color.Emerald100).P(3)\u0022\u003EInline block\u003C/span\u003E \u003Cspan class=\u0022@Css.Inline().Background(Color.Amber100).P(1)\u0022\u003EInline\u003C/span\u003E \u003Cdiv class=\u0022@Css.Hidden()\u0022\u003EHidden\u003C/div\u003E"
+        },
+        {
+          "id": "position",
+          "heading": "Position",
+          "level": 2,
+          "text": "Utility Generated CSS Combine a position with the offset helpers. Offsets use the spacing scale, so is . Utility Generated CSS New",
+          "code": "Relative() position: relative Absolute() position: absolute Fixed() position: fixed Sticky() position: sticky Top(4) 1rem Inset(4) inset: 1rem Top(4) top: 1rem Right(4) right: 1rem Bottom(4) bottom: 1rem Left(4) left: 1rem Z(10) z-index: 10 \u003Cdiv class=\u0022@Css.Relative().H(32).RoundedLg().Background(Color.Slate100)\u0022\u003E \u003Cdiv class=\u0022@Css.Absolute().Top(2).Right(2).Px(3).Py(1) .RoundedFull().TextXs().FontBold() .Background(Color.Red500).Color(Color.White)\u0022\u003E New \u003C/div\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "stacking",
+          "heading": "Stacking",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "Z(0) z-index: 0 Z(10) z-index: 10 Z(50) z-index: 50"
+        },
+        {
+          "id": "overflow",
+          "heading": "Overflow",
+          "level": 2,
+          "text": "Utility Generated CSS Scrollable content. Scrollable content. Scrollable content. Scrollable content. Scrollable content.",
+          "code": "OverflowAuto() overflow: auto OverflowHidden() overflow: hidden OverflowScroll() overflow: scroll \u003Cdiv class=\u0022@Css.OverflowAuto().H(24).P(3).RoundedMd()\u0022\u003E \u003Cp\u003EScrollable content.\u003C/p\u003E ... \u003C/div\u003E"
+        },
+        {
+          "id": "object-fit-and-aspect-ratio",
+          "heading": "Object fit and aspect ratio",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "ObjectCover() object-fit: cover ObjectContain() object-fit: contain AspectSquare() aspect-ratio: 1 / 1 AspectVideo() aspect-ratio: 16 / 9 \u003Cdiv class=\u0022@Css.Grid().GridCols(2).Gap(4)\u0022\u003E \u003Cdiv class=\u0022@Css.AspectSquare().RoundedMd().Background(Color.Indigo500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.AspectVideo().RoundedMd().Background(Color.Violet500)\u0022\u003E\u003C/div\u003E \u003C/div\u003E"
+        }
+      ]
+    },
+    {
+      "route": "/docs/flexbox-grid",
+      "title": "Flexbox \u0026 grid",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "flexbox-and-grid",
+          "heading": "Flexbox and grid",
+          "level": 1,
+          "text": "Lay out with flexbox and CSS grid. A composite Flex helper covers the common container setup, while grid utilities handle the rest.",
+          "code": ""
+        },
+        {
+          "id": "flex-containers",
+          "heading": "Flex containers",
+          "level": 2,
+          "text": "The composite method sets the display, direction and any of the optional justify, align, wrap and gap values in one call. Start Middle End",
+          "code": "Flex Css.Flex( FlexDirection.Row, justify: Justify.Between, align: Align.Center, gap: 4, wrap: FlexWrapValue.Wrap); \u003Cdiv class=\u0022@Css.Flex(FlexDirection.Row, Justify.Between, Align.Center, gap: 4)\u0022\u003E \u003Cdiv\u003EStart\u003C/div\u003E \u003Cdiv\u003EMiddle\u003C/div\u003E \u003Cdiv\u003EEnd\u003C/div\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "direction",
+          "heading": "Direction",
+          "level": 3,
+          "text": "Utility Generated CSS",
+          "code": "FlexRow() flex-direction: row FlexCol() flex-direction: column Flex(FlexDirection.RowReverse) flex-direction: row-reverse Flex(FlexDirection.ColReverse) flex-direction: column-reverse"
+        },
+        {
+          "id": "justify-content",
+          "heading": "Justify content",
+          "level": 3,
+          "text": "Utility Generated CSS",
+          "code": "JustifyStart() justify-content: flex-start JustifyEnd() justify-content: flex-end JustifyCenter() justify-content: center JustifyBetween() justify-content: space-between Flex(..., Justify.Around) justify-content: space-around Flex(..., Justify.Evenly) justify-content: space-evenly"
+        },
+        {
+          "id": "align-items",
+          "heading": "Align items",
+          "level": 3,
+          "text": "Utility Generated CSS",
+          "code": "ItemsStart() align-items: flex-start ItemsEnd() align-items: flex-end ItemsCenter() align-items: center Flex(..., align: Align.Baseline) align-items: baseline Flex(..., align: Align.Stretch) align-items: stretch"
+        },
+        {
+          "id": "wrap-grow-and-gap",
+          "heading": "Wrap, grow and gap",
+          "level": 3,
+          "text": "Utility Generated CSS Fixed Grow",
+          "code": "FlexWrap() flex-wrap: wrap Flex(..., wrap: FlexWrapValue.NoWrap) flex-wrap: nowrap Grow() flex-grow: 1 Shrink() flex-shrink: 1 Gap(4) gap: 1rem GapX(4) column-gap: 1rem GapY(4) row-gap: 1rem \u003Cdiv class=\u0022@Css.Flex(FlexDirection.Row, gap: 2)\u0022\u003E \u003Cdiv\u003EFixed\u003C/div\u003E \u003Cdiv class=\u0022@Css.Grow()\u0022\u003EGrow\u003C/div\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "grid",
+          "heading": "Grid",
+          "level": 2,
+          "text": "Utility Generated CSS span 2 1 1 1 start 3",
+          "code": "GridCols(3) grid-template-columns: repeat(3, minmax(0, 1fr)) GridRows(2) grid-template-rows: repeat(2, minmax(0, 1fr)) ColSpan(2) grid-column: span 2 / span 2 RowSpan(2) grid-row: span 2 / span 2 ColStart(3) grid-column-start: 3 \u003Cdiv class=\u0022@Css.Grid().GridCols(4).Gap(3)\u0022\u003E \u003Cdiv class=\u0022@Css.ColSpan(2)\u0022\u003Espan 2\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv class=\u0022@Css.ColStart(3)\u0022\u003Estart 3\u003C/div\u003E \u003C/div\u003E"
+        }
+      ]
+    },
+    {
+      "route": "/docs/spacing",
+      "title": "Spacing",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "spacing",
+          "heading": "Spacing",
+          "level": 1,
+          "text": "Padding and margin share one numeric scale. Multiply any integer by 0.25rem to get the rendered value.",
+          "code": ""
+        },
+        {
+          "id": "the-scale",
+          "heading": "The scale",
+          "level": 2,
+          "text": "Spacing methods take an integer. The value is scaled by , so becomes . A scale of produces . Utility Generated CSS",
+          "code": "0.25rem P(4) 1rem 0 0px P(0) / M(0) 0px P(1) / M(1) 0.25rem P(2) / M(2) 0.5rem P(4) / M(4) 1rem P(6) / M(6) 1.5rem P(8) / M(8) 2rem"
+        },
+        {
+          "id": "padding",
+          "heading": "Padding",
+          "level": 2,
+          "text": "Utility Generated CSS P(2) P(6)",
+          "code": "P(n) padding Px(n) padding-inline Py(n) padding-block Pt(n) padding-top Pr(n) padding-right Pb(n) padding-bottom Pl(n) padding-left \u003Cdiv class=\u0022@Css.P(2).Background(Color.Blue100)\u0022\u003E \u003Cdiv class=\u0022@Css.P(2)\u0022\u003EP(2)\u003C/div\u003E \u003C/div\u003E \u003Cdiv class=\u0022@Css.P(6).Background(Color.Indigo100)\u0022\u003E \u003Cdiv class=\u0022@Css.P(2)\u0022\u003EP(6)\u003C/div\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "margin",
+          "heading": "Margin",
+          "level": 2,
+          "text": "Utility Generated CSS Margin bottom 4 Margin top 4",
+          "code": "M(n) margin Mx(n) margin-inline My(n) margin-block Mt(n) margin-top Mr(n) margin-right Mb(n) margin-bottom Ml(n) margin-left \u003Cdiv class=\u0022@Css.Mb(4)\u0022\u003EMargin bottom 4\u003C/div\u003E \u003Cdiv class=\u0022@Css.Mt(4)\u0022\u003EMargin top 4\u003C/div\u003E"
+        },
+        {
+          "id": "auto-margins",
+          "heading": "Auto margins",
+          "level": 2,
+          "text": "Auto margin helpers are handy for centering a block horizontally or pushing content apart. Utility Generated CSS Centered",
+          "code": "MxAuto() margin-inline: auto MyAuto() margin-block: auto \u003Cdiv class=\u0022@Css.P(4)\u0022\u003E \u003Cdiv class=\u0022@Css.W(32).MxAuto()\u0022\u003ECentered\u003C/div\u003E \u003C/div\u003E"
+        }
+      ]
+    },
+    {
+      "route": "/docs/sizing",
+      "title": "Sizing",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "sizing",
+          "heading": "Sizing",
+          "level": 1,
+          "text": "Set width and height with the spacing scale, percentage keywords or the predefined Size values.",
+          "code": ""
+        },
+        {
+          "id": "width-and-height",
+          "heading": "Width and height",
+          "level": 2,
+          "text": "The numeric width and height helpers use the same scale as spacing. There are also a few named keywords for common cases. Utility Generated CSS",
+          "code": "W(4) width: 1rem H(4) height: 1rem WFull() width: 100% WScreen() width: 100vw WAuto() width: auto HFull() height: 100% HScreen() height: 100vh \u003Cdiv class=\u0022@Css.W(32).H(8)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.WFull().H(8)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.W(16).HFull()\u0022\u003E\u003C/div\u003E"
+        },
+        {
+          "id": "minimum-and-maximum",
+          "heading": "Minimum and maximum",
+          "level": 2,
+          "text": "Min and max helpers take a value instead of a number. The values cover the usual content and viewport keywords. Utility Generated CSS",
+          "code": "Size MaxW(Size.Md) max-width: 48rem MinW(Size.Sm) min-width: 40rem MaxH(Size.Lg) max-height: 64rem MinH(Size.ScreenH) min-height: 100vh"
+        },
+        {
+          "id": "available-sizes",
+          "heading": "Available sizes",
+          "level": 3,
+          "text": "Utility Generated CSS max-width: 48rem",
+          "code": "Size.Sm 40rem Size.Md 48rem Size.Lg 64rem Size.Xl 80rem Size.Full 100% Size.ScreenW 100vw Size.ScreenH 100vh Size.Zero 0px Size.Min min-content Size.Max max-content Size.Fit fit-content \u003Cdiv class=\u0022@Css.MaxW(Size.Md).P(6)\u0022\u003E max-width: 48rem \u003C/div\u003E"
+        }
+      ]
+    },
+    {
+      "route": "/docs/typography",
+      "title": "Typography",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "typography",
+          "heading": "Typography",
+          "level": 1,
+          "text": "Font size, weight, alignment, decoration, casing and line height, all controlled from the builder.",
+          "code": ""
+        },
+        {
+          "id": "font-size",
+          "heading": "Font size",
+          "level": 2,
+          "text": "Utility Generated CSS text-xs (0.75rem) text-sm (0.875rem) text-base (1rem) text-lg (1.125rem) text-xl (1.25rem) text-2xl (1.5rem) text-3xl (1.875rem)",
+          "code": "TextXs() font-size: 0.75rem TextSm() font-size: 0.875rem TextBase() font-size: 1rem TextLg() font-size: 1.125rem TextXl() font-size: 1.25rem Text2Xl() font-size: 1.5rem Text3Xl() font-size: 1.875rem \u003Cp class=\u0022@Css.TextXs()\u0022\u003Etext-xs\u003C/p\u003E \u003Cp class=\u0022@Css.Text3Xl()\u0022\u003Etext-3xl\u003C/p\u003E"
+        },
+        {
+          "id": "font-weight-and-style",
+          "heading": "Font weight and style",
+          "level": 2,
+          "text": "Utility Generated CSS Thin weight Normal weight Bold weight Italic Not italic",
+          "code": "FontThin() font-weight: 100 FontNormal() font-weight: 400 FontBold() font-weight: 700 Italic() font-style: italic NotItalic() font-style: normal \u003Cp class=\u0022@Css.FontThin()\u0022\u003EThin weight\u003C/p\u003E \u003Cp class=\u0022@Css.FontBold()\u0022\u003EBold weight\u003C/p\u003E \u003Cp class=\u0022@Css.Italic()\u0022\u003EItalic\u003C/p\u003E"
+        },
+        {
+          "id": "alignment-and-decoration",
+          "heading": "Alignment and decoration",
+          "level": 2,
+          "text": "Utility Generated CSS Left aligned Center aligned Right aligned Underlined and not underlined",
+          "code": "TextLeft() text-align: left TextCenter() text-align: center TextRight() text-align: right Underline() text-decoration-line: underline NoUnderline() text-decoration-line: none \u003Cp class=\u0022@Css.TextCenter()\u0022\u003ECenter aligned\u003C/p\u003E \u003Cp class=\u0022@Css.TextRight()\u0022\u003ERight aligned\u003C/p\u003E \u003Cp\u003E\u003Cspan class=\u0022@Css.Underline()\u0022\u003EUnderlined\u003C/span\u003E\u003C/p\u003E"
+        },
+        {
+          "id": "casing-and-whitespace",
+          "heading": "Casing and whitespace",
+          "level": 2,
+          "text": "Utility Generated CSS uppercase text LOWERCASE TEXT capitalize each word this line will not wrap no matter how long it becomes in the container",
+          "code": "Uppercase() text-transform: uppercase Lowercase() text-transform: lowercase Capitalize() text-transform: capitalize WhitespaceNoWrap() white-space: nowrap \u003Cp class=\u0022@Css.Uppercase()\u0022\u003Euppercase text\u003C/p\u003E \u003Cp class=\u0022@Css.Capitalize()\u0022\u003Ecapitalize each word\u003C/p\u003E \u003Cp class=\u0022@Css.WhitespaceNoWrap()\u0022\u003Ewill not wrap\u003C/p\u003E"
+        },
+        {
+          "id": "line-height",
+          "heading": "Line height",
+          "level": 2,
+          "text": "uses the spacing scale for : is .",
+          "code": "Leading(n) line-height Leading(6) 1.5rem Css.TextSm().Leading(6); // class: text-sm leading-6 // CSS: .leading-6 { line-height: 1.5rem }"
+        }
+      ]
+    },
+    {
+      "route": "/docs/borders-effects",
+      "title": "Borders \u0026 effects",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "borders-and-effects",
+          "heading": "Borders and effects",
+          "level": 1,
+          "text": "Outline your surfaces with borders and radius, then add rings, shadows and opacity.",
+          "code": ""
+        },
+        {
+          "id": "border-width",
+          "heading": "Border width",
+          "level": 2,
+          "text": "Utility Generated CSS 1px border 2px border Dashed blue border",
+          "code": "Border() border-width: 1px Border(2) border-width: 2px Border(4) border-width: 4px \u003Cdiv class=\u0022@Css.Border().BorderColor(Color.Slate300).P(4)\u0022\u003E1px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2).BorderColor(Color.Slate300).P(4)\u0022\u003E2px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2, Color.Blue400, BorderStyle.Dashed).P(4)\u0022\u003EDashed blue border\u003C/div\u003E"
+        },
+        {
+          "id": "border-style-and-color",
+          "heading": "Border style and color",
+          "level": 2,
+          "text": "Utility Generated CSS The composite overload combines the three border pieces in a single call:",
+          "code": "BorderColor(Color.Slate300) border-color: \u003Cvalue\u003E BorderSolid() border-style: solid BorderDashed() border-style: dashed BorderDotted() border-style: dotted Css.Border(2, Color.Slate300, BorderStyle.Dashed); // expands to three utilities: // border-2 border-width: 2px // border-slate-300 border-color: ... // border-dashed border-style: dashed"
+        },
+        {
+          "id": "border-radius",
+          "heading": "Border radius",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "RoundedSm() border-radius: 0.125rem Rounded() border-radius: 0.25rem RoundedMd() border-radius: 0.375rem RoundedLg() border-radius: 0.5rem RoundedFull() border-radius: 9999px \u003Cdiv class=\u0022@Css.RoundedSm().W(16).H(16).Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.RoundedFull().W(16).H(16).Background(Color.Purple500)\u0022\u003E\u003C/div\u003E"
+        },
+        {
+          "id": "rings-and-outlines",
+          "heading": "Rings and outlines",
+          "level": 2,
+          "text": "A ring is a based outline that follows the border radius, which makes it ideal for focus states. The outline helpers map to the native property. Utility Generated CSS Focus me Ring",
+          "code": "box-shadow outline Ring(3, Color.Blue300) box-shadow: 0 0 0 3px \u003Cvalue\u003E Outline(2) outline-width: 2px OutlineHidden() outline: 2px solid transparent \u003Cbutton class=\u0022@Css.Px(5).Py(2).RoundedMd().FontBold() @Css.Focus(f =\u003E f.Ring(3, Color.Blue300).OutlineHidden())\u0022\u003E Focus me \u003C/button\u003E"
+        },
+        {
+          "id": "shadows",
+          "heading": "Shadows",
+          "level": 2,
+          "text": "Utility Generated CSS sm md lg",
+          "code": "ShadowSm() box-shadow: small Shadow() box-shadow: default ShadowMd() box-shadow: medium ShadowLg() box-shadow: large \u003Cdiv class=\u0022@Css.ShadowSm().P(4).RoundedMd().Background(Color.White)\u0022\u003Esm\u003C/div\u003E \u003Cdiv class=\u0022@Css.ShadowMd().P(4).RoundedMd().Background(Color.White)\u0022\u003Emd\u003C/div\u003E \u003Cdiv class=\u0022@Css.ShadowLg().P(4).RoundedMd().Background(Color.White)\u0022\u003Elg\u003C/div\u003E"
+        },
+        {
+          "id": "opacity-and-cursor",
+          "heading": "Opacity and cursor",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "Opacity(50) opacity: 0.5 Opacity(0) opacity: 0 Opacity(100) opacity: 1 CursorPointer() cursor: pointer \u003Cdiv class=\u0022@Css.Opacity(100).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(75).P(4).RoundedMd().Background(Color.Blue500).CursorPointer()\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(50).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(25).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E"
+        }
+      ]
+    }
+  ]
+}

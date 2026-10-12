@@ -1,0 +1,47 @@
+@* Search trigger + command palette. Behaviour is in docs-search.js; this only
+   renders the markup and passes the generated class names to the script. *@
+<div data-fc-search>
+    <button type="button" class="@DocsStyles.SearchButton" data-fc-search-open
+            aria-label="Search documentation" aria-haspopup="dialog">
+        <span class="@DocsStyles.SearchButtonMain">
+            <svg class="@DocsStyles.SearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+            </svg>
+            <span class="@DocsStyles.SearchButtonLabel">Search</span>
+        </span>
+        <kbd class="@DocsStyles.SearchKbd" data-fc-search-kbd>Ctrl K</kbd>
+    </button>
+
+    <div class="@DocsStyles.SearchOverlay" data-fc-search-overlay hidden>
+        <div class="@DocsStyles.SearchDialog" role="dialog" aria-modal="true" aria-label="Search documentation">
+            <div class="@DocsStyles.SearchInputRow">
+                <svg class="@DocsStyles.SearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input type="search" class="@DocsStyles.SearchInput" data-fc-search-input
+                       placeholder="Search the documentation" autocomplete="off" spellcheck="false"
+                       aria-controls="fc-search-results" aria-autocomplete="list" />
+                <kbd class="@DocsStyles.SearchKbd">Esc</kbd>
+            </div>
+
+            <p class="@DocsStyles.SearchStatus" data-fc-search-status aria-live="polite"></p>
+
+            <ul id="fc-search-results" class="@DocsStyles.SearchResults" data-fc-search-results
+                role="listbox" aria-label="Search results"
+                data-fc-result-class="@DocsStyles.SearchResult"
+                data-fc-result-active-class="@DocsStyles.SearchResultActive"
+                data-fc-result-path-class="@DocsStyles.SearchResultPath"
+                data-fc-result-title-class="@DocsStyles.SearchResultTitle"
+                data-fc-result-text-class="@DocsStyles.SearchResultText"
+                data-fc-mark-class="@DocsStyles.SearchMark"></ul>
+
+            <p class="@DocsStyles.SearchEmpty" data-fc-search-empty hidden>
+                No results. Try a different term.
+            </p>
+        </div>
+    </div>
+</div>

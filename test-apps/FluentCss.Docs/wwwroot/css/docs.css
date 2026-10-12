@@ -90,6 +90,56 @@ code {
     scroll-margin-top: 5rem;
 }
 
+/* Search trigger: centred in the header on wide screens, inline on narrow ones.
+   Centred with insets/margin (not transform) so the fixed-position palette it
+   contains is still positioned against the viewport. */
+.fc-header-search {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 20rem;
+    max-width: 40vw;
+    height: fit-content;
+}
+
+@media (width < 64rem) {
+    .fc-header-search {
+        position: static;
+        inset: auto;
+        margin: 0;
+        width: auto;
+        max-width: none;
+        height: auto;
+    }
+}
+
+/* Search palette: translucency and list resets the utility builder does not express. */
+.fc-search-overlay {
+    background-color: rgb(15 23 42 / 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.theme-dark .fc-search-overlay {
+    background-color: rgb(0 0 0 / 0.6);
+}
+
+.fc-search-input-row {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.theme-dark .fc-search-input-row {
+    border-bottom-color: #334155;
+}
+
+.fc-search-results {
+    list-style: none;
+}
+
+/* Keep the focus ring clear of the text. */
+.fc-search-input {
+    padding: 2px 4px;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;

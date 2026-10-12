@@ -11,6 +11,7 @@
   </Folder>
   <Folder Name="/test-apps/">
     <Project Path="test-apps/FluentCss.Docs/FluentCss.Docs.csproj" />
+    <Project Path="test-apps/FluentCss.Docs.Indexer/FluentCss.Docs.Indexer.csproj" />
     <Project Path="test-apps/FluentCssBlazoreInteractiveWasm/FluentCssBlazoreInteractiveWasm.Client/FluentCssBlazoreInteractiveWasm.Client.csproj" Id="0f482b15-4350-4936-8089-529364cddc0c" />
     <Project Path="test-apps/FluentCssBlazoreInteractiveWasm/FluentCssBlazoreInteractiveWasm/FluentCssBlazoreInteractiveWasm.csproj" Id="53b71055-e421-4cb1-b1d1-07dcbef3fbf8" />
     <Project Path="test-apps/FluentCssBlazorInteractiveServer/FluentCssBlazorInteractiveServer.csproj" Id="f6aef406-9621-4cc0-916b-747fb1b76481" />

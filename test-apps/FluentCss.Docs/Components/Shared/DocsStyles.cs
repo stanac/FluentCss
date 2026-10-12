@@ -334,4 +334,88 @@ public static class DocsStyles
     // ---------------------------------------------------------------------
 
     public static string CodeTag { get; } = InlineCode;
+
+    // ---------------------------------------------------------------------
+    // Search
+    //
+    // The markup is rendered here (so it is styled with the builder like the rest
+    // of the site) but the behaviour lives in docs-search.js. Dynamic result nodes
+    // read their class names from data attributes on the results list, mirroring
+    // how the "On this page" nav passes its classes to docs.js.
+    // ---------------------------------------------------------------------
+
+    // Centred in the header by the .fc-header-search rule in docs.css. It is
+    // positioned without transform so the fixed-position palette inside is not
+    // trapped by a transformed containing block.
+    public static string HeaderSearch { get; } = "fc-header-search";
+
+    public static string SearchButton { get; } =
+        $"{Css.Flex(FlexDirection.Row, Justify.Between, align: Align.Center, gap: 2).WFull()} " +
+        $"{Css.Px(3).Py(2).RoundedMd().CursorPointer().TextSm()} " +
+        $"{Css.Color(Color.Slate500).Background(Color.Slate100)} " +
+        $"{Css.Hover(h => h.Background(Color.Slate200).Color(Color.Slate700))} " +
+        $"{Dark.Background(Color.Slate800).Color(Color.Slate400)} " +
+        $"{Dark.Hover(h => h.Background(Color.Slate700).Color(Color.Slate200))}";
+
+    public static string SearchButtonMain { get; } =
+        $"{Css.Flex(FlexDirection.Row, align: Align.Center, gap: 2)}";
+
+    public static string SearchButtonLabel { get; } =
+        $"{Css.Hidden()} {Css.MinMd(md => md.Inline())}";
+
+    public static string SearchKbd { get; } =
+        $"{Css.Hidden().RoundedSm().Border().BorderColor(Color.Slate300).Px(1).TextXs()} " +
+        $"{Css.Color(Color.Slate400)} " +
+        $"{Css.MinMd(md => md.InlineBlock())} " +
+        $"{Dark.BorderColor(Color.Slate600).Color(Color.Slate500)}";
+
+    public static string SearchOverlay { get; } =
+        $"fc-search-overlay {Css.Fixed().Inset(0).Z(50).P(4).OverflowAuto()} " +
+        $"{Css.Flex(FlexDirection.Row, Justify.Center, align: Align.Start)}";
+
+    public static string SearchDialog { get; } =
+        $"{Css.WFull().MaxW(Size.Md).MxAuto().Mt(16).RoundedLg().ShadowLg().OverflowHidden()} " +
+        $"{Css.Background(Color.White).Border().BorderColor(Color.Slate200)} " +
+        $"{Dark.Background(Color.Slate900).BorderColor(Color.Slate700)}";
+
+    public static string SearchInputRow { get; } =
+        $"fc-search-input-row {Css.Flex(FlexDirection.Row, align: Align.Center, gap: 3).Px(4).Py(3)}";
+
+    public static string SearchIcon { get; } =
+        $"{Css.W(5).H(5).Shrink()} {Css.Color(Color.Slate400)}";
+
+    public static string SearchInput { get; } =
+        $"fc-search-input {Css.Grow().WFull().Border(0).Background(Color.White).Color(Color.Slate900).TextBase()} " +
+        $"{Dark.Background(Color.Slate900).Color(Color.Slate100)}";
+
+    public static string SearchStatus { get; } =
+        $"{Css.Px(4).Pt(2).TextXs().Color(Color.Slate400)} {Dark.Color(Color.Slate500)}";
+
+    public static string SearchResults { get; } =
+        $"fc-search-results {Css.M(0).P(0).Mb(2)}";
+
+    public static string SearchResult { get; } =
+        $"{Css.Block().Px(4).Py(3).NoUnderline()} " +
+        $"{Css.Hover(h => h.Background(Color.Slate100))} " +
+        $"{Dark.Hover(h => h.Background(Color.Slate800))}";
+
+    public static string SearchResultActive { get; } =
+        $"{Css.Background(Color.Slate100)} {Dark.Background(Color.Slate800)}";
+
+    public static string SearchResultPath { get; } =
+        $"{Css.Block().TextXs().FontBold().Uppercase().Color(Color.Slate400).Mb(1)} " +
+        $"{Dark.Color(Color.Slate500)}";
+
+    public static string SearchResultTitle { get; } =
+        $"{Css.Block().FontBold().Color(Color.Slate900)} {Dark.Color(Color.White)}";
+
+    public static string SearchResultText { get; } =
+        $"{Css.Block().TextSm().Color(Color.Slate500).Mt(1)} {Dark.Color(Color.Slate400)}";
+
+    public static string SearchMark { get; } =
+        $"{Css.Background(Color.Amber200).Color(Color.Amber900).RoundedSm()} " +
+        $"{Dark.Background(Color.Amber900).Color(Color.Amber100)}";
+
+    public static string SearchEmpty { get; } =
+        $"{Css.Px(4).Py(6).TextSm().TextCenter().Color(Color.Slate400)} {Dark.Color(Color.Slate500)}";
 }
