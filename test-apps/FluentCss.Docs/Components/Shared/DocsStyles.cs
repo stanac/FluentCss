@@ -69,6 +69,33 @@ public static class DocsStyles
     public static string Article { get; } =
         $"{Css.MaxW(Size.Lg).MxAuto().WFull()}";
 
+    public static string ContentRow { get; } =
+        $"{Css.WFull().Flex(FlexDirection.Row, Justify.Center, align: Align.Start, gap: 8)}";
+
+    // "On this page" navigation. The container starts hidden and its list is built by
+    // docs.js from the headings that are actually rendered, so no page hard-codes it.
+    public static string Toc { get; } =
+        $"{Css.Hidden().W(56).Sticky().Top(20).P(4).RoundedLg()} " +
+        $"{Css.Border().BorderColor(Color.Slate200)} " +
+        $"{Dark.BorderColor(Color.Slate800)} " +
+        $"{Css.Media("width > 80rem", "min-xl", xl => xl.Block())}";
+
+    public static string TocTitle { get; } =
+        $"{Css.TextXs().FontBold().Uppercase().Color(Color.Slate400).Mb(3)} " +
+        $"{Dark.Color(Color.Slate500)}";
+
+    public static string TocNav { get; } =
+        $"{Css.Flex(FlexDirection.Col, gap: 1)}";
+
+    public static string TocLink { get; } =
+        $"{Css.Block().TextSm().NoUnderline().Color(Color.Slate500).Py(1).Leading(5)} " +
+        $"{Css.Hover(h => h.Color(Color.Slate900))} " +
+        $"{Dark.Color(Color.Slate400)} {Dark.Hover(h => h.Color(Color.White))}";
+
+    public static string TocLinkActive { get; } =
+        $"{Css.Block().TextSm().NoUnderline().FontBold().Color(Color.Blue600).Py(1).Leading(5)} " +
+        $"{Dark.Color(Color.Blue400)}";
+
     // ---------------------------------------------------------------------
     // Branding / navigation
     // ---------------------------------------------------------------------
@@ -79,9 +106,7 @@ public static class DocsStyles
         $"{Dark.Color(Color.White)}";
 
     public static string BrandMark { get; } =
-        $"{Css.W(8).H(8).RoundedMd().TextCenter().TextSm().FontBold()} " +
-        $"{Css.Background(Color.Blue600).Color(Color.White)} " +
-        $"{Css.Flex(FlexDirection.Row, Justify.Center, Align.Center, gap: 0)}";
+        $"{Css.W(8).H(8).Block().RoundedMd()}";
 
     public static string SectionTitle { get; } =
         $"{Css.TextXs().FontBold().Uppercase().Mt(6).Mb(2).Color(Color.Slate400)}";
@@ -188,6 +213,31 @@ public static class DocsStyles
         $"{Css.Hover(h => h.BorderColor(Color.Blue400).Background(Color.Blue50))} " +
         $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)} " +
         $"{Dark.Hover(h => h.BorderColor(Color.Blue700).Background(Color.Slate800))}";
+
+    // ---------------------------------------------------------------------
+    // Previous / next pager
+    // ---------------------------------------------------------------------
+
+    public static string Pager { get; } =
+        $"{Css.Mt(12).Pt(6).Flex(FlexDirection.Row, Justify.Between, gap: 4)} " +
+        $"{Css.Border(0)} " +
+        $"{Dark.BorderColor(Color.Slate800)}";
+
+    public static string PagerLink { get; } =
+        $"{Css.Flex(FlexDirection.Col, gap: 1).Px(4).Py(3).RoundedLg().NoUnderline()} " +
+        $"{Css.Border().BorderColor(Color.Slate200).Background(Color.White)} " +
+        $"{Css.Hover(h => h.BorderColor(Color.Blue400).Background(Color.Blue50))} " +
+        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)} " +
+        $"{Dark.Hover(h => h.BorderColor(Color.Blue700).Background(Color.Slate800))}";
+
+    public static string PagerLinkNext { get; } =
+        $"{PagerLink} {Css.Flex(FlexDirection.Col, align: Align.End).TextRight()}";
+
+    public static string PagerHint { get; } =
+        $"{Css.TextXs().FontBold().Uppercase().Color(Color.Slate400)}";
+
+    public static string PagerTitle { get; } =
+        $"{Css.FontBold().Color(Color.Slate900)} {Dark.Color(Color.White)}";
 
     // ---------------------------------------------------------------------
     // Examples / cards

@@ -1,4 +1,4 @@
-@page "/how-it-works"
+@page "/docs/how-it-works"
 
 <PageTitle>How it works - FluentCss</PageTitle>
 
@@ -65,18 +65,6 @@
 </p>
 
 <CodeBlock Code="@RegistryExample" />
-
-<Callout Kind="CalloutKind.Info" Title="Rendering in Blazor">
-    The <code class="@DocsStyles.InlineCode">CssStyles</code> component subscribes to
-    <code class="@DocsStyles.InlineCode">OnClassAdded</code>. In an interactive render mode it re-renders
-    as new classes appear. In static server rendering it reads the registry once, after the page has
-    finished rendering, which is why it belongs at the end of the layout.
-</Callout>
-
-<p class="@DocsStyles.P">
-    Now that you know the mechanics, learn how to
-    <a href="/utility-classes" data-enhance-nav="false" class="@DocsStyles.Link">style with utility classes</a>.
-</p>
 
 @code {
     private static readonly (string Utility, string Css)[] NameFormat =

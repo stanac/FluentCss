@@ -1,0 +1,81 @@
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@if (_previous is not null || _next is not null)
+{
+    <nav class="@DocsStyles.Pager" aria-label="Documentation pagination">
+        @if (_previous is not null)
+        {
+            <a href="@_previous.Href" class="@DocsStyles.PagerLink">
+                <span class="@DocsStyles.PagerHint">Previous</span>
+                <span class="@DocsStyles.PagerTitle">@_previous.Title</span>
+            </a>
+        }
+        else
+        {
+            <span></span>
+        }
+
+        @if (_next is not null)
+        {
+            <a href="@_next.Href" class="@DocsStyles.PagerLinkNext">
+                <span class="@DocsStyles.PagerHint">Next</span>
+                <span class="@DocsStyles.PagerTitle">@_next.Title</span>
+            </a>
+        }
+    </nav>
+}
+
+@code {
+    private static readonly IReadOnlyList<NavItem> Pages =
+        DocsNavigation.Sections.SelectMany(section => section.Items).ToList();
+
+    private NavItem? _previous;
+    private NavItem? _next;
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+        Update();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        Update();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Update()
+    {
+        var path = "/" + Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        if (path.Length > 1 && path.EndsWith('/'))
+        {
+            path = path.TrimEnd('/');
+        }
+
+        var index = -1;
+
+        for (var i = 0; i < Pages.Count; i++)
+        {
+            if (Matches(Pages[i].Href, path))
+            {
+                index = i;
+                break;
+            }
+        }
+
+        _previous = index > 0 ? Pages[index - 1] : null;
+        _next = index >= 0 && index < Pages.Count - 1 ? Pages[index + 1] : null;
+    }
+
+    private static bool Matches(string href, string path) =>
+        href == "/"
+            ? path == "/"
+            : path.Equals(href, StringComparison.OrdinalIgnoreCase);
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

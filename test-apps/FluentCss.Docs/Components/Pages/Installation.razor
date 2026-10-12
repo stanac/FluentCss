@@ -1,4 +1,4 @@
-@page "/installation"
+@page "/docs/installation"
 
 <PageTitle>Installation - FluentCss</PageTitle>
 
@@ -26,8 +26,8 @@
             <td class="@DocsStyles.Td">Blazor</td>
             <td class="@DocsStyles.Td">
                 The <code class="@DocsStyles.InlineCode">CssStyles</code> component and the preflight stylesheet.
-                Use it for Blazor static SSR, Blazor Server (interactive server) and Blazor WebAssembly
-                (standalone).
+                Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web
+                Apps using the Interactive Server, Interactive WebAssembly or Auto render mode.
             </td>
         </tr>
         <tr class="@DocsStyles.Tr">
@@ -69,18 +69,37 @@
 
 <CodeBlock Code="@LayoutBlazor" Language="cshtml" />
 
-<Callout Kind="CalloutKind.Warning" Title="Placement matters">
-    Put <code class="@DocsStyles.InlineCode">CssStyles</code> near the end of the layout, after the page content.
-    Utilities are registered while the page renders, so if the component runs too early the stylesheet will be
-    incomplete on the first response.
-</Callout>
-
 <p class="@DocsStyles.P">
     Optionally include the Tailwind preflight reset to normalize browser defaults such as margins, borders and
     fonts:
 </p>
 
-<CodeBlock Code="@PreflightBlazor" Language="cshtml" />
+<h3 class="@DocsStyles.H3">Interactive rendering</h3>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">CssStyles</code> is more than a snapshot of the classes seen so far: it
+    subscribes to the class registry and re-renders its <code class="@DocsStyles.InlineCode">&lt;style&gt;</code>
+    block whenever a new class is registered. A component that renders later on the client - a dialog, a tab or
+    anything that only appears after a click - is therefore styled as soon as it renders, with no page reload.
+</p>
+
+<p class="@DocsStyles.P">
+    For that to work <code class="@DocsStyles.InlineCode">CssStyles</code> has to live <em>inside</em> the
+    interactive render boundary. In a Blazor Web App that means the layout, or anything else under
+    <code class="@DocsStyles.InlineCode">&lt;Routes&gt;</code>, rather than the statically rendered
+    <code class="@DocsStyles.InlineCode">App.razor</code> head:
+</p>
+
+<CodeBlock Code="@InteractiveBlazor" Language="cshtml" />
+
+<Callout Kind="CalloutKind.Info" Title="Registration follows the process">
+    Classes are registered in the process that renders the component. A prerender fills the server registry;
+    interactive WebAssembly fills one inside the browser; an interactive server circuit runs in the server process
+    and shares its registry with the prerender. Whichever runtime is active owns a
+    <code class="@DocsStyles.InlineCode">CssStyles</code> instance and re-emits the stylesheet when that runtime
+    registers new classes. The Interactive Server, Interactive WebAssembly and Auto render modes are all
+    supported.
+</Callout>
 
 <h2 class="@DocsStyles.H2">MVC and Razor Pages</h2>
 
@@ -116,18 +135,10 @@
 
 <CodeBlock Code="@LayoutMvcRazor" Language="cshtml" />
 
-<Callout Kind="CalloutKind.Info" Title="You do not manage the hash">
+<Callout Kind="CalloutKind.Info" Title="No need to add hash or timestamp">
     The tag helper resolves the current hash when the layout renders, but classes can still be registered after
     that point. The injected script re-reads <code class="@DocsStyles.InlineCode">/fluentcss/hash</code> on load and
     watches the document for later changes, swapping the stylesheet when it changes.
-</Callout>
-
-<h2 class="@DocsStyles.H2">Client-side interactivity (work in progress)</h2>
-
-<Callout Kind="CalloutKind.Warning" Title="Not supported yet">
-    A Blazor Web App using the Interactive WebAssembly or Auto render mode registers classes on the client, which
-    is not supported yet. Static SSR, standalone Blazor WebAssembly and Blazor Server (interactive server) are
-    supported today with <code class="@DocsStyles.InlineCode">FluentCss.Blazor</code>.
 </Callout>
 
 <h2 class="@DocsStyles.H2">Any other .NET project</h2>
@@ -147,11 +158,6 @@
 
 <CodeBlock Code="@NonBlazor" />
 
-<p class="@DocsStyles.P">
-    Next, read <a href="/how-it-works" data-enhance-nav="false" class="@DocsStyles.Link">How it works</a>
-    to understand what happens behind the scenes.
-</p>
-
 @code {
     private const string InstallBlazor =
         """
@@ -166,18 +172,33 @@
 
     private const string LayoutBlazor =
         """
-        <!-- MainLayout.razor -->
-        @inherits LayoutComponentBase
-
-        <header>...</header>
-        <main>@Body</main>
-
+        <!-- MainLayout.razor or App.razor -->
+        ...
+        <head>
+        ...
+        
+        <!-- Add Tailwind CSS preflight, optional but strongly recommended -->
+        <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
         <FluentCss.Blazor.CssStyles />
+        
+        ...
+        </head>
+        
+        <body>...</body>
+        
         """;
 
-    private const string PreflightBlazor =
+    private const string InteractiveBlazor =
         """
-        <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
+        <!-- App.razor: the render mode decides where interactivity runs -->
+        <Routes @rendermode="InteractiveWebAssembly" />
+
+        <!-- MainLayout.razor: CssStyles is part of the interactive tree -->
+        @inherits LayoutComponentBase
+        
+        <FluentCss.Blazor.CssStyles />
+        
+        <main>@Body</main>
         """;
 
     private const string InstallMvcRazor =

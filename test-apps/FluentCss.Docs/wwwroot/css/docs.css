@@ -79,6 +79,17 @@ code {
     color: #c02d76;
 }
 
+/* docs.js toggles the hidden attribute on the right-hand "On this page" nav, so it
+   must win over the responsive display utilities on the same element. */
+[hidden] {
+    display: none !important;
+}
+
+/* Headings get ids from docs.js; keep the anchor jumps clear of the sticky header. */
+[data-fc-toc-source] :is(h1, h2, h3, h4, h5, h6)[id] {
+    scroll-margin-top: 5rem;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;

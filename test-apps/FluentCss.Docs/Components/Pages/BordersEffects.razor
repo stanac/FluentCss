@@ -1,4 +1,4 @@
-@page "/borders-effects"
+@page "/docs/borders-effects"
 
 <PageTitle>Borders &amp; effects - FluentCss</PageTitle>
 
@@ -82,7 +82,7 @@
 <Example Code="@OpacityExample">
     <div class="@Css.Flex(FlexDirection.Row, gap: 3)">
         <div class="@Css.Opacity(100).P(4).RoundedMd().Background(Color.Blue500)"></div>
-        <div class="@Css.Opacity(75).P(4).RoundedMd().Background(Color.Blue500)"></div>
+        <div class="@Css.Opacity(75).P(4).RoundedMd().Background(Color.Blue500).CursorPointer()"></div>
         <div class="@Css.Opacity(50).P(4).RoundedMd().Background(Color.Blue500)"></div>
         <div class="@Css.Opacity(25).P(4).RoundedMd().Background(Color.Blue500)"></div>
     </div>
@@ -176,8 +176,9 @@
 
     private const string OpacityExample =
         """
-        <div class="@Css.Opacity(100).P(4).Background(Color.Blue500)"></div>
-        <div class="@Css.Opacity(50).P(4).Background(Color.Blue500)"></div>
-        <div class="@Css.Opacity(25).P(4).Background(Color.Blue500)"></div>
+        <div class="@Css.Opacity(100).P(4).RoundedMd().Background(Color.Blue500)"></div>
+        <div class="@Css.Opacity(75).P(4).RoundedMd().Background(Color.Blue500).CursorPointer()"></div>
+        <div class="@Css.Opacity(50).P(4).RoundedMd().Background(Color.Blue500)"></div>
+        <div class="@Css.Opacity(25).P(4).RoundedMd().Background(Color.Blue500)"></div>
         """;
 }

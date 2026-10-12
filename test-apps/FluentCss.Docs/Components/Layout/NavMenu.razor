@@ -2,8 +2,8 @@
 @implements IDisposable
 
 <nav>
-    <a href="/" data-enhance-nav="false" class="@DocsStyles.Brand">
-        <span class="@DocsStyles.BrandMark">F</span>
+    <a href="/" class="@DocsStyles.Brand">
+        <img src="_content/FluentCss.Docs/logo.svg" alt="" class="@DocsStyles.BrandMark" />
         <span>FluentCss</span>
     </a>
 
@@ -14,7 +14,7 @@
             @foreach (var item in group.Items)
             {
                 <li>
-                    <a href="@item.Href" data-enhance-nav="false" class="@GetLinkClass(item.Href)">@item.Title</a>
+                    <a href="@item.Href" class="@GetLinkClass(item.Href)">@item.Title</a>
                 </li>
             }
         </ul>

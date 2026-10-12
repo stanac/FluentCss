@@ -6,8 +6,7 @@
     <span class="@DocsStyles.Badge">Utility-first CSS for .NET</span>
 
     <h1 class="@Css.Text3Xl().FontBold().Color(Color.Slate900).Mt(4).Mb(4) @Dark.Color(Color.White)">
-        Build CSS from C#,<br />
-        one fluent call at a time.
+        Strongly-typed CSS utility classes using C# (supports Blazor, Razor Pages and MVC)
     </h1>
 
     <p class="@Css.TextLg().Color(Color.Slate600).Mb(8).MaxW(Size.Lg) @Dark.Color(Color.Slate400)">
@@ -16,8 +15,8 @@
     </p>
 
     <div class="@Css.Flex(FlexDirection.Row, gap: 4)">
-        <a href="/installation" data-enhance-nav="false" class="@DocsStyles.ButtonPrimary">Get started</a>
-        <a href="/utility-classes" data-enhance-nav="false" class="@DocsStyles.ButtonSecondary">Browse utilities</a>
+        <a href="/docs/installation" class="@DocsStyles.ButtonPrimary">Get started</a>
+        <a href="/docs/utility-classes" class="@DocsStyles.ButtonSecondary">Browse utilities</a>
     </div>
 </section>
 
@@ -37,19 +36,6 @@
             <h3 class="@DocsStyles.CardTitle">@feature.Title</h3>
             <p class="@DocsStyles.P">@feature.Body</p>
         </div>
-    }
-</div>
-
-<h2 class="@DocsStyles.H2">Explore the documentation</h2>
-
-<div class="@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md => md.GridCols(3))">
-    @foreach (var group in DocsNavigation.Sections)
-    {
-        <a href="@group.Items[0].Href" data-enhance-nav="false" class="@DocsStyles.PageLinkCard">
-            <p class="@DocsStyles.SourceTag">@group.Title</p>
-            <p class="@DocsStyles.CardTitle">@group.Items[0].Title</p>
-            <p class="@DocsStyles.Small">@group.Items.Count topics</p>
-        </a>
     }
 </div>
 

@@ -1,4 +1,4 @@
-@page "/dark-mode"
+@page "/docs/dark-mode"
 
 <PageTitle>Dark mode - FluentCss</PageTitle>
 
@@ -34,9 +34,11 @@
 <h2 class="@DocsStyles.H2">Toggling the theme</h2>
 
 <p class="@DocsStyles.P">
-    Toggling is plain DOM work: add or remove the theme class. This documentation site keeps the
-    choice in <code class="@DocsStyles.InlineCode">localStorage</code> and applies it before the page
-    paints.
+    Toggling is plain DOM work: add or remove the theme class. This documentation site persists the
+    choice in a cookie and reads it on the server, so the theme class is part of the rendered
+    <code class="@DocsStyles.InlineCode">&lt;html&gt;</code> element and the page never flashes the
+    light theme first. <code class="@DocsStyles.InlineCode">localStorage</code> is kept as a fallback
+    for first visits.
 </p>
 
 <CodeBlock Code="@ToggleScript" Language="javascript" />
@@ -65,10 +67,6 @@
 
 <CodeBlock Code="@CustomTheme" />
 
-<p class="@DocsStyles.P">
-    Continue to the <a href="/colors" data-enhance-nav="false" class="@DocsStyles.Link">color palette</a>.
-</p>
-
 @code {
     private const string DarkExample =
         """
@@ -92,15 +90,19 @@
 
     private const string ToggleScript =
         """
-        // Apply the saved choice before the page paints
-        var saved = localStorage.getItem('fluentcss-theme');
-        if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('theme-dark');
+        // Read the saved choice. The server reads the same cookie to render the
+        // theme class on <html>, so this only handles the first visit.
+        var theme = readCookie('fluentcss-theme') || localStorage.getItem('fluentcss-theme');
+        if (theme !== 'dark' && theme !== 'light') {
+            theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
+        document.documentElement.classList.toggle('theme-dark', theme === 'dark');
 
-        // Toggle it somewhere (for example a button)
+        // Toggle it somewhere (for example a button) and persist the choice.
         function fcToggleTheme() {
-            document.documentElement.classList.toggle('theme-dark');
+            var dark = document.documentElement.classList.toggle('theme-dark');
+            document.cookie = 'fluentcss-theme=' + (dark ? 'dark' : 'light') +
+                ';path=/;max-age=31536000;samesite=lax';
         }
         """;
 

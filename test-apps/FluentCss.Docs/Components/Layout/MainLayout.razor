@@ -12,7 +12,7 @@
                         onclick="document.getElementById('fc-sidebar').classList.toggle('hidden')">
                     Menu
                 </button>
-                <span class="@DocsStyles.Small">FluentCss documentation</span>
+                <span class="@DocsStyles.Small">FluentCss Documentation</span>
             </div>
             <div class="@DocsStyles.HeaderLeft">
                 <a href="https://github.com/stanac/FluentCss" target="_blank" rel="noreferrer" class="@DocsStyles.HeaderLink">
@@ -23,9 +23,21 @@
         </header>
 
         <main class="@DocsStyles.Content">
-            <article class="@DocsStyles.Article">
-                @Body
-            </article>
+            <div class="@DocsStyles.ContentRow">
+                <article class="@DocsStyles.Article" data-fc-toc-source>
+                    @Body
+                    <DocsPager />
+                </article>
+
+                @* The list is filled in by docs.js from the headings on the page. *@
+                <aside id="fc-toc" class="@DocsStyles.Toc" hidden>
+                    <p class="@DocsStyles.TocTitle">On this page</p>
+                    <nav data-fc-toc-nav
+                         class="@DocsStyles.TocNav"
+                         data-fc-link-class="@DocsStyles.TocLink"
+                         data-fc-active-class="@DocsStyles.TocLinkActive"></nav>
+                </aside>
+            </div>
         </main>
     </div>
 </div>
