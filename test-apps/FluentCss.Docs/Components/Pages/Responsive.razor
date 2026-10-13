@@ -8,9 +8,15 @@
 <h2 class="@DocsStyles.H2">Min and max helpers</h2>
 
 <p class="@DocsStyles.P">
-    FluentCss ships with one default breakpoint, <code class="@DocsStyles.InlineCode">md</code>, at
-    <code class="@DocsStyles.InlineCode">48rem</code>. Use <code class="@DocsStyles.InlineCode">MinMd</code>
-    for screens at or above it and <code class="@DocsStyles.InlineCode">MaxMd</code> for screens below it.
+    FluentCss ships with the common breakpoints in <code class="@DocsStyles.InlineCode">Breakpoints</code>
+    (<code class="@DocsStyles.InlineCode">XSmall</code> 20rem through
+    <code class="@DocsStyles.InlineCode">XXLarge</code> 96rem), exposed as
+    <code class="@DocsStyles.InlineCode">MinSm</code>, <code class="@DocsStyles.InlineCode">MinMd</code>,
+    <code class="@DocsStyles.InlineCode">MinLg</code> … and the matching
+    <code class="@DocsStyles.InlineCode">Max*</code> helpers. Min is inclusive
+    (<code class="@DocsStyles.InlineCode">&gt;=</code>) and max is exclusive
+    (<code class="@DocsStyles.InlineCode">&lt;</code>), so the exact breakpoint belongs to the min side and
+    the two never overlap.
 </p>
 
 <ApiTable Rows="@MediaHelpers" />
@@ -26,19 +32,56 @@
     </div>
 </Example>
 
-<h2 class="@DocsStyles.H2">Custom breakpoints</h2>
+<h2 class="@DocsStyles.H2">The Length type</h2>
 
 <p class="@DocsStyles.P">
-    The <code class="@DocsStyles.InlineCode">Media</code> method accepts any media query and a short
-    prefix used to build the class name. This is how you add the breakpoints your design needs.
+    For anything outside <code class="@DocsStyles.InlineCode">Breakpoints</code> use
+    <code class="@DocsStyles.InlineCode">Min(Length)</code> and
+    <code class="@DocsStyles.InlineCode">Max(Length)</code> with any
+    <code class="@DocsStyles.InlineCode">Length</code> value. A
+    <code class="@DocsStyles.InlineCode">Length</code> is just a CSS value plus an optional name; the
+    factories cover the common units and the constructor handles everything else.
 </p>
 
-<CodeBlock Code="@CustomBreakpoints" />
+<ApiTable Rows="@LengthFactories" />
+
+<CodeBlock Code="@LengthExample" />
+
+<p class="@DocsStyles.P">
+    To reuse a length, put it in a static class of your own — the same pattern as custom colors. The
+    <code class="@DocsStyles.InlineCode">Name</code> becomes the class fragment, so a named value gives
+    a readable class (<code class="@DocsStyles.InlineCode">min-tablet:</code>) instead of the raw value
+    (<code class="@DocsStyles.InlineCode">min-700px:</code>).
+</p>
+
+<CodeBlock Code="@NamedLengths" />
+
+<Callout Kind="CalloutKind.Warning" Title="The name is the identity">
+    FluentCss deduplicates generated CSS by class name. When you set a
+    <code class="@DocsStyles.InlineCode">Length</code> name it must be unique and stable: two lengths
+    with the same name are treated as the same class, and the first value registered wins. When the name
+    is omitted the value is used, which can never collide.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Raw media queries</h2>
+
+<p class="@DocsStyles.P">
+    The <code class="@DocsStyles.InlineCode">Media</code> method is the underlying primitive and accepts
+    any media query and prefix, for queries that are not width comparisons.
+</p>
+
+<CodeBlock Code="@RawMedia" />
 
 <Callout Kind="CalloutKind.Info" Title="Modern range syntax">
     The built-in helpers use the modern range syntax, for example
-    <code class="@DocsStyles.InlineCode">@@media (width &gt; 48rem)</code>. Make sure your target
+    <code class="@DocsStyles.InlineCode">@@media (width &gt;= 48rem)</code>. Make sure your target
     browsers support it, which all current versions of Chrome, Edge, Firefox and Safari do.
+</Callout>
+
+<Callout Kind="CalloutKind.Info" Title="Priority follows the breakpoint">
+    Media rules are emitted in a fixed order, not registration order: min-width helpers are sorted
+    ascending (a larger breakpoint wins over a smaller one) and max-width helpers descending (a smaller
+    range wins). Min rules come after max rules when both match.
 </Callout>
 
 <h2 class="@DocsStyles.H2">Combining with states</h2>
@@ -53,10 +96,54 @@
 @code {
     private static readonly (string Utility, string Css)[] MediaHelpers =
     [
-        ("MinMd(md => ...)", "@media (width > 48rem), class prefix min-md:"),
+        ("MinSm(sm => ...)", "@media (width >= 40rem), class prefix min-sm:"),
+        ("MinMd(md => ...)", "@media (width >= 48rem), class prefix min-md:"),
+        ("MinLg(lg => ...)", "@media (width >= 64rem), class prefix min-lg:"),
         ("MaxMd(md => ...)", "@media (width < 48rem), class prefix max-md:"),
+        ("Min(Length.Px(700), x => ...)", "@media (width >= 700px), class prefix min-700px:"),
         ("Media(query, prefix, x => ...)", "any query, custom prefix"),
     ];
+
+    private static readonly (string Utility, string Css)[] LengthFactories =
+    [
+        ("Length.Px(400)", "400px"),
+        ("Length.Rem(1.5)", "1.5rem"),
+        ("Length.Em(1.25)", "1.25em"),
+        ("Length.Percent(80)", "80%"),
+        ("Length.Vh(100)", "100vh"),
+        ("Length.Vw(100)", "100vw"),
+        ("new Length(value, name?)", "any CSS value, optional class name"),
+    ];
+
+    private const string LengthExample =
+        """
+        Length.Px(400);      // "400px"
+        Length.Rem(1.5);     // "1.5rem"
+        Length.Em(1.25);     // "1.25em"
+        Length.Percent(80);  // "80%"
+        Length.Vh(100);      // "100vh"
+        Length.Vw(100);      // "100vw"
+
+        new Length("90rem");         // value used as the class fragment
+        new Length("90rem", "wide"); // "wide" used as the class fragment
+        """;
+
+    private const string NamedLengths =
+        """
+        public static class MyLengths
+        {
+            public static readonly Length Tablet = new("700px", "tablet");
+            public static readonly Length Wide   = new("90rem", "wide");
+        }
+
+        Css
+            .Grid()
+            .GridCols(1)
+            .Min(MyLengths.Tablet, md => md.GridCols(3))
+            .Min(MyLengths.Wide, lg => lg.GridCols(4));
+
+        // classes: grid grid-cols-1 min-tablet:grid-cols-3 min-wide:grid-cols-4
+        """;
 
     private const string ResponsiveExample =
         """
@@ -69,15 +156,12 @@
         <!-- grid grid-cols-1 gap-4 min-md:grid-cols-3 -->
         """;
 
-    private const string CustomBreakpoints =
+    private const string RawMedia =
         """
-        FluentCssBuilder.Css
-            .Grid()
-            .GridCols(1)
-            .Media("width > 40rem", "sm", x => x.GridCols(2))
-            .Media("width > 64rem", "lg", x => x.GridCols(4));
+        Css.Media("(prefers-color-scheme: dark)", "scheme-dark",
+            x => x.Background(Color.Slate900).Color(Color.White));
 
-        // classes: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+        // class prefix scheme-dark:
         """;
 
     private const string ResponsiveStates =

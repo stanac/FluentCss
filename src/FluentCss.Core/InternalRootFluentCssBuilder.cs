@@ -22,10 +22,6 @@ internal class InternalRootFluentCssBuilder : InternalFluentCssBuilder, IRootFlu
         throw new NotImplementedException();
     }
 
-    public IRootFluentCssBuilder MinMd(Action<IFluentCssBuilder> cssBuilderAction) => Media("width > 48rem", "min-md", cssBuilderAction);
-
-    public IRootFluentCssBuilder MaxMd(Action<IFluentCssBuilder> cssBuilderAction) => Media("width < 48rem", "max-md", cssBuilderAction);
-
     public IRootFluentCssBuilder Media(string query, string classPrefix, Action<IRootFluentCssBuilder> cssBuilderAction)
     {
         InternalRootFluentCssBuilder builder = new InternalRootFluentCssBuilder(_registry, Theme, query, classPrefix);

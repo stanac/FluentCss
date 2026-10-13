@@ -21,6 +21,20 @@
     </div>
 </Example>
 
+<h3 class="@DocsStyles.H3">Custom font size with Length</h3>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Text</code> also accepts a <code class="@DocsStyles.InlineCode">Length</code>,
+    so you can use any value or unit, including fluid <code class="@DocsStyles.InlineCode">clamp()</code> expressions.
+</p>
+
+<CodeBlock Code="@FontSizeLength" />
+
+<Example Code="@FontSizeLengthExample">
+    <p class="@Css.Text(Length.Rem(2.5))">text-2.5rem</p>
+    <p class="@Css.Text(FluidText)">text-fluid</p>
+</Example>
+
 <h2 class="@DocsStyles.H2">Font weight and style</h2>
 
 <ApiTable Rows="@FontStyles" />
@@ -34,6 +48,44 @@
         <p class="@Css.NotItalic()">Not italic</p>
     </div>
 </Example>
+
+<h2 class="@DocsStyles.H2">Font family</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">FontSans()</code>,
+    <code class="@DocsStyles.InlineCode">FontSerif()</code> and
+    <code class="@DocsStyles.InlineCode">FontMono()</code> apply the built-in stacks.
+    <code class="@DocsStyles.InlineCode">Sans(...)</code>,
+    <code class="@DocsStyles.InlineCode">Serif(...)</code> and
+    <code class="@DocsStyles.InlineCode">Mono(...)</code> prepend one or more custom families
+    to the matching default, and <code class="@DocsStyles.InlineCode">Font(FontFamily)</code>
+    takes a fully custom stack.
+</p>
+
+<ApiTable Rows="@FontFamilies" />
+
+<CodeBlock Code="@FontFamilyExample" />
+
+<Example Code="@FontFamilyLiveExample">
+    <div class="@Css.Flex(FlexDirection.Col, gap: 2)">
+        <p class="@Css.Font(FontFamily.Sans)">font-sans &mdash; the default UI stack</p>
+        <p class="@Css.Font(FontFamily.Serif)">font-serif &mdash; the default serif stack</p>
+        <p class="@Css.Font(FontFamily.Mono)">font-mono &mdash; const answer = 42;</p>
+        <p class="@Css.Font(BrandFont)">font-brand &mdash; a custom stack</p>
+    </div>
+</Example>
+
+<Callout Kind="CalloutKind.Info" Title="Auto-derived class names">
+    A font stack cannot become a class name: the HTML
+    <code class="@DocsStyles.InlineCode">class</code> attribute is whitespace separated, so a stack
+    like <code class="@DocsStyles.InlineCode">Inter, ui-sans-serif, system-ui</code> is not a valid
+    token. When <code class="@DocsStyles.InlineCode">FontFamily.Name</code> is not set, a readable
+    token is derived from the families and suffixed with a short hash, for example
+    <code class="@DocsStyles.InlineCode">Sans("Inter")</code> &rarr;
+    <code class="@DocsStyles.InlineCode">font-sans-inter-&lt;hash&gt;</code>. Pass an explicit name
+    (<code class="@DocsStyles.InlineCode">new FontFamily(stack, "brand")</code>) when you want a
+    clean, predictable class.
+</Callout>
 
 <h2 class="@DocsStyles.H2">Alignment and decoration</h2>
 
@@ -81,6 +133,8 @@
         ("TextXl()", "font-size: 1.25rem"),
         ("Text2Xl()", "font-size: 1.5rem"),
         ("Text3Xl()", "font-size: 1.875rem"),
+        ("Text(Length.Rem(2.5))", "font-size: 2.5rem"),
+        ("Text(new Length(\"clamp(...)\", \"fluid\"))", "font-size: clamp(...)"),
     ];
 
     private static readonly (string Utility, string Css)[] FontStyles =
@@ -90,6 +144,17 @@
         ("FontBold()", "font-weight: 700"),
         ("Italic()", "font-style: italic"),
         ("NotItalic()", "font-style: normal"),
+    ];
+
+    private static readonly (string Utility, string Css)[] FontFamilies =
+    [
+        ("FontSans()", "font-family: ui-sans-serif, system-ui, … (font-sans)"),
+        ("FontSerif()", "font-family: ui-serif, Georgia, … (font-serif)"),
+        ("FontMono()", "font-family: ui-monospace, … (font-mono)"),
+        ("Font(FontFamily.Sans)", "font-family: <built-in stack>"),
+        ("Font(new FontFamily(\"Inter, sans-serif\", \"brand\"))", "font-family: Inter, sans-serif (font-brand)"),
+        ("Sans(\"Inter\", …)", "prepends families to the sans stack; hashed class"),
+        ("Serif(…) / Mono(…)", "prepends families to the serif / mono stack"),
     ];
 
     private static readonly (string Utility, string Css)[] TextUtilities =
@@ -115,11 +180,46 @@
         <p class="@Css.Text3Xl()">text-3xl</p>
         """;
 
+    // Reusable font-size token for the live example below.
+    private static readonly Length FluidText = new("clamp(1rem, 2vw, 2rem)", "fluid");
+
+    private const string FontSizeLength =
+        """
+        Css.Text(Length.Rem(2.5));                              // text-2.5rem
+        Css.Text(Length.Px(18));                                // text-18px
+        Css.Text(new Length("clamp(1rem,2vw,2rem)", "fluid")); // text-fluid
+        """;
+
+    private const string FontSizeLengthExample =
+        """
+        <p class="@Css.Text(Length.Rem(2.5))">text-2.5rem</p>
+        <p class="@Css.Text(FluidText)">text-fluid</p>
+        """;
+
     private const string WeightExample =
         """
         <p class="@Css.FontThin()">Thin weight</p>
         <p class="@Css.FontBold()">Bold weight</p>
         <p class="@Css.Italic()">Italic</p>
+        """;
+
+    // Reusable custom font stack for the live example below.
+    private static readonly FontFamily BrandFont = new("Georgia, serif", "brand");
+
+    private const string FontFamilyExample =
+        """
+        Css.FontSans();                                          // font-sans
+        Css.Font(FontFamily.Serif);                              // font-serif
+        Css.Font(new FontFamily("Inter, sans-serif", "brand"));  // font-brand
+        Css.Sans("Inter", "Helvetica Neue");                     // font-sans-inter-helvetica-neue-<hash>
+        """;
+
+    private const string FontFamilyLiveExample =
+        """
+        <p class="@Css.Font(FontFamily.Sans)">font-sans</p>
+        <p class="@Css.Font(FontFamily.Serif)">font-serif</p>
+        <p class="@Css.Font(FontFamily.Mono)">font-mono</p>
+        <p class="@Css.Font(BrandFont)">font-brand</p>
         """;
 
     private const string AlignmentExample =

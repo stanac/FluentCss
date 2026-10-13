@@ -3,7 +3,7 @@
 <PageTitle>Sizing - FluentCss</PageTitle>
 
 <DocHeader Title="Sizing"
-           Description="Set width and height with the spacing scale, percentage keywords or the predefined Size values." />
+           Description="Set width and height with the spacing scale, arbitrary Length values or the predefined Size keywords." />
 
 <h2 class="@DocsStyles.H2">Width and height</h2>
 
@@ -25,14 +25,33 @@
 <h2 class="@DocsStyles.H2">Minimum and maximum</h2>
 
 <p class="@DocsStyles.P">
-    Min and max helpers take a <code class="@DocsStyles.InlineCode">Size</code> value instead of a
-    number. The values cover the usual content and viewport keywords.
+    Min and max helpers take either a predefined <code class="@DocsStyles.InlineCode">Size</code>
+    value or any <code class="@DocsStyles.InlineCode">Length</code>. Use
+    <code class="@DocsStyles.InlineCode">Size</code> for the named keywords and
+    <code class="@DocsStyles.InlineCode">Length</code> for arbitrary values, other units and reusable
+    project tokens.
 </p>
 
 <ApiTable Rows="@MinMaxUtilities" />
 
 <h3 class="@DocsStyles.H3">Available sizes</h3>
 <ApiTable Rows="@SizeValues" />
+
+<h3 class="@DocsStyles.H3">Arbitrary sizes with Length</h3>
+
+<p class="@DocsStyles.P">
+    A <code class="@DocsStyles.InlineCode">Length</code> works everywhere a
+    <code class="@DocsStyles.InlineCode">Size</code> does, and covers units the named set does not
+    include.
+</p>
+
+<CodeBlock Code="@LengthSizing" />
+
+<Example Code="@LengthSizingExample">
+    <div class="@(Css.MinH(HeroHeight).MaxW(ReadingWidth).P(6).RoundedLg().Background(Color.Emerald500).Color(Color.White))">
+        min-height: 12rem, max-width: 65ch
+    </div>
+</Example>
 
 <Example Code="@MaxWExample">
     <div class="@Css.MaxW(Size.Md).P(6).RoundedLg().Background(Color.Emerald500).Color(Color.White)">
@@ -58,6 +77,8 @@
         ("MinW(Size.Sm)", "min-width: 40rem"),
         ("MaxH(Size.Lg)", "max-height: 64rem"),
         ("MinH(Size.ScreenH)", "min-height: 100vh"),
+        ("MaxW(Length.Px(720))", "max-width: 720px"),
+        ("MinH(Length.Vh(100))", "min-height: 100vh"),
     ];
 
     private static readonly (string Utility, string Css)[] SizeValues =
@@ -86,6 +107,30 @@
         """
         <div class="@Css.MaxW(Size.Md).P(6)">
             max-width: 48rem
+        </div>
+        """;
+
+    // Reusable Length tokens for the live example below.
+    private static readonly Length HeroHeight = new("12rem", "hero");
+    private static readonly Length ReadingWidth = new("65ch", "reading");
+
+    private const string LengthSizing =
+        """
+        // Any Length works with MaxW / MinW / MaxH / MinH:
+        Css.MaxW(Length.Px(720));                    // max-w-720px
+        Css.MinW(Length.Percent(50));                // min-w-50%
+        Css.MinH(Length.Vh(100));                    // min-h-100vh
+        Css.MaxH(new Length("min-content", "min")); // max-h-min
+
+        // Or a reusable token:
+        public static readonly Length Reading = new("65ch", "reading");
+        Css.MaxW(Reading);                           // max-w-reading
+        """;
+
+    private const string LengthSizingExample =
+        """
+        <div class="@(Css.MinH(HeroHeight).MaxW(ReadingWidth).P(6))">
+            min-height: 12rem, max-width: 65ch
         </div>
         """;
 }

@@ -16,6 +16,31 @@
 
 <ApiTable Rows="@ScaleTable" />
 
+<h2 class="@DocsStyles.H2">Custom spacing</h2>
+
+<p class="@DocsStyles.P">
+    The integer scale covers the common steps. For anything else — a half step, another unit, or a
+    project token — use the <code class="@DocsStyles.InlineCode">Length</code> overloads. A named
+    <code class="@DocsStyles.InlineCode">Length</code> gives a readable class and can be reused
+    anywhere a spacing helper is accepted (padding, margin, sizing, gap, line-height).
+</p>
+
+<CodeBlock Code="@CustomSpacing" />
+
+<Example Code="@CustomSpacingExample">
+    <div class="@Css.P(CardPadding).RoundedMd().Background(Color.Violet100)">
+        <div class="@Css.P(Length.Em(0.75)).Background(Color.Violet500).Color(Color.White).RoundedSm().TextXs()">
+            Length.Em(0.75)
+        </div>
+    </div>
+</Example>
+
+<Callout Kind="CalloutKind.Warning" Title="The name is the identity">
+    FluentCss deduplicates generated CSS by class name. A custom
+    <code class="@DocsStyles.InlineCode">Length</code> name must be unique and stable; when the name is
+    omitted the value is used, which can never collide with another value.
+</Callout>
+
 <h2 class="@DocsStyles.H2">Padding</h2>
 
 <ApiTable Rows="@PaddingUtilities" />
@@ -57,6 +82,34 @@
 </Example>
 
 @code {
+    // A custom spacing token reused by the live example below. In a real app this
+    // would live in its own file (see CustomSpacing for the shape).
+    private static readonly Length CardPadding = new("1.25rem", "card");
+
+    private const string CustomSpacing =
+        """
+        public static class MySpacing
+        {
+            public static readonly Length Card   = new("1.25rem", "card");   // p-card
+            public static readonly Length Gutter = new("2rem", "gutter");    // gap-gutter
+        }
+
+        Css.P(MySpacing.Card);
+        Css.Gap(MySpacing.Gutter);
+
+        // Or pass any Length directly:
+        Css.P(Length.Px(13));       // p-13px
+        Css.M(Length.Percent(5));   // m-5%
+        Css.W(Length.Vw(100));      // w-100vw
+        """;
+
+    private const string CustomSpacingExample =
+        """
+        <div class="@Css.P(CardPadding)">
+            <div class="@Css.P(Length.Em(0.75))">Length.Em(0.75)</div>
+        </div>
+        """;
+
     private static readonly (string Utility, string Css)[] ScaleTable =
     [
         ("P(0) / M(0)", "0px"),

@@ -95,7 +95,9 @@ public class UtilityClassTests
         var css = sut.CssString;
 
         // Assert
-        css.Should().Be(".w-1/2 { width: 50% } ");
+        // A slash is not valid in an unescaped class selector, so it is escaped
+        // even though the class attribute keeps the readable form.
+        css.Should().Be(".w-1\\/2 { width: 50% } ");
     }
 
     [Fact]

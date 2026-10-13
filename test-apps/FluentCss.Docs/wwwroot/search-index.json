@@ -11,7 +11,7 @@
           "heading": "Strongly-typed CSS utility classes using C# (supports Blazor, Razor Pages and MVC)",
           "level": 1,
           "text": "FluentCss lets you compose Tailwind-inspired utility classes with a type-safe, chainable API. You write C#, the library generates the class names and the CSS. Get started Browse utilities Generated entirely from C#",
-          "code": "\u003Cdiv class=\u0022@Css.P(6).RoundedLg() .Background(Color.Emerald500) .Color(Color.White).FontBold() .Hover(h =\u003E h.Background(Color.Emerald600))\u0022\u003E Generated entirely from C# \u003C/div\u003E"
+          "code": "\u003Cdiv class=\u0022@Css.P(6) .RoundedLg() .Background(Color.Emerald500) .Color(Color.White) .FontBold() .Hover(h =\u003E h.Background(Color.Emerald600))\u0022\u003E Generated entirely from C# \u003C/div\u003E"
         },
         {
           "id": "why-fluentcss",
@@ -25,13 +25,6 @@
           "heading": "Type-safe",
           "level": 3,
           "text": "Every utility is a method. Rename, refactor and navigate styles with the same tooling you already use for C#.",
-          "code": ""
-        },
-        {
-          "id": "tailwind-palette",
-          "heading": "Tailwind palette",
-          "level": 3,
-          "text": "22 color families with 11 shades each (50 to 950), plus black and white, ready to use.",
           "code": ""
         },
         {
@@ -56,10 +49,17 @@
           "code": ""
         },
         {
-          "id": "blazor-ready",
-          "heading": "Blazor ready",
+          "id": "supports-blazor",
+          "heading": "Supports Blazor",
           "level": 3,
-          "text": "Drop the CssStyles component into your layout and the stylesheet updates as you build.",
+          "text": "All hosting models.",
+          "code": ""
+        },
+        {
+          "id": "supports-mvc-and-razor-pages",
+          "heading": "Supports MVC and Razor Pages",
+          "level": 3,
+          "text": "Some of us still love MVC.",
           "code": ""
         }
       ]
@@ -275,6 +275,62 @@
       ]
     },
     {
+      "route": "/docs/extensibility",
+      "title": "Extensibility",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "extensibility",
+          "heading": "Extensibility",
+          "level": 1,
+          "text": "FluentCss is a small set of primitives. Because utilities are ordinary C# methods and values are typed, you can grow the API with your own tokens and helper methods.",
+          "code": ""
+        },
+        {
+          "id": "primitives-not-a-fixed-api",
+          "heading": "Primitives, not a fixed API",
+          "level": 2,
+          "text": "The library gives you typed values ( , , , ) and builder methods that accept them. Anything project-specific \u2014 a spacing scale, a brand palette, a card helper \u2014 belongs in your application, not in the library.",
+          "code": "Color Length Size FontFamily"
+        },
+        {
+          "id": "define-your-own-tokens",
+          "heading": "Define your own tokens",
+          "level": 2,
+          "text": "A token is just a named value. Group related values in a static class; the name becomes the class fragment and the value is emitted as-is.",
+          "code": "Length public static class Spacing { public static readonly Length Xs = new(\u00220.25rem\u0022, \u00221\u0022); // p-1 public static readonly Length Sm = new(\u00220.5rem\u0022, \u00222\u0022); // p-2 public static readonly Length Md = new(\u00221rem\u0022, \u00224\u0022); // p-4 public static readonly Length Lg = new(\u00221.5rem\u0022, \u00226\u0022); // p-6 public static readonly Length Xl = new(\u00222rem\u0022, \u00228\u0022); // p-8 } // The name is the class token, so these reuse the numeric class names // that P(1)..P(8) already produce and deduplicate with them. Css.P(Spacing.Md).Gap(Spacing.Md); // classes: p-4 gap-4"
+        },
+        {
+          "id": "add-helper-methods",
+          "heading": "Add helper methods",
+          "level": 2,
+          "text": "Turn repeated chains into extension methods. A helper is a normal static method whose first parameter is the builder; return the same interface so calls keep chaining. Which interface should I extend? \u2014 implemented by every builder. Best for helpers that only set values, and the only choice that also works inside , and . \u2014 the normal builder returned by , and . Use it when the helper chains several utilities. \u2014 the root only. Required for , and . \u2014 the parameter passed to the / / callbacks.",
+          "code": "public static class StyleExtensions { // IStyleBuilder\u003CT\u003E is implemented by every builder, so this works on // Css, Dark, Theme(\u0022...\u0022) and inside Hover/Focus/Active. public static T Padded\u003CT\u003E(this IStyleBuilder\u003CT\u003E builder, Length length) =\u003E builder.P(length); // A concrete interface can chain and return the same type. public static IFluentCssBuilder SpacingMd(this IFluentCssBuilder builder) =\u003E builder.P(Spacing.Md).Gap(Spacing.Md); } // usage Css.Padded(Spacing.Lg); Css.SpacingMd(); IStyleBuilder\u003CT\u003E Hover Focus Active IFluentCssBuilder Css Dark Theme(...) IRootFluentCssBuilder Min Max Media IOnlyStyleBuilder Hover Focus Active"
+        },
+        {
+          "id": "composite-helpers",
+          "heading": "Composite helpers",
+          "level": 2,
+          "text": "The same pattern works for component-level styles: one method that expands to a full set of utilities. The call site stays readable and the definition lives in one place. Card Composed from Length tokens.",
+          "code": "public static class ComponentExtensions { public static IFluentCssBuilder Card(this IFluentCssBuilder builder) =\u003E builder .P(Spacing.Lg) .Gap(Spacing.Md) .Flex(FlexDirection.Col) .RoundedLg() .Border() .BorderColor(Color.Slate200) .Background(Color.White); } // usage \u003Cdiv class=\u0022@Css.Card()\u0022\u003E ... \u003C/div\u003E \u003Cdiv class=\u0022@Css.Card()\u0022\u003E \u003Cp class=\u0022@Css.FontBold()\u0022\u003ECard\u003C/p\u003E \u003Cp class=\u0022@Css.TextSm()\u0022\u003EComposed from Length tokens.\u003C/p\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "arbitrary-declarations",
+          "heading": "Arbitrary declarations",
+          "level": 2,
+          "text": "When no typed helper covers a CSS property, use the escape hatch. It emits one utility with a class name, a property and a value. The class name is the identity used for deduplication, so keep it unique and stable. Prefer typed helpers is stringly-typed. Prefer , , , and the built-in methods when they exist; reach for only for the gaps.",
+          "code": "Arbitrary // Arbitrary(\u0022class-name\u0022, \u0022css-property\u0022, \u0022css-value\u0022) Css.Arbitrary(\u0022font-350\u0022, \u0022font-weight\u0022, \u0022350\u0022); Css.Arbitrary(\u0022aspect-golden\u0022, \u0022aspect-ratio\u0022, \u00221.618 / 1\u0022); Css.Arbitrary(\u0022grid-dashboard\u0022, \u0022grid-template-columns\u0022, \u0022240px 1fr\u0022); // It composes with states and media like any other utility: Css.Hover(h =\u003E h.Arbitrary(\u0022font-350\u0022, \u0022font-weight\u0022, \u0022350\u0022)); Css.MinMd(md =\u003E md.Arbitrary(\u0022text-huge\u0022, \u0022font-size\u0022, \u00224rem\u0022)); Arbitrary Color Length Size FontFamily Arbitrary"
+        },
+        {
+          "id": "responsive-and-state-helpers",
+          "heading": "Responsive and state helpers",
+          "level": 2,
+          "text": "Root and callback helpers follow the same idea, targeting the interface that has the methods you need.",
+          "code": "public static class ResponsiveExtensions { // IRootFluentCssBuilder is required for media and theme helpers. public static IRootFluentCssBuilder StackOnMd(this IRootFluentCssBuilder builder) =\u003E builder.MinMd(md =\u003E md.Flex(FlexDirection.Row)); // IOnlyStyleBuilder is what Hover/Focus/Active pass to the callback. public static IOnlyStyleBuilder CardHover(this IOnlyStyleBuilder builder) =\u003E builder.ShadowLg().Background(Color.Blue50); } // usage Css.Card().StackOnMd(); Css.Hover(h =\u003E h.CardHover());"
+        }
+      ]
+    },
+    {
       "route": "/docs/states",
       "title": "Hover \u0026 focus",
       "section": "Core concepts",
@@ -325,15 +381,22 @@
           "id": "min-and-max-helpers",
           "heading": "Min and max helpers",
           "level": 2,
-          "text": "FluentCss ships with one default breakpoint, , at . Use for screens at or above it and for screens below it. Utility Generated CSS One Two Three",
-          "code": "md 48rem MinMd MaxMd MinMd(md =\u003E ...) @media (width \u003E 48rem), class prefix min-md: MaxMd(md =\u003E ...) @media (width \u003C 48rem), class prefix max-md: Media(query, prefix, x =\u003E ...) any query, custom prefix \u003Cdiv class=\u0022@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md =\u003E md.GridCols(3))\u0022\u003E ... \u003C/div\u003E \u003C!-- generated classes --\u003E \u003C!-- grid grid-cols-1 gap-4 min-md:grid-cols-3 --\u003E"
+          "text": "FluentCss ships with the common breakpoints in ( 20rem through 96rem), exposed as , , \u2026 and the matching helpers. Min is inclusive ( ) and max is exclusive ( ), so the exact breakpoint belongs to the min side and the two never overlap. Utility Generated CSS One Two Three",
+          "code": "Breakpoints XSmall XXLarge MinSm MinMd MinLg Max* \u003E= \u003C MinSm(sm =\u003E ...) @media (width \u003E= 40rem), class prefix min-sm: MinMd(md =\u003E ...) @media (width \u003E= 48rem), class prefix min-md: MinLg(lg =\u003E ...) @media (width \u003E= 64rem), class prefix min-lg: MaxMd(md =\u003E ...) @media (width \u003C 48rem), class prefix max-md: Min(Length.Px(700), x =\u003E ...) @media (width \u003E= 700px), class prefix min-700px: Media(query, prefix, x =\u003E ...) any query, custom prefix \u003Cdiv class=\u0022@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md =\u003E md.GridCols(3))\u0022\u003E ... \u003C/div\u003E \u003C!-- generated classes --\u003E \u003C!-- grid grid-cols-1 gap-4 min-md:grid-cols-3 --\u003E"
         },
         {
-          "id": "custom-breakpoints",
-          "heading": "Custom breakpoints",
+          "id": "the-length-type",
+          "heading": "The Length type",
           "level": 2,
-          "text": "The method accepts any media query and a short prefix used to build the class name. This is how you add the breakpoints your design needs. Modern range syntax The built-in helpers use the modern range syntax, for example . Make sure your target browsers support it, which all current versions of Chrome, Edge, Firefox and Safari do.",
-          "code": "Media FluentCssBuilder.Css .Grid() .GridCols(1) .Media(\u0022width \u003E 40rem\u0022, \u0022sm\u0022, x =\u003E x.GridCols(2)) .Media(\u0022width \u003E 64rem\u0022, \u0022lg\u0022, x =\u003E x.GridCols(4)); // classes: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 @media (width \u003E 48rem)"
+          "text": "For anything outside use and with any value. A is just a CSS value plus an optional name; the factories cover the common units and the constructor handles everything else. Utility Generated CSS To reuse a length, put it in a static class of your own \u2014 the same pattern as custom colors. The becomes the class fragment, so a named value gives a readable class ( ) instead of the raw value ( ). The name is the identity FluentCss deduplicates generated CSS by class name. When you set a name it must be unique and stable: two lengths with the same name are treated as the same class, and the first value registered wins. When the name is omitted the value is used, which can never collide.",
+          "code": "Breakpoints Min(Length) Max(Length) Length Length Length.Px(400) 400px Length.Rem(1.5) 1.5rem Length.Em(1.25) 1.25em Length.Percent(80) 80% Length.Vh(100) 100vh Length.Vw(100) 100vw new Length(value, name?) any CSS value, optional class name Length.Px(400); // \u0022400px\u0022 Length.Rem(1.5); // \u00221.5rem\u0022 Length.Em(1.25); // \u00221.25em\u0022 Length.Percent(80); // \u002280%\u0022 Length.Vh(100); // \u0022100vh\u0022 Length.Vw(100); // \u0022100vw\u0022 new Length(\u002290rem\u0022); // value used as the class fragment new Length(\u002290rem\u0022, \u0022wide\u0022); // \u0022wide\u0022 used as the class fragment Name min-tablet: min-700px: public static class MyLengths { public static readonly Length Tablet = new(\u0022700px\u0022, \u0022tablet\u0022); public static readonly Length Wide = new(\u002290rem\u0022, \u0022wide\u0022); } Css .Grid() .GridCols(1) .Min(MyLengths.Tablet, md =\u003E md.GridCols(3)) .Min(MyLengths.Wide, lg =\u003E lg.GridCols(4)); // classes: grid grid-cols-1 min-tablet:grid-cols-3 min-wide:grid-cols-4 Length"
+        },
+        {
+          "id": "raw-media-queries",
+          "heading": "Raw media queries",
+          "level": 2,
+          "text": "The method is the underlying primitive and accepts any media query and prefix, for queries that are not width comparisons. Modern range syntax The built-in helpers use the modern range syntax, for example . Make sure your target browsers support it, which all current versions of Chrome, Edge, Firefox and Safari do. Priority follows the breakpoint Media rules are emitted in a fixed order, not registration order: min-width helpers are sorted ascending (a larger breakpoint wins over a smaller one) and max-width helpers descending (a smaller range wins). Min rules come after max rules when both match.",
+          "code": "Media Css.Media(\u0022(prefers-color-scheme: dark)\u0022, \u0022scheme-dark\u0022, x =\u003E x.Background(Color.Slate900).Color(Color.White)); // class prefix scheme-dark: @media (width \u003E= 48rem)"
         },
         {
           "id": "combining-with-states",
@@ -387,6 +450,55 @@
       ]
     },
     {
+      "route": "/docs/custom-themes",
+      "title": "Custom themes",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "custom-themes",
+          "heading": "Custom themes",
+          "level": 1,
+          "text": "Any name passed to Theme() becomes a theme. Build a themed look once and switch it on by adding a single ancestor class.",
+          "code": ""
+        },
+        {
+          "id": "a-theme-is-an-ancestor-class",
+          "heading": "A theme is an ancestor class",
+          "level": 2,
+          "text": "FluentCss does not ship a fixed list of themes. is just the built-in shortcut for . Passing any other name produces a new theme: every utility you build from that root is prefixed with the theme name and scoped by an ancestor carrying the same name.",
+          "code": "Dark Theme(\u0022dark\u0022)"
+        },
+        {
+          "id": "inline-usage-in-razor",
+          "heading": "Inline usage in Razor",
+          "level": 2,
+          "text": "Custom themes compose with the same inline shorthands you already use: , and . Stack the variants in one attribute and the active ancestor decides which one wins. Inline themed card Click Ocean or Sunset below to re-skin this card.",
+          "code": "@Css @Dark @Theme(\u0022name\u0022) class \u003Cdiv class=\u0022@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200) .Background(Color.White).Color(Color.Slate900) @Dark.Background(Color.Slate800).BorderColor(Color.Slate700).Color(Color.White) @Theme(\u0022ocean\u0022).Background(Color.Sky50).BorderColor(Color.Sky300).Color(Color.Sky900) @Theme(\u0022sunset\u0022).Background(Color.Orange50).BorderColor(Color.Orange300).Color(Color.Orange900)\u0022\u003E \u003Cp class=\u0022@Css.FontBold().Mb(1)\u0022\u003EInline themed card\u003C/p\u003E \u003Cp class=\u0022@Css.TextSm().Color(Color.Slate600) @Dark.Color(Color.Slate300) @Theme(\u0022ocean\u0022).Color(Color.Sky800) @Theme(\u0022sunset\u0022).Color(Color.Orange800)\u0022\u003E Click Ocean or Sunset above to re-skin this card. \u003C/p\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "try-it-on-this-whole-page",
+          "heading": "Try it on this whole page",
+          "level": 2,
+          "text": "The buttons below add or to the element, so the entire page re-skins. Nothing is written to the cookie: as soon as you navigate away the class is removed and the persisted light/dark choice is restored, so these themes never follow you to other pages. Ocean Sunset Default Acme Dashboard Live preview Revenue $48.2k Active users 3,214 Churn 1.8% Ocean Sunset Reset",
+          "code": "theme-ocean theme-sunset \u003Chtml\u003E"
+        },
+        {
+          "id": "applying-a-theme",
+          "heading": "Applying a theme",
+          "level": 2,
+          "text": "Theming is plain DOM work. Add the ancestor class to opt in, remove it to opt out. There is no registry call and no re-render: the CSS for the themed utilities already exists and only activates while the ancestor class is present. Why this never leaks to other pages The docs only persist and in the cookie. Custom themes are applied at runtime and are removed by the navigation cleanup in , so another page can never inherit them. If you want a custom theme to survive a reload, store its name in your own cookie and read it the same way the dark theme is read.",
+          "code": "// Opt in: an ancestor carries the theme class. document.documentElement.classList.add(\u0027theme-ocean\u0027); // Opt out again. document.documentElement.classList.remove(\u0027theme-ocean\u0027); // Never persisted, so a navigation restores the normal theme. // (Only \u0027dark\u0027 / \u0027light\u0027 are stored in the FluentCss cookie.) dark light docs.js"
+        },
+        {
+          "id": "combining-with-hover-and-responsive-variants",
+          "heading": "Combining with hover and responsive variants",
+          "level": 2,
+          "text": "Prefixes compose in a fixed order \u2014 media, then theme, then pseudo \u2014 so a themed and responsive utility reads naturally.",
+          "code": "Theme(\u0022ocean\u0022) .MinMd(md =\u003E md .Background(Color.Sky100) .Hover(h =\u003E h.Background(Color.Sky200))); // classes: min-md:theme-ocean:bg-sky-100 // min-md:theme-ocean:hover:bg-sky-200"
+        }
+      ]
+    },
+    {
       "route": "/docs/colors",
       "title": "Colors",
       "section": "Core concepts",
@@ -411,6 +523,20 @@
           "level": 2,
           "text": "Each exposes the raw value as well, which is useful when you need the value in your own code.",
           "code": "Color Color emerald = Color.Emerald500; string name = emerald.Name; // \u0022emerald-500\u0022 string value = emerald.Value; // \u0022oklch(0.696 0.17 162.48)\u0022"
+        },
+        {
+          "id": "custom-colors",
+          "heading": "Custom colors",
+          "level": 2,
+          "text": "The Tailwind palette is only a starting point. has a public constructor, so you can create any color you need: the first argument is the name used to build the class, the second is any valid CSS color value (hex, , , even ). Brand 500 Brand 100 Outlined",
+          "code": "Color rgb() oklch() var(--brand) // Color(name, value): the name becomes the class, the value is any CSS color. Color brand = new(\u0022brand-500\u0022, \u0022#6366f1\u0022); Css.Background(brand); // -\u003E class: bg-brand-500 Css.Color(brand); // -\u003E class: text-brand-500 Css.BorderColor(brand); // -\u003E class: border-brand-500 \u003Cdiv class=\u0022@Css.P(4).RoundedMd() .Background(MyColors.Brand500) .Color(Color.White).FontBold()\u0022\u003E Brand 500 \u003C/div\u003E"
+        },
+        {
+          "id": "your-own-colors-class",
+          "heading": "Your own colors class",
+          "level": 2,
+          "text": "Group related colors in your own static class, exactly like does. The values are ordinary instances, so they work everywhere a built-in color is accepted, including , responsive and theme variants. The name is the identity FluentCss deduplicates generated CSS by class name. A custom color\u0027s becomes the class ( ), so it must be unique and stable. Two colors with the same name are treated as the same class, and the first value registered wins.",
+          "code": "FluentCss.Core.Color Color Hover public static class MyColors { public static readonly Color Brand50 = new(\u0022brand-50\u0022, \u0022#eef2ff\u0022); public static readonly Color Brand100 = new(\u0022brand-100\u0022, \u0022#e0e7ff\u0022); public static readonly Color Brand300 = new(\u0022brand-300\u0022, \u0022#a5b4fc\u0022); public static readonly Color Brand500 = new(\u0022brand-500\u0022, \u0022#6366f1\u0022); public static readonly Color Brand700 = new(\u0022brand-700\u0022, \u0022#4338ca\u0022); public static readonly Color Brand900 = new(\u0022brand-900\u0022, \u0022#312e81\u0022); } // Then use them like any built-in color, including variants: Css.Background(MyColors.Brand500).Color(MyColors.Brand50); Css.Hover(h =\u003E h.Background(MyColors.Brand700)); Dark.Color(MyColors.Brand100); Name bg-brand-500"
         },
         {
           "id": "the-palette",
@@ -553,6 +679,13 @@
           "code": "0.25rem P(4) 1rem 0 0px P(0) / M(0) 0px P(1) / M(1) 0.25rem P(2) / M(2) 0.5rem P(4) / M(4) 1rem P(6) / M(6) 1.5rem P(8) / M(8) 2rem"
         },
         {
+          "id": "custom-spacing",
+          "heading": "Custom spacing",
+          "level": 2,
+          "text": "The integer scale covers the common steps. For anything else \u2014 a half step, another unit, or a project token \u2014 use the overloads. A named gives a readable class and can be reused anywhere a spacing helper is accepted (padding, margin, sizing, gap, line-height). Length.Em(0.75) The name is the identity FluentCss deduplicates generated CSS by class name. A custom name must be unique and stable; when the name is omitted the value is used, which can never collide with another value.",
+          "code": "Length Length public static class MySpacing { public static readonly Length Card = new(\u00221.25rem\u0022, \u0022card\u0022); // p-card public static readonly Length Gutter = new(\u00222rem\u0022, \u0022gutter\u0022); // gap-gutter } Css.P(MySpacing.Card); Css.Gap(MySpacing.Gutter); // Or pass any Length directly: Css.P(Length.Px(13)); // p-13px Css.M(Length.Percent(5)); // m-5% Css.W(Length.Vw(100)); // w-100vw \u003Cdiv class=\u0022@Css.P(CardPadding)\u0022\u003E \u003Cdiv class=\u0022@Css.P(Length.Em(0.75))\u0022\u003ELength.Em(0.75)\u003C/div\u003E \u003C/div\u003E Length"
+        },
+        {
           "id": "padding",
           "heading": "Padding",
           "level": 2,
@@ -584,7 +717,7 @@
           "id": "sizing",
           "heading": "Sizing",
           "level": 1,
-          "text": "Set width and height with the spacing scale, percentage keywords or the predefined Size values.",
+          "text": "Set width and height with the spacing scale, arbitrary Length values or the predefined Size keywords.",
           "code": ""
         },
         {
@@ -598,15 +731,22 @@
           "id": "minimum-and-maximum",
           "heading": "Minimum and maximum",
           "level": 2,
-          "text": "Min and max helpers take a value instead of a number. The values cover the usual content and viewport keywords. Utility Generated CSS",
-          "code": "Size MaxW(Size.Md) max-width: 48rem MinW(Size.Sm) min-width: 40rem MaxH(Size.Lg) max-height: 64rem MinH(Size.ScreenH) min-height: 100vh"
+          "text": "Min and max helpers take either a predefined value or any . Use for the named keywords and for arbitrary values, other units and reusable project tokens. Utility Generated CSS",
+          "code": "Size Length Size Length MaxW(Size.Md) max-width: 48rem MinW(Size.Sm) min-width: 40rem MaxH(Size.Lg) max-height: 64rem MinH(Size.ScreenH) min-height: 100vh MaxW(Length.Px(720)) max-width: 720px MinH(Length.Vh(100)) min-height: 100vh"
         },
         {
           "id": "available-sizes",
           "heading": "Available sizes",
           "level": 3,
-          "text": "Utility Generated CSS max-width: 48rem",
-          "code": "Size.Sm 40rem Size.Md 48rem Size.Lg 64rem Size.Xl 80rem Size.Full 100% Size.ScreenW 100vw Size.ScreenH 100vh Size.Zero 0px Size.Min min-content Size.Max max-content Size.Fit fit-content \u003Cdiv class=\u0022@Css.MaxW(Size.Md).P(6)\u0022\u003E max-width: 48rem \u003C/div\u003E"
+          "text": "Utility Generated CSS",
+          "code": "Size.Sm 40rem Size.Md 48rem Size.Lg 64rem Size.Xl 80rem Size.Full 100% Size.ScreenW 100vw Size.ScreenH 100vh Size.Zero 0px Size.Min min-content Size.Max max-content Size.Fit fit-content"
+        },
+        {
+          "id": "arbitrary-sizes-with-length",
+          "heading": "Arbitrary sizes with Length",
+          "level": 3,
+          "text": "A works everywhere a does, and covers units the named set does not include. min-height: 12rem, max-width: 65ch max-width: 48rem",
+          "code": "Length Size // Any Length works with MaxW / MinW / MaxH / MinH: Css.MaxW(Length.Px(720)); // max-w-720px Css.MinW(Length.Percent(50)); // min-w-50% Css.MinH(Length.Vh(100)); // min-h-100vh Css.MaxH(new Length(\u0022min-content\u0022, \u0022min\u0022)); // max-h-min // Or a reusable token: public static readonly Length Reading = new(\u002265ch\u0022, \u0022reading\u0022); Css.MaxW(Reading); // max-w-reading \u003Cdiv class=\u0022@(Css.MinH(HeroHeight).MaxW(ReadingWidth).P(6))\u0022\u003E min-height: 12rem, max-width: 65ch \u003C/div\u003E \u003Cdiv class=\u0022@Css.MaxW(Size.Md).P(6)\u0022\u003E max-width: 48rem \u003C/div\u003E"
         }
       ]
     },
@@ -627,7 +767,14 @@
           "heading": "Font size",
           "level": 2,
           "text": "Utility Generated CSS text-xs (0.75rem) text-sm (0.875rem) text-base (1rem) text-lg (1.125rem) text-xl (1.25rem) text-2xl (1.5rem) text-3xl (1.875rem)",
-          "code": "TextXs() font-size: 0.75rem TextSm() font-size: 0.875rem TextBase() font-size: 1rem TextLg() font-size: 1.125rem TextXl() font-size: 1.25rem Text2Xl() font-size: 1.5rem Text3Xl() font-size: 1.875rem \u003Cp class=\u0022@Css.TextXs()\u0022\u003Etext-xs\u003C/p\u003E \u003Cp class=\u0022@Css.Text3Xl()\u0022\u003Etext-3xl\u003C/p\u003E"
+          "code": "TextXs() font-size: 0.75rem TextSm() font-size: 0.875rem TextBase() font-size: 1rem TextLg() font-size: 1.125rem TextXl() font-size: 1.25rem Text2Xl() font-size: 1.5rem Text3Xl() font-size: 1.875rem Text(Length.Rem(2.5)) font-size: 2.5rem Text(new Length(\u0022clamp(...)\u0022, \u0022fluid\u0022)) font-size: clamp(...) \u003Cp class=\u0022@Css.TextXs()\u0022\u003Etext-xs\u003C/p\u003E \u003Cp class=\u0022@Css.Text3Xl()\u0022\u003Etext-3xl\u003C/p\u003E"
+        },
+        {
+          "id": "custom-font-size-with-length",
+          "heading": "Custom font size with Length",
+          "level": 3,
+          "text": "also accepts a , so you can use any value or unit, including fluid expressions. text-2.5rem text-fluid",
+          "code": "Text Length clamp() Css.Text(Length.Rem(2.5)); // text-2.5rem Css.Text(Length.Px(18)); // text-18px Css.Text(new Length(\u0022clamp(1rem,2vw,2rem)\u0022, \u0022fluid\u0022)); // text-fluid \u003Cp class=\u0022@Css.Text(Length.Rem(2.5))\u0022\u003Etext-2.5rem\u003C/p\u003E \u003Cp class=\u0022@Css.Text(FluidText)\u0022\u003Etext-fluid\u003C/p\u003E"
         },
         {
           "id": "font-weight-and-style",
@@ -635,6 +782,13 @@
           "level": 2,
           "text": "Utility Generated CSS Thin weight Normal weight Bold weight Italic Not italic",
           "code": "FontThin() font-weight: 100 FontNormal() font-weight: 400 FontBold() font-weight: 700 Italic() font-style: italic NotItalic() font-style: normal \u003Cp class=\u0022@Css.FontThin()\u0022\u003EThin weight\u003C/p\u003E \u003Cp class=\u0022@Css.FontBold()\u0022\u003EBold weight\u003C/p\u003E \u003Cp class=\u0022@Css.Italic()\u0022\u003EItalic\u003C/p\u003E"
+        },
+        {
+          "id": "font-family",
+          "heading": "Font family",
+          "level": 2,
+          "text": ", and apply the built-in stacks. , and prepend one or more custom families to the matching default, and takes a fully custom stack. Utility Generated CSS font-sans \u2014 the default UI stack font-serif \u2014 the default serif stack font-mono \u2014 const answer = 42; font-brand \u2014 a custom stack Auto-derived class names A font stack cannot become a class name: the HTML attribute is whitespace separated, so a stack like is not a valid token. When is not set, a readable token is derived from the families and suffixed with a short hash, for example \u2192 . Pass an explicit name ( ) when you want a clean, predictable class.",
+          "code": "FontSans() FontSerif() FontMono() Sans(...) Serif(...) Mono(...) Font(FontFamily) FontSans() font-family: ui-sans-serif, system-ui, \u2026 (font-sans) FontSerif() font-family: ui-serif, Georgia, \u2026 (font-serif) FontMono() font-family: ui-monospace, \u2026 (font-mono) Font(FontFamily.Sans) font-family: \u003Cbuilt-in stack\u003E Font(new FontFamily(\u0022Inter, sans-serif\u0022, \u0022brand\u0022)) font-family: Inter, sans-serif (font-brand) Sans(\u0022Inter\u0022, \u2026) prepends families to the sans stack; hashed class Serif(\u2026) / Mono(\u2026) prepends families to the serif / mono stack Css.FontSans(); // font-sans Css.Font(FontFamily.Serif); // font-serif Css.Font(new FontFamily(\u0022Inter, sans-serif\u0022, \u0022brand\u0022)); // font-brand Css.Sans(\u0022Inter\u0022, \u0022Helvetica Neue\u0022); // font-sans-inter-helvetica-neue-\u003Chash\u003E \u003Cp class=\u0022@Css.Font(FontFamily.Sans)\u0022\u003Efont-sans\u003C/p\u003E \u003Cp class=\u0022@Css.Font(FontFamily.Serif)\u0022\u003Efont-serif\u003C/p\u003E \u003Cp class=\u0022@Css.Font(FontFamily.Mono)\u0022\u003Efont-mono\u003C/p\u003E \u003Cp class=\u0022@Css.Font(BrandFont)\u0022\u003Efont-brand\u003C/p\u003E class Inter, ui-sans-serif, system-ui FontFamily.Name Sans(\u0022Inter\u0022) font-sans-inter-\u003Chash\u003E new FontFamily(stack, \u0022brand\u0022)"
         },
         {
           "id": "alignment-and-decoration",
@@ -690,7 +844,14 @@
           "heading": "Border radius",
           "level": 2,
           "text": "Utility Generated CSS",
-          "code": "RoundedSm() border-radius: 0.125rem Rounded() border-radius: 0.25rem RoundedMd() border-radius: 0.375rem RoundedLg() border-radius: 0.5rem RoundedFull() border-radius: 9999px \u003Cdiv class=\u0022@Css.RoundedSm().W(16).H(16).Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.RoundedFull().W(16).H(16).Background(Color.Purple500)\u0022\u003E\u003C/div\u003E"
+          "code": "RoundedSm() border-radius: 0.125rem Rounded() border-radius: 0.25rem RoundedMd() border-radius: 0.375rem RoundedLg() border-radius: 0.5rem RoundedFull() border-radius: 9999px Rounded(Length.Px(4)) border-radius: 4px Rounded(Length.Percent(50)) border-radius: 50% \u003Cdiv class=\u0022@Css.RoundedSm().W(16).H(16).Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.RoundedFull().W(16).H(16).Background(Color.Purple500)\u0022\u003E\u003C/div\u003E"
+        },
+        {
+          "id": "custom-radius-with-length",
+          "heading": "Custom radius with Length",
+          "level": 3,
+          "text": "also accepts a , which covers arbitrary values, other units (including percentages) and reusable tokens.",
+          "code": "Rounded Length Css.Rounded(Length.Px(4)); // rounded-4px Css.Rounded(Length.Percent(50)); // rounded-50% Css.Rounded(new Length(\u00221.25rem\u0022, \u0022card\u0022)); // rounded-card \u003Cdiv class=\u0022@Css.Rounded(Length.Px(4))\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Rounded(CardRadius)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Rounded(Length.Percent(50))\u0022\u003E\u003C/div\u003E"
         },
         {
           "id": "rings-and-outlines",

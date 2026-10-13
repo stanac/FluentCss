@@ -11,6 +11,32 @@ namespace FluentCss.Docs.Components.Shared;
 public static class DocsStyles
 {
     // ---------------------------------------------------------------------
+    // Themes
+    //
+    // The docs support the built-in light/dark pair plus two transient custom
+    // themes used by the /docs/custom-themes playground. A theme is nothing more
+    // than an ancestor class: when an element carries "theme-ocean" the
+    // "theme-ocean:" utilities below start to apply. The custom themes are never
+    // written to a cookie, so they cannot leak to other pages.
+    // ---------------------------------------------------------------------
+
+    /// <summary>Ancestor class that activates the ocean custom theme.</summary>
+    public const string OceanThemeClass = "theme-ocean";
+
+    /// <summary>Ancestor class that activates the sunset custom theme.</summary>
+    public const string SunsetThemeClass = "theme-sunset";
+
+    /// <summary>
+    /// Applied to <c>&lt;body&gt;</c> by every docs host. The custom theme variants
+    /// only take effect while the page opts in by adding the ancestor class.
+    /// </summary>
+    public static string BodyClasses { get; } =
+        $"{Css.Background(Color.White).Color(Color.Slate900)} " +
+        $"{Dark.Background(Color.Slate950).Color(Color.Slate100)} " +
+        $"{Theme("ocean").Background(Color.Sky50).Color(Color.Slate900)} " +
+        $"{Theme("sunset").Background(Color.Orange50).Color(Color.Slate900)}";
+
+    // ---------------------------------------------------------------------
     // Layout shell
     // ---------------------------------------------------------------------
 
@@ -22,6 +48,8 @@ public static class DocsStyles
         $"{Css.WFull().Flex(FlexDirection.Col).Hidden()} " +
         $"{Css.P(4).Background(Color.Slate50)} " +
         $"{Dark.Background(Color.Slate900)} " +
+        $"{Theme("ocean").Background(Color.Sky100)} " +
+        $"{Theme("sunset").Background(Color.Orange100)} " +
         $"{Css.MinMd(md => md.W(64).Flex(FlexDirection.Col).HScreen().Sticky().Top(0).OverflowAuto())}";
 
     public static string ContentWrap { get; } =
@@ -31,7 +59,9 @@ public static class DocsStyles
         $"{Css.Sticky().Top(0).Z(10).H(14).Px(4).ShadowSm()} " +
         $"{Css.Flex(FlexDirection.Row, Justify.Between, Align.Center)} " +
         $"{Css.Background(Color.White)} " +
-        $"{Dark.Background(Color.Slate900)}";
+        $"{Dark.Background(Color.Slate900)} " +
+        $"{Theme("ocean").Background(Color.Sky100)} " +
+        $"{Theme("sunset").Background(Color.Orange100)}";
 
     public static string HeaderLeft { get; } =
         $"{Css.Flex(FlexDirection.Row, align: Align.Center, gap: 3)}";
@@ -249,12 +279,16 @@ public static class DocsStyles
     public static string ExamplePreview { get; } =
         $"{Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200).Mb(4)} " +
         $"{Css.Background(Color.Slate50)} " +
-        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)}";
+        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)} " +
+        $"{Theme("ocean").Background(Color.Sky50).BorderColor(Color.Sky300)} " +
+        $"{Theme("sunset").Background(Color.Orange50).BorderColor(Color.Orange300)}";
 
     public static string Card { get; } =
         $"{Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200)} " +
         $"{Css.Background(Color.White)} " +
-        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)}";
+        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)} " +
+        $"{Theme("ocean").Background(Color.Sky50).BorderColor(Color.Sky300)} " +
+        $"{Theme("sunset").Background(Color.Orange50).BorderColor(Color.Orange300)}";
 
     public static string CardHover { get; } =
         $"{Css.Hover(h => h.ShadowLg())}";
@@ -334,6 +368,49 @@ public static class DocsStyles
     // ---------------------------------------------------------------------
 
     public static string CodeTag { get; } = InlineCode;
+
+    // ---------------------------------------------------------------------
+    // Custom theme playground (see /docs/custom-themes)
+    //
+    // These classes pair a neutral look with theme-ocean / theme-sunset variants so
+    // the compact app preview on that page re-skins when the ancestor class changes.
+    // ---------------------------------------------------------------------
+
+    public static string CustomThemeToolbar { get; } =
+        $"{Css.Flex(FlexDirection.Row, gap: 3).Mb(6)}";
+
+    public static string CustomThemeStage { get; } =
+        $"{Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200)} " +
+        $"{Css.Background(Color.White)} " +
+        $"{Dark.BorderColor(Color.Slate800).Background(Color.Slate900)} " +
+        $"{Theme("ocean").Background(Color.Sky50).BorderColor(Color.Sky300)} " +
+        $"{Theme("sunset").Background(Color.Orange50).BorderColor(Color.Orange300)}";
+
+    public static string CustomThemeBar { get; } =
+        $"{Css.Flex(FlexDirection.Row, Justify.Between, align: Align.Center).P(4).RoundedMd().Mb(4)} " +
+        $"{Css.Background(Color.Slate100)} " +
+        $"{Dark.Background(Color.Slate800)} " +
+        $"{Theme("ocean").Background(Color.Sky200)} " +
+        $"{Theme("sunset").Background(Color.Orange200)}";
+
+    public static string CustomThemeAccent { get; } =
+        $"{Css.Px(4).Py(2).RoundedMd().FontBold().Color(Color.White)} " +
+        $"{Css.Background(Color.Slate700)} " +
+        $"{Theme("ocean").Background(Color.Sky600)} " +
+        $"{Theme("sunset").Background(Color.Orange600)}";
+
+    public static string CustomThemeCard { get; } =
+        $"{Css.P(4).RoundedMd().Border().BorderColor(Color.Slate200).Background(Color.White)} " +
+        $"{Dark.BorderColor(Color.Slate700).Background(Color.Slate800)} " +
+        $"{Theme("ocean").Background(Color.White).BorderColor(Color.Sky300)} " +
+        $"{Theme("sunset").Background(Color.White).BorderColor(Color.Orange300)}";
+
+    public static string CustomThemeChip { get; } =
+        $"{Css.InlineBlock().Px(2).Py(1).RoundedFull().TextXs().FontBold()} " +
+        $"{Css.Background(Color.Slate200).Color(Color.Slate700)} " +
+        $"{Dark.Background(Color.Slate700).Color(Color.Slate200)} " +
+        $"{Theme("ocean").Background(Color.Sky300).Color(Color.Sky900)} " +
+        $"{Theme("sunset").Background(Color.Orange300).Color(Color.Orange900)}";
 
     // ---------------------------------------------------------------------
     // Search

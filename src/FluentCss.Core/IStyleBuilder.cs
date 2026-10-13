@@ -30,10 +30,20 @@ public interface IStyleBuilder<out T>
     T P(int scale);
 
     /// <summary>
+    /// Sets padding on all sides from a <see cref="Length"/>.
+    /// </summary>
+    T P(Length length);
+
+    /// <summary>
     /// Sets padding on left and right sides
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T Px(int scale);
+
+    /// <summary>
+    /// Sets padding on left and right sides from a <see cref="Length"/>.
+    /// </summary>
+    T Px(Length length);
 
     /// <summary>
     /// Sets padding on top and bottom sides
@@ -42,10 +52,20 @@ public interface IStyleBuilder<out T>
     T Py(int scale);
 
     /// <summary>
+    /// Sets padding on top and bottom sides from a <see cref="Length"/>.
+    /// </summary>
+    T Py(Length length);
+
+    /// <summary>
     /// Sets padding on top side
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T Pt(int scale);
+
+    /// <summary>
+    /// Sets padding on top side from a <see cref="Length"/>.
+    /// </summary>
+    T Pt(Length length);
 
     /// <summary>
     /// Sets padding on right side
@@ -54,10 +74,20 @@ public interface IStyleBuilder<out T>
     T Pr(int scale);
 
     /// <summary>
+    /// Sets padding on right side from a <see cref="Length"/>.
+    /// </summary>
+    T Pr(Length length);
+
+    /// <summary>
     /// Sets padding on bottom side
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T Pb(int scale);
+
+    /// <summary>
+    /// Sets padding on bottom side from a <see cref="Length"/>.
+    /// </summary>
+    T Pb(Length length);
 
     /// <summary>
     /// Sets padding on left side
@@ -66,10 +96,20 @@ public interface IStyleBuilder<out T>
     T Pl(int scale);
 
     /// <summary>
+    /// Sets padding on left side from a <see cref="Length"/>.
+    /// </summary>
+    T Pl(Length length);
+
+    /// <summary>
     /// Sets margin on all sides
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T M(int scale);
+
+    /// <summary>
+    /// Sets margin on all sides from a <see cref="Length"/>.
+    /// </summary>
+    T M(Length length);
 
     /// <summary>
     /// Sets margin on left and right sides
@@ -78,10 +118,20 @@ public interface IStyleBuilder<out T>
     T Mx(int scale);
 
     /// <summary>
+    /// Sets margin on left and right sides from a <see cref="Length"/>.
+    /// </summary>
+    T Mx(Length length);
+
+    /// <summary>
     /// Sets margin on top and bottom sides
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T My(int scale);
+
+    /// <summary>
+    /// Sets margin on top and bottom sides from a <see cref="Length"/>.
+    /// </summary>
+    T My(Length length);
 
     /// <summary>
     /// Sets margin on top side
@@ -90,10 +140,20 @@ public interface IStyleBuilder<out T>
     T Mt(int scale);
 
     /// <summary>
+    /// Sets margin on top side from a <see cref="Length"/>.
+    /// </summary>
+    T Mt(Length length);
+
+    /// <summary>
     /// Sets margin on right side
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T Mr(int scale);
+
+    /// <summary>
+    /// Sets margin on right side from a <see cref="Length"/>.
+    /// </summary>
+    T Mr(Length length);
 
     /// <summary>
     /// Sets margin on bottom side
@@ -102,10 +162,20 @@ public interface IStyleBuilder<out T>
     T Mb(int scale);
 
     /// <summary>
+    /// Sets margin on bottom side from a <see cref="Length"/>.
+    /// </summary>
+    T Mb(Length length);
+
+    /// <summary>
     /// Sets margin on left side
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T Ml(int scale);
+
+    /// <summary>
+    /// Sets margin on left side from a <see cref="Length"/>.
+    /// </summary>
+    T Ml(Length length);
 
     /// <summary>
     /// Sets margin left and right to auto
@@ -174,10 +244,20 @@ public interface IStyleBuilder<out T>
     T Inset(int scale);
 
     /// <summary>
+    /// Sets top, right, bottom, and left properties from a <see cref="Length"/>.
+    /// </summary>
+    T Inset(Length length);
+
+    /// <summary>
     /// Sets top property
     /// </summary>
     /// <param name="scale">Position scale, scale is 0.25rem</param>
     T Top(int scale);
+
+    /// <summary>
+    /// Sets top property from a <see cref="Length"/>.
+    /// </summary>
+    T Top(Length length);
 
     /// <summary>
     /// Sets bottom property
@@ -186,16 +266,31 @@ public interface IStyleBuilder<out T>
     T Bottom(int scale);
 
     /// <summary>
+    /// Sets bottom property from a <see cref="Length"/>.
+    /// </summary>
+    T Bottom(Length length);
+
+    /// <summary>
     /// Sets left property
     /// </summary>
     /// <param name="scale">Position scale, scale is 0.25rem</param>
     T Left(int scale);
 
     /// <summary>
+    /// Sets left property from a <see cref="Length"/>.
+    /// </summary>
+    T Left(Length length);
+
+    /// <summary>
     /// Sets right property
     /// </summary>
     /// <param name="scale">Position scale, scale is 0.25rem</param>
     T Right(int scale);
+
+    /// <summary>
+    /// Sets right property from a <see cref="Length"/>.
+    /// </summary>
+    T Right(Length length);
 
     /// <summary>
     /// Sets z-index
@@ -208,6 +303,11 @@ public interface IStyleBuilder<out T>
     /// </summary>
     /// <param name="scale">Width scale, scale is 0.25rem</param>
     T W(int scale);
+
+    /// <summary>
+    /// Sets width from a <see cref="Length"/>.
+    /// </summary>
+    T W(Length length);
 
     /// <summary>
     /// Sets width to 100%
@@ -231,6 +331,11 @@ public interface IStyleBuilder<out T>
     T H(int scale);
 
     /// <summary>
+    /// Sets height from a <see cref="Length"/>.
+    /// </summary>
+    T H(Length length);
+
+    /// <summary>
     /// Sets height to 100%
     /// </summary>
     T HFull();
@@ -247,10 +352,20 @@ public interface IStyleBuilder<out T>
     T MaxW(Size size);
 
     /// <summary>
+    /// Sets max-width from a <see cref="Length"/>.
+    /// </summary>
+    T MaxW(Length length);
+
+    /// <summary>
     /// Sets min-height
     /// </summary>
     /// <param name="size">Size identifier</param>
     T MinH(Size size);
+
+    /// <summary>
+    /// Sets min-height from a <see cref="Length"/>.
+    /// </summary>
+    T MinH(Length length);
 
     /// <summary>
     /// Sets flex-direction to row
@@ -309,16 +424,31 @@ public interface IStyleBuilder<out T>
     T Gap(int scale);
 
     /// <summary>
+    /// Sets gap between rows and columns from a <see cref="Length"/>.
+    /// </summary>
+    T Gap(Length length);
+
+    /// <summary>
     /// Sets column gap
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T GapX(int scale);
 
     /// <summary>
+    /// Sets column gap from a <see cref="Length"/>.
+    /// </summary>
+    T GapX(Length length);
+
+    /// <summary>
     /// Sets row gap
     /// </summary>
     /// <param name="scale">Spacing scale, scale is 0.25rem</param>
     T GapY(int scale);
+
+    /// <summary>
+    /// Sets row gap from a <see cref="Length"/>.
+    /// </summary>
+    T GapY(Length length);
 
     /// <summary>
     /// Sets flex-grow to 1
@@ -366,6 +496,12 @@ public interface IStyleBuilder<out T>
     T Text3Xl();
 
     /// <summary>
+    /// Sets font-size from a <see cref="Length"/>, for example
+    /// <c>Text(Length.Rem(3))</c> or <c>Text(new Length("clamp(1rem,2vw,2rem)", "fluid"))</c>.
+    /// </summary>
+    T Text(Length size);
+
+    /// <summary>
     /// Sets font-weight to 100
     /// </summary>
     T FontThin();
@@ -379,6 +515,45 @@ public interface IStyleBuilder<out T>
     /// Sets font-weight to 700
     /// </summary>
     T FontBold();
+
+    /// <summary>
+    /// Sets font-family to the default <c>sans</c> stack (<c>font-sans</c>)
+    /// </summary>
+    T FontSans();
+
+    /// <summary>
+    /// Sets font-family to the default <c>serif</c> stack (<c>font-serif</c>)
+    /// </summary>
+    T FontSerif();
+
+    /// <summary>
+    /// Sets font-family to the default monospace stack (<c>font-mono</c>)
+    /// </summary>
+    T FontMono();
+
+    /// <summary>
+    /// Sets font-family from a <see cref="FontFamily"/>, for example
+    /// <c>Font(FontFamily.Sans)</c> or <c>Font(new FontFamily("Inter, sans-serif", "brand"))</c>.
+    /// </summary>
+    T Font(FontFamily family);
+
+    /// <summary>
+    /// Prepends custom families to the default <c>sans</c> stack. The class token is
+    /// derived from the families and suffixed with a short hash, for example
+    /// <c>Sans("Inter")</c> emits <c>font-family: Inter, ui-sans-serif, …</c> with the
+    /// class <c>font-sans-inter-&lt;hash&gt;</c>.
+    /// </summary>
+    T Sans(params string[] families);
+
+    /// <summary>
+    /// Prepends custom families to the default <c>serif</c> stack.
+    /// </summary>
+    T Serif(params string[] families);
+
+    /// <summary>
+    /// Prepends custom families to the default monospace stack.
+    /// </summary>
+    T Mono(params string[] families);
 
     /// <summary>
     /// Sets text-align to center
@@ -420,6 +595,12 @@ public interface IStyleBuilder<out T>
     /// Sets border-radius to 0.25rem
     /// </summary>
     T Rounded();
+
+    /// <summary>
+    /// Sets border-radius from a <see cref="Length"/>, for example
+    /// <c>Rounded(Length.Percent(50))</c> or <c>Rounded(new Length("1.25rem", "card"))</c>.
+    /// </summary>
+    T Rounded(Length radius);
 
     /// <summary>
     /// Sets border-radius to 0.125rem
@@ -479,10 +660,20 @@ public interface IStyleBuilder<out T>
     T MinW(Size size);
 
     /// <summary>
+    /// Sets min-width from a <see cref="Length"/>.
+    /// </summary>
+    T MinW(Length length);
+
+    /// <summary>
     /// Sets max-height
     /// </summary>
     /// <param name="size">Size identifier</param>
     T MaxH(Size size);
+
+    /// <summary>
+    /// Sets max-height from a <see cref="Length"/>.
+    /// </summary>
+    T MaxH(Length length);
 
     /// <summary>
     /// Creates a grid with n equal-width columns
@@ -586,6 +777,11 @@ public interface IStyleBuilder<out T>
     T Leading(int scale);
 
     /// <summary>
+    /// Sets line-height from a <see cref="Length"/>.
+    /// </summary>
+    T Leading(Length length);
+
+    /// <summary>
     /// Sets border-style to solid
     /// </summary>
     T BorderSolid();
@@ -635,4 +831,18 @@ public interface IStyleBuilder<out T>
     /// <param name="gap">Gap scale (optional)</param>
     /// <param name="wrap">Flex wrap (optional)</param>
     T Flex(FlexDirection direction, Justify? justify = null, Align? align = null, int? gap = null, FlexWrapValue? wrap = null);
+
+    /// <summary>
+    /// Escape hatch for any CSS declaration the typed helpers do not cover. Emits a
+    /// single utility with the given class name, property and value.
+    /// </summary>
+    /// <remarks>
+    /// The class name is the identity used to deduplicate the generated CSS, so it must
+    /// be unique and stable. Use the typed overloads (<see cref="Length"/>, <see cref="Color"/>,
+    /// <see cref="Size"/>) when they exist; reach for this only for the gaps.
+    /// </remarks>
+    /// <param name="className">Class name / token for the utility, for example <c>font-350</c></param>
+    /// <param name="property">CSS property, for example <c>font-weight</c></param>
+    /// <param name="value">CSS value, for example <c>350</c></param>
+    T Arbitrary(string className, string property, string value);
 }

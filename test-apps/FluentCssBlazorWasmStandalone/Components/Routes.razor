@@ -10,15 +10,11 @@
 </Router>
 
 @code {
-    private static readonly string BodyClasses =
-        $"{Css.Background(Color.White).Color(Color.Slate900)} " +
-        $"{Dark.Background(Color.Slate950).Color(Color.Slate100)}";
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("fcSetBodyClasses", BodyClasses);
+            await JS.InvokeVoidAsync("fcSetBodyClasses", DocsStyles.BodyClasses);
         }
     }
 }

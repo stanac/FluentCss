@@ -43,18 +43,20 @@
     private static readonly (string Title, string Body)[] Features =
     [
         ("Type-safe", "Every utility is a method. Rename, refactor and navigate styles with the same tooling you already use for C#."),
-        ("Tailwind palette", "22 color families with 11 shades each (50 to 950), plus black and white, ready to use."),
         ("States and responsive", "Compose hover, focus and active states, then layer responsive min/md and max/md variants on top."),
         ("Dark mode built in", "Use the Dark builder for theme-aware styles, or Theme() for any custom theme name."),
         ("Automatic CSS", "Classes are deduplicated in a registry that emits the final CSS for you."),
-        ("Blazor ready", "Drop the CssStyles component into your layout and the stylesheet updates as you build."),
+        ("Supports Blazor", "All hosting models."),
+        ("Supports MVC and Razor Pages", "Some of us still love MVC.")
     ];
 
     private const string QuickExample =
         """
-        <div class="@Css.P(6).RoundedLg()
+        <div class="@Css.P(6)
+                        .RoundedLg()
                         .Background(Color.Emerald500)
-                        .Color(Color.White).FontBold()
+                        .Color(Color.White)
+                        .FontBold()
                         .Hover(h => h.Background(Color.Emerald600))">
             Generated entirely from C#
         </div>

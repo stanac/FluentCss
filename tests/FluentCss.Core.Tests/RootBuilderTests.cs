@@ -15,9 +15,9 @@ public class RootBuilderTests
 
         // Assert
         var added = _registry.Single();
-        // Based on implementation: Media("width > 48rem", "max-md", ...)
+        // min is inclusive so the exact breakpoint belongs to the min side.
         added.MediaPrefix.Should().Be("min-md");
-        added.MediaQuery.Should().Be("(width > 48rem)");
+        added.MediaQuery.Should().Be("(width >= 48rem)");
         added.ClassName.Should().Be("min-md:bg-black");
     }
 

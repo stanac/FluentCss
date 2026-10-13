@@ -24,7 +24,7 @@
     <script src="_content/FluentCss.Docs/docs-search.js"></script>
 </head>
 
-<body class="@BodyClass">
+<body class="@DocsStyles.BodyClasses">
     <Routes />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
@@ -39,8 +39,4 @@
 
     private string HtmlClass =>
         FluentCssTheme.GetHtmlClass(HttpContext?.Request.Cookies[FluentCssTheme.CookieName]);
-
-    private static readonly string BodyClass =
-        $"{Css.Background(Color.White).Color(Color.Slate900)} " +
-        $"{Dark.Background(Color.Slate950).Color(Color.Slate100)}";
 }

@@ -12,4 +12,8 @@
 		<InternalsVisibleTo Include="FluentCss.Core.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="ZBase32" Version="1.1.0" />
+	</ItemGroup>
+
 </Project>

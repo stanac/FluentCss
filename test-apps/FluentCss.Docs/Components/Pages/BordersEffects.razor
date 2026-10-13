@@ -40,6 +40,23 @@
     </div>
 </Example>
 
+<h3 class="@DocsStyles.H3">Custom radius with Length</h3>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Rounded</code> also accepts a <code class="@DocsStyles.InlineCode">Length</code>,
+    which covers arbitrary values, other units (including percentages) and reusable tokens.
+</p>
+
+<CodeBlock Code="@RadiusLength" />
+
+<Example Code="@RadiusLengthExample">
+    <div class="@Css.Flex(FlexDirection.Row, gap: 3)">
+        <div class="@Css.Rounded(Length.Px(4)).W(16).H(16).Background(Color.Blue500)"></div>
+        <div class="@Css.Rounded(CardRadius).W(16).H(16).Background(Color.Indigo500)"></div>
+        <div class="@Css.Rounded(Length.Percent(50)).W(16).H(16).Background(Color.Violet500)"></div>
+    </div>
+</Example>
+
 <h2 class="@DocsStyles.H2">Rings and outlines</h2>
 
 <p class="@DocsStyles.P">
@@ -52,8 +69,7 @@
 
 <Example Code="@RingExample">
     <div class="@Css.Flex(FlexDirection.Row, gap: 4)">
-        <button class="@Css.Px(5).Py(2).RoundedMd().Background(Color.White).Color(Color.Slate800)
-                        .Border().BorderColor(Color.Slate300).FontBold().CursorPointer()
+        <button class="@(Css.Px(5).Py(2).RoundedMd().Background(Color.White).Color(Color.Slate800).Border().BorderColor(Color.Slate300).FontBold().CursorPointer())
                         @Css.Focus(f => f.Ring(3, Color.Blue300).OutlineHidden())">
             Focus me
         </button>
@@ -111,6 +127,8 @@
         ("RoundedMd()", "border-radius: 0.375rem"),
         ("RoundedLg()", "border-radius: 0.5rem"),
         ("RoundedFull()", "border-radius: 9999px"),
+        ("Rounded(Length.Px(4))", "border-radius: 4px"),
+        ("Rounded(Length.Percent(50))", "border-radius: 50%"),
     ];
 
     private static readonly (string Utility, string Css)[] RingOutlineUtilities =
@@ -157,6 +175,23 @@
         """
         <div class="@Css.RoundedSm().W(16).H(16).Background(Color.Blue500)"></div>
         <div class="@Css.RoundedFull().W(16).H(16).Background(Color.Purple500)"></div>
+        """;
+
+    // Reusable radius token for the live example below.
+    private static readonly Length CardRadius = new("1.25rem", "card");
+
+    private const string RadiusLength =
+        """
+        Css.Rounded(Length.Px(4));                  // rounded-4px
+        Css.Rounded(Length.Percent(50));            // rounded-50%
+        Css.Rounded(new Length("1.25rem", "card")); // rounded-card
+        """;
+
+    private const string RadiusLengthExample =
+        """
+        <div class="@Css.Rounded(Length.Px(4))"></div>
+        <div class="@Css.Rounded(CardRadius)"></div>
+        <div class="@Css.Rounded(Length.Percent(50))"></div>
         """;
 
     private const string RingExample =

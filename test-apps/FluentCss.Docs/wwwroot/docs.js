@@ -39,6 +39,49 @@
         } catch (e) { }
     }
 
+    // ---------------------------------------------------------------------
+    // Custom theme playground
+    //
+    // Custom themes are page-scoped: they are applied to <html> at runtime and are
+    // deliberately NOT written to the cookie or localStorage. Anything that starts a
+    // navigation clears the class and re-applies the persisted light/dark choice, so
+    // the custom theme can never leak to another page.
+    // ---------------------------------------------------------------------
+
+    var customThemeClass = null;
+
+    function clearCustomTheme() {
+        if (!customThemeClass) {
+            return;
+        }
+
+        document.documentElement.classList.remove(customThemeClass);
+        customThemeClass = null;
+
+        // Restore the persisted light/dark theme that the custom theme temporarily
+        // replaced on <html>.
+        applyTheme();
+    }
+
+    function setCustomTheme(themeClass) {
+        clearCustomTheme();
+
+        if (!themeClass) {
+            return;
+        }
+
+        var root = document.documentElement;
+
+        // A custom theme owns the whole ancestor class set: drop the built-in dark
+        // class so the two never fight over the same elements.
+        root.classList.remove('theme-dark');
+        root.classList.add(themeClass);
+        customThemeClass = themeClass;
+    }
+
+    window.fcSetCustomTheme = setCustomTheme;
+    window.fcClearCustomTheme = clearCustomTheme;
+
     window.fcApplyTheme = applyTheme;
 
     window.fcToggleTheme = function () {
@@ -259,8 +302,37 @@
             window.Blazor.addEventListener('enhancedload', function () {
                 highlightAll();
                 buildToc();
+
+                // Enhanced navigation swaps the page without a reload; the custom
+                // theme belongs to the previous page and must not survive it.
+                clearCustomTheme();
             });
         }
+
+        // Client-side (WebAssembly) routing does not fire enhancedload. Clear the
+        // custom theme as soon as the user starts navigating away from the page.
+        document.addEventListener('click', function (e) {
+            var link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+
+            if (!link || link.hasAttribute('data-fc-toc-link')) {
+                return;
+            }
+
+            if (link.target && link.target !== '_self') {
+                return;
+            }
+
+            var href = link.getAttribute('href') || '';
+
+            // In-page anchors and same-page links are not navigations.
+            if (href.charAt(0) === '#' || link.hasAttribute('download')) {
+                return;
+            }
+
+            clearCustomTheme();
+        });
+
+        window.addEventListener('popstate', clearCustomTheme);
     }
 
     // Apply the theme immediately, while the head is still parsing, so it is set

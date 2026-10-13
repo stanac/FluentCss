@@ -20,19 +20,10 @@ public interface IRootFluentCssBuilder: IFluentCssBuilder
     IRootFluentCssBuilder ContainerSizeName(string name);
 
     /// <summary>
-    /// Responsive builder for min-width: Md (default: 48rem)
-    /// </summary>
-    /// <param name="cssBuilderAction">CSS builder action</param>
-    IRootFluentCssBuilder MinMd(Action<IFluentCssBuilder> cssBuilderAction);
-
-    /// <summary>
-    /// Responsive builder for min-width: Md (default: 48rem)
-    /// </summary>
-    /// <param name="cssBuilderAction">CSS builder action</param>
-    IRootFluentCssBuilder MaxMd(Action<IFluentCssBuilder> cssBuilderAction);
-
-    /// <summary>
-    /// Custom media query builder
+    /// Custom media query builder. This is the single primitive the responsive
+    /// helpers are built on: see <see cref="RootFluentCssBuilderExtensions.Min"/>,
+    /// <see cref="RootFluentCssBuilderExtensions.Max"/> and the named breakpoint
+    /// helpers (for example <see cref="RootFluentCssBuilderExtensions.MinMd"/>).
     /// </summary>
     /// <param name="query">Media query</param>
     /// <param name="classPrefix">Class prefix for creating class names</param>

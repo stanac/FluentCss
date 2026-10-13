@@ -132,27 +132,27 @@ public class UtilityClass
 
         if (!string.IsNullOrWhiteSpace(Theme))
         {
-            sb.Append('.').Append(Theme).Append(' ');
+            sb.Append('.').Append(Escape(Theme!)).Append(' ');
         }
 
         sb.Append('.');
 
         if (!string.IsNullOrWhiteSpace(MediaPrefix))
         {
-            sb.Append(MediaPrefix).Append("\\:");
+            sb.Append(Escape(MediaPrefix!)).Append("\\:");
         }
 
         if (!string.IsNullOrWhiteSpace(Theme))
         {
-            sb.Append(Theme).Append("\\:");
+            sb.Append(Escape(Theme!)).Append("\\:");
         }
 
         if (!string.IsNullOrWhiteSpace(Pseudo))
         {
-            sb.Append(Pseudo).Append("\\:");
+            sb.Append(Escape(Pseudo!)).Append("\\:");
         }
 
-        sb.Append(_classNameNoPseudo);
+        sb.Append(Escape(_classNameNoPseudo));
 
         if (!string.IsNullOrWhiteSpace(Pseudo))
         {
@@ -171,4 +171,53 @@ public class UtilityClass
 
         return css;
     }
+
+    /// <summary>
+    /// Escapes a class-name fragment for use in a CSS selector. The class attribute
+    /// keeps the readable form (for example <c>min-1.5rem</c>); only the selector
+    /// needs the escapes (<c>.min-1\\.5rem\\:</c>).
+    /// </summary>
+    private static string Escape(string value)
+    {
+        int firstSpecial = -1;
+
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (!IsSafeIdentifierChar(value[i]))
+            {
+                firstSpecial = i;
+                break;
+            }
+        }
+
+        if (firstSpecial < 0)
+        {
+            return value;
+        }
+
+        StringBuilder sb = StringBuilderBag.TakeOrNew();
+        sb.Append(value, 0, firstSpecial);
+
+        for (int i = firstSpecial; i < value.Length; i++)
+        {
+            char c = value[i];
+
+            if (!IsSafeIdentifierChar(c))
+            {
+                sb.Append('\\');
+            }
+
+            sb.Append(c);
+        }
+
+        string result = sb.ToString();
+        StringBuilderBag.ClearAndReturn(sb);
+        return result;
+    }
+
+    private static bool IsSafeIdentifierChar(char c) =>
+        (c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        (c >= '0' && c <= '9') ||
+        c == '-' || c == '_';
 }

@@ -126,6 +126,22 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
     public T FontNormal() => AddInternal(new UtilityClass("font-normal", "font-weight", "400"));
     public T FontBold() => AddInternal(new UtilityClass("font-bold", "font-weight", "700"));
 
+    public T FontSans() => Font(FontFamily.Sans);
+    public T FontSerif() => Font(FontFamily.Serif);
+    public T FontMono() => Font(FontFamily.Mono);
+
+    public T Font(FontFamily family) =>
+        AddInternal(new UtilityClass($"font-{family.Token}", "font-family", family.Value));
+
+    public T Sans(params string[] families) =>
+        Font(FontFamily.Prepend("sans", FontFamily.SansStack, families));
+
+    public T Serif(params string[] families) =>
+        Font(FontFamily.Prepend("serif", FontFamily.SerifStack, families));
+
+    public T Mono(params string[] families) =>
+        Font(FontFamily.Prepend("mono", FontFamily.MonoStack, families));
+
     public T TextCenter() => AddInternal(new UtilityClass("text-center", "text-align", "center"));
     public T TextLeft() => AddInternal(new UtilityClass("text-left", "text-align", "left"));
     public T TextRight() => AddInternal(new UtilityClass("text-right", "text-align", "right"));
@@ -253,6 +269,59 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
 
         return ReturnSelf();
     }
+
+    // ---------------------------------------------------------------------
+    // Length overloads
+    //
+    // Each int-scale method has a Length overload so arbitrary values and units
+    // can be used, and so named Length values work (for example
+    // P(Spacing.Medium)). The class name comes from Length.Token.
+    // ---------------------------------------------------------------------
+
+    protected T LengthUtility(string classPrefix, string property, Length length) =>
+        AddInternal(new UtilityClass($"{classPrefix}-{length.Token}", property, length.Value));
+
+    public T P(Length length) => LengthUtility("p", "padding", length);
+    public T Px(Length length) => LengthUtility("px", "padding-inline", length);
+    public T Py(Length length) => LengthUtility("py", "padding-block", length);
+    public T Pt(Length length) => LengthUtility("pt", "padding-top", length);
+    public T Pr(Length length) => LengthUtility("pr", "padding-right", length);
+    public T Pb(Length length) => LengthUtility("pb", "padding-bottom", length);
+    public T Pl(Length length) => LengthUtility("pl", "padding-left", length);
+
+    public T M(Length length) => LengthUtility("m", "margin", length);
+    public T Mx(Length length) => LengthUtility("mx", "margin-inline", length);
+    public T My(Length length) => LengthUtility("my", "margin-block", length);
+    public T Mt(Length length) => LengthUtility("mt", "margin-top", length);
+    public T Mr(Length length) => LengthUtility("mr", "margin-right", length);
+    public T Mb(Length length) => LengthUtility("mb", "margin-bottom", length);
+    public T Ml(Length length) => LengthUtility("ml", "margin-left", length);
+
+    public T Inset(Length length) => LengthUtility("inset", "inset", length);
+    public T Top(Length length) => LengthUtility("top", "top", length);
+    public T Bottom(Length length) => LengthUtility("bottom", "bottom", length);
+    public T Left(Length length) => LengthUtility("left", "left", length);
+    public T Right(Length length) => LengthUtility("right", "right", length);
+
+    public T W(Length length) => LengthUtility("w", "width", length);
+    public T H(Length length) => LengthUtility("h", "height", length);
+
+    public T MaxW(Length length) => LengthUtility("max-w", "max-width", length);
+    public T MinW(Length length) => LengthUtility("min-w", "min-width", length);
+    public T MaxH(Length length) => LengthUtility("max-h", "max-height", length);
+    public T MinH(Length length) => LengthUtility("min-h", "min-height", length);
+
+    public T Gap(Length length) => LengthUtility("gap", "gap", length);
+    public T GapX(Length length) => LengthUtility("gap-x", "column-gap", length);
+    public T GapY(Length length) => LengthUtility("gap-y", "row-gap", length);
+
+    public T Leading(Length length) => LengthUtility("leading", "line-height", length);
+
+    public T Rounded(Length radius) => LengthUtility("rounded", "border-radius", radius);
+    public T Text(Length size) => LengthUtility("text", "font-size", size);
+
+    public T Arbitrary(string className, string property, string value) =>
+        AddInternal(new UtilityClass(className, property, value));
 
     public override string ToString()
     {

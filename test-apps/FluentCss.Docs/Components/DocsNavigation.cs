@@ -22,9 +22,11 @@ public static class DocsNavigation
         new("Core concepts",
         [
             new("Utility classes", "/docs/utility-classes"),
+            new("Extensibility", "/docs/extensibility"),
             new("Hover & focus", "/docs/states"),
             new("Responsive design", "/docs/responsive"),
             new("Dark mode", "/docs/dark-mode"),
+            new("Custom themes", "/docs/custom-themes"),
             new("Colors", "/docs/colors"),
         ]),
         new("Utilities",

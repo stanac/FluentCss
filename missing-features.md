@@ -16,15 +16,6 @@ Legend:
 
 ## Core concepts
 
-- **[missing] Theme variables / design tokens.** There are no CSS custom
-  properties and no theme-variable equivalent, so palettes, spacing, radii and
-  fonts cannot be re-themed at runtime.
-- **[missing] Configuration and customization.** There is no config file or API
-  to extend or replace the color palette, spacing scale, breakpoints, fonts or
-  container sizes.
-- **[missing] Arbitrary values and properties.** The builder only accepts the
-  predefined scales and `Color`/`Size` values. There is no generic way to pass
-  an arbitrary CSS value such as a custom length or raw color.
 - **[missing] Important modifier.** No `!` prefix/suffix.
 - **[missing] Negative values.** No `-mt-4`, `-left-2`, etc.
 - **[missing] Opacity modifier on colors.** No `bg-red-500/50` or
@@ -43,10 +34,6 @@ Legend:
 - **[missing] Direction variants.** No `rtl` / `ltr`, and no logical-property
   variants.
 - **[missing] Direct-child variant.** No `*` / `**` child combinator variants.
-- **[partial] Responsive breakpoints.** Only a single `md` breakpoint
-  (`48rem`) is built in. Other breakpoints require the manual
-  `Media(query, prefix, ...)` helper; there are no named `sm`, `lg`, `xl`,
-  `2xl` helpers.
 - **[missing] Container queries.** No `@container` support and no
   `@min-*` / `@max-*` container variants.
 - **[missing] Dark mode strategies.** Only an ancestor class theme
@@ -79,8 +66,9 @@ Legend:
   `grid`, `none`. Missing `inline-flex`, `inline-grid`, `table` family,
   `contents`, `flow-root`, `list-item`, etc.
 - **[partial] position.** Missing `static` (and no `inset` logical variants).
-- **[partial] inset / top / right / bottom / left.** Only the numeric spacing
-  scale; missing `auto`, `full`, fractions and negative values.
+- **[partial] inset / top / right / bottom / left.** Numeric spacing scale plus
+  arbitrary lengths via `Length`; missing dedicated `auto`, `full`, fraction and
+  negative helpers (all still expressible with a `Length`).
 - **[partial] z-index.** Only integers; missing `auto` and negatives.
 - **[partial] aspect-ratio.** Only `square` (1/1) and `video` (16/9); missing
   `3/2`, `4/3`, `21/9`, arbitrary values and custom properties.
@@ -110,8 +98,9 @@ Legend:
   subset (`Start`, `End`, `Center`, and `Between` for justify). The rest
   (`Around`, `Evenly`, `Baseline`, `Stretch`) are reachable only through the
   composite `Flex(...)` call.
-- **[partial] gap.** Only the numeric spacing scale; no arbitrary lengths,
-  `gap-px` or custom properties.
+- **[partial] gap.** Numeric spacing scale plus arbitrary lengths via
+  `Gap(Length)` / `GapX` / `GapY`; missing a `gap-px` shorthand (use
+  `Gap(Length.Px(1))`).
 
 ---
 
@@ -122,7 +111,6 @@ Legend:
 - **[missing]** logical properties: `ps`, `pe`, `pbs`, `pbe`, `ms`, `me`,
   `mbs`, `mbe`
 - **[missing]** negative spacing values
-- **[missing]** arbitrary values and custom properties
 - Padding (`p`, `px`, `py`, `pt`, `pr`, `pb`, `pl`) and margin
   (`m`, `mx`, `my`, `mt`, `mr`, `mb`, `ml`, auto) are implemented.
 
@@ -133,12 +121,14 @@ Legend:
 - **[missing]** `size-*`
 - **[missing]** logical properties: `inline-size`, `min-inline-size`,
   `max-inline-size`, `block-size`, `min-block-size`, `max-block-size`
-- **[partial] width / height.** Only the spacing scale plus `full`, `screen`
-  and `auto`; missing fractions, `min-content`, `max-content`, `fit-content`,
-  `svh`/`lvh`/`dvh`, and arbitrary values.
-- **[partial] min/max width & height.** Only the predefined `Size` set; no
-  numeric scale, no `none`/`auto`/`min`/`max`/`fit` on every axis, no
-  arbitrary values.
+- **[partial] width / height.** Numeric scale plus `full`, `screen`, `auto` and
+  arbitrary lengths via `W(Length)` / `H(Length)`; missing dedicated fraction,
+  `min-content` / `max-content` / `fit-content` and `svh` / `lvh` / `dvh`
+  helpers (still expressible with a `Length`).
+- **[partial] min/max width & height.** The predefined `Size` set plus any
+  `Length` (arbitrary values/units, including `none`/`auto`/`min`/`max`/`fit`
+  passed as a `Length`); missing a dedicated numeric scale and per-axis keyword
+  helpers.
 - **[bug/parity] Named sizes.** `Size._2Xl` and `Size._3Xl` both resolve to
   `96rem` and generate the class prefixes `2l` and `3l` (instead of `2xl` and
   `3xl`).
@@ -147,7 +137,10 @@ Legend:
 
 ## Typography
 
-- **[missing]** `font-family` (`font-sans`, `font-serif`, `font-mono`)
+- **[partial] font-family.** Built-in `font-sans` / `font-serif` / `font-mono`
+  (Tailwind default stacks), custom stacks via `Font(FontFamily)` and prepend
+  helpers `Sans(...)` / `Serif(...)` / `Mono(...)`; missing the theme-variable
+  form (`--font-*`).
 - **[missing]** `font-smoothing`
 - **[missing]** `font-stretch`
 - **[missing]** `font-variant-numeric`
@@ -165,11 +158,12 @@ Legend:
 - **[missing]** `overflow-wrap`
 - **[missing]** `hyphens`
 - **[missing]** `content`
-- **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`);
-  missing the wider named scale, arbitrary sizes and per-size line heights.
-- **[partial] line-height.** Only the numeric `Leading(n)` scale; missing
-  `leading-none`, `tight`, `snug`, `normal`, `relaxed`, `loose` and arbitrary
-  values.
+- **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`) plus
+  arbitrary sizes via `Text(Length)`; missing the wider named scale and
+  per-size line heights.
+- **[partial] line-height.** Numeric `Leading(n)` scale plus arbitrary lengths
+  via `Leading(Length)`; missing the named `leading-none` / `tight` / `snug` /
+  `normal` / `relaxed` / `loose` helpers.
 - **[partial] white-space.** Only `nowrap`; missing `normal`, `pre`, `pre-line`,
   `pre-wrap`, `break-spaces`.
 - **[partial] font-weight.** Only `100`, `400`, `700`; missing the other
@@ -188,8 +182,9 @@ Legend:
 - **[missing]** `background-position`
 - **[missing]** `background-repeat`
 - **[missing]** `background-size`
-- Only `background-color` via `Background(Color)` is implemented, with no
-  opacity modifier, arbitrary colors or gradients.
+- Only `background-color` via `Background(Color)` is implemented (arbitrary
+  colors via the `Color(name, value)` constructor); no opacity modifier or
+  gradients.
 
 ---
 
@@ -324,7 +319,8 @@ Tailwind's behavior in practice.
   as expected.
 - **[mutable] Cached class name.** `UtilityClass.ClassName` lazily caches into a
   mutable field, so a utility instance is not purely immutable on first read.
-- **[missing] Raw CSS escape hatch.** There is no way to attach arbitrary CSS
-  declarations or a stylesheet through the builder.
+- **[partial] Raw CSS escape hatch.** `Arbitrary(className, property, value)`
+  attaches arbitrary CSS declarations; there is still no way to attach a full
+  stylesheet through the builder.
 - **[missing] Variant constraints.** Only one media, one theme and one pseudo
   can be combined, and there are no arbitrary/custom variants.

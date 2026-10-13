@@ -1,0 +1,196 @@
+@page "/docs/custom-themes"
+
+<PageTitle>Custom themes - FluentCss</PageTitle>
+
+<DocHeader Title="Custom themes"
+           Description="Any name passed to Theme() becomes a theme. Build a themed look once and switch it on by adding a single ancestor class." />
+
+<h2 class="@DocsStyles.H2">A theme is an ancestor class</h2>
+
+<p class="@DocsStyles.P">
+    FluentCss does not ship a fixed list of themes. <code class="@DocsStyles.InlineCode">Dark</code> is
+    just the built-in shortcut for <code class="@DocsStyles.InlineCode">Theme("dark")</code>. Passing
+    any other name produces a new theme: every utility you build from that root is prefixed with the
+    theme name and scoped by an ancestor carrying the same name.
+</p>
+
+<h2 class="@DocsStyles.H2">Inline usage in Razor</h2>
+
+<p class="@DocsStyles.P">
+    Custom themes compose with the same inline shorthands you already use:
+    <code class="@DocsStyles.InlineCode">@("@Css")</code>,
+    <code class="@DocsStyles.InlineCode">@("@Dark")</code> and
+    <code class="@DocsStyles.InlineCode">@("@Theme(\"name\")")</code>. Stack the variants in one
+    <code class="@DocsStyles.InlineCode">class</code> attribute and the active ancestor decides which
+    one wins.
+</p>
+
+<Example Code="@InlineExample">
+    <div class="@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200).Background(Color.White).Color(Color.Slate900)
+                    @Dark.Background(Color.Slate800).BorderColor(Color.Slate700).Color(Color.White)
+                    @Theme("ocean").Background(Color.Sky50).BorderColor(Color.Sky300).Color(Color.Sky900)
+                    @Theme("sunset").Background(Color.Orange50).BorderColor(Color.Orange300).Color(Color.Orange900)">
+        <p class="@Css.FontBold().Mb(1)">Inline themed card</p>
+        <p class="@Css.TextSm().Color(Color.Slate600)
+                  @Dark.Color(Color.Slate300)
+                  @Theme("ocean").Color(Color.Sky800)
+                  @Theme("sunset").Color(Color.Orange800)">
+            Click Ocean or Sunset below to re-skin this card.
+        </p>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Try it on this whole page</h2>
+
+<p class="@DocsStyles.P">
+    The buttons below add <code class="@DocsStyles.InlineCode">theme-ocean</code> or
+    <code class="@DocsStyles.InlineCode">theme-sunset</code> to the
+    <code class="@DocsStyles.InlineCode">&lt;html&gt;</code> element, so the entire page re-skins.
+    Nothing is written to the cookie: as soon as you navigate away the class is removed and the
+    persisted light/dark choice is restored, so these themes never follow you to other pages.
+</p>
+
+<div class="@DocsStyles.CustomThemeToolbar">
+    <button type="button" class="@DocsStyles.CustomThemeAccent"
+            onclick="fcSetCustomTheme('theme-ocean')">
+        Ocean
+    </button>
+    <button type="button" class="@DocsStyles.CustomThemeAccent"
+            onclick="fcSetCustomTheme('theme-sunset')">
+        Sunset
+    </button>
+    <button type="button" class="@DocsStyles.ButtonSecondary"
+            onclick="fcClearCustomTheme()">
+        Default
+    </button>
+</div>
+
+<div class="@DocsStyles.CustomThemeStage">
+    <div class="@DocsStyles.CustomThemeBar">
+        <span class="@Css.FontBold().Color(Color.Slate900) @Dark.Color(Color.White)">Acme Dashboard</span>
+        <span class="@DocsStyles.CustomThemeChip">Live preview</span>
+    </div>
+
+    <div class="@Css.Grid().GridCols(1).Gap(4) @Css.MinMd(md => md.GridCols(3))">
+        @foreach (var stat in Stats)
+        {
+            <div class="@DocsStyles.CustomThemeCard">
+                <p class="@Css.TextXs().FontBold().Uppercase().Color(Color.Slate500).Mb(1)
+                          @Dark.Color(Color.Slate400)">
+                    @stat.Label
+                </p>
+                <p class="@Css.Text2Xl().FontBold().Color(Color.Slate900) @Dark.Color(Color.White)">
+                    @stat.Value
+                </p>
+            </div>
+        }
+    </div>
+
+    <div class="@Css.Mt(6).Flex(FlexDirection.Row, gap: 3)">
+        <button type="button" class="@DocsStyles.CustomThemeAccent"
+                onclick="fcSetCustomTheme('theme-ocean')">
+            Ocean
+        </button>
+        <button type="button" class="@DocsStyles.CustomThemeAccent"
+                onclick="fcSetCustomTheme('theme-sunset')">
+            Sunset
+        </button>
+        <button type="button" class="@DocsStyles.CustomThemeAccent"
+                onclick="fcClearCustomTheme()">
+            Reset
+        </button>
+    </div>
+</div>
+
+<h2 class="@DocsStyles.H2">Applying a theme</h2>
+
+<p class="@DocsStyles.P">
+    Theming is plain DOM work. Add the ancestor class to opt in, remove it to opt out. There is no
+    registry call and no re-render: the CSS for the themed utilities already exists and only activates
+    while the ancestor class is present.
+</p>
+
+<CodeBlock Code="@ToggleScript" Language="javascript" />
+
+<Callout Kind="CalloutKind.Info" Title="Why this never leaks to other pages">
+    The docs only persist <code class="@DocsStyles.InlineCode">dark</code> and
+    <code class="@DocsStyles.InlineCode">light</code> in the cookie. Custom themes are applied at
+    runtime and are removed by the navigation cleanup in <code class="@DocsStyles.InlineCode">docs.js</code>,
+    so another page can never inherit them. If you <em>want</em> a custom theme to survive a reload,
+    store its name in your own cookie and read it the same way the dark theme is read.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Combining with hover and responsive variants</h2>
+
+<p class="@DocsStyles.P">
+    Prefixes compose in a fixed order — media, then theme, then pseudo — so a themed and responsive
+    utility reads naturally.
+</p>
+
+<CodeBlock Code="@ComposedExample" />
+
+@code {
+    private static readonly (string Label, string Value)[] Stats =
+    [
+        ("Revenue", "$48.2k"),
+        ("Active users", "3,214"),
+        ("Churn", "1.8%"),
+    ];
+
+    private const string InlineExample =
+        """
+        <div class="@Css.P(6).RoundedLg().Border().BorderColor(Color.Slate200)
+                    .Background(Color.White).Color(Color.Slate900)
+                    @Dark.Background(Color.Slate800).BorderColor(Color.Slate700).Color(Color.White)
+                    @Theme("ocean").Background(Color.Sky50).BorderColor(Color.Sky300).Color(Color.Sky900)
+                    @Theme("sunset").Background(Color.Orange50).BorderColor(Color.Orange300).Color(Color.Orange900)">
+            <p class="@Css.FontBold().Mb(1)">Inline themed card</p>
+            <p class="@Css.TextSm().Color(Color.Slate600)
+                      @Dark.Color(Color.Slate300)
+                      @Theme("ocean").Color(Color.Sky800)
+                      @Theme("sunset").Color(Color.Orange800)">
+                Click Ocean or Sunset above to re-skin this card.
+            </p>
+        </div>
+        """;
+
+    private const string OceanExample =
+        """
+        var ocean = Theme("ocean");
+
+        ocean
+            .Background(Color.Sky50)
+            .Color(Color.Sky900)
+            .Hover(h => h.Background(Color.Sky100));
+
+        // classes:
+        // theme-ocean:bg-sky-50
+        // theme-ocean:text-sky-900
+        // theme-ocean:hover:bg-sky-100
+
+        // add the class "theme-ocean" to an ancestor to activate it
+        """;
+
+    private const string ToggleScript =
+        """
+        // Opt in: an ancestor carries the theme class.
+        document.documentElement.classList.add('theme-ocean');
+
+        // Opt out again.
+        document.documentElement.classList.remove('theme-ocean');
+
+        // Never persisted, so a navigation restores the normal theme.
+        // (Only 'dark' / 'light' are stored in the FluentCss cookie.)
+        """;
+
+    private const string ComposedExample =
+        """
+        Theme("ocean")
+            .MinMd(md => md
+                .Background(Color.Sky100)
+                .Hover(h => h.Background(Color.Sky200)));
+
+        // classes: min-md:theme-ocean:bg-sky-100
+        //          min-md:theme-ocean:hover:bg-sky-200
+        """;
+}

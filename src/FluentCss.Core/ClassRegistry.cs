@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -23,12 +24,18 @@ public class ClassRegistry : IEnumerable<UtilityClass>
     //
     // Only the media/non-media split is required: a pseudo (\:hover) or theme
     // (.theme-dark .x) selector already has a higher specificity than the base
-    // rule, so it wins regardless of source order. Every media combination can
-    // therefore share one final bucket, leaving five buckets:
+    // rule, so it wins regardless of source order. Non-media rules therefore use
+    // four buckets:
     //
-    //   0 base, 1 pseudo, 2 theme, 3 theme + pseudo, 4 any media
-    private const int BucketCount = 5;
+    //   0 base, 1 pseudo, 2 theme, 3 theme + pseudo
+    //
+    // Media rules are kept as objects (not raw strings) so they can be sorted when
+    // the stylesheet is emitted, following Tailwind: min-width variants ascending
+    // (larger breakpoints win), max-width variants descending (smaller ranges win),
+    // with min rules after max so min takes precedence when both match.
+    private const int BucketCount = 4;
     private readonly StringBuilder[] _buckets;
+    private readonly List<UtilityClass> _mediaClasses = new();
     private readonly object _cssBuilderLock = new();
     private readonly ConcurrentLazyObject<string> _cssObject;
     private readonly ConcurrentLazyObject<byte[]> _bytesObject;
@@ -74,6 +81,8 @@ public class ClassRegistry : IEnumerable<UtilityClass>
                     result.Append(_buckets[i]);
                 }
 
+                AppendMedia(result);
+
                 string css = result.ToString();
                 StringBuilderBag.ClearAndReturn(result);
 
@@ -92,12 +101,18 @@ public class ClassRegistry : IEnumerable<UtilityClass>
             return false;
         }
 
-        int bucket = BucketIndex(c);
-
         lock (_cssBuilderLock)
         {
-            _buckets[bucket].Append('\n');
-            _buckets[bucket].Append(c.CssString);
+            if (!string.IsNullOrWhiteSpace(c.MediaQuery))
+            {
+                _mediaClasses.Add(c);
+            }
+            else
+            {
+                StringBuilder bucket = _buckets[BucketIndex(c)];
+                bucket.Append('\n');
+                bucket.Append(c.CssString);
+            }
         }
 
         _cssObject.Invalidate();
@@ -122,14 +137,7 @@ public class ClassRegistry : IEnumerable<UtilityClass>
 
     private static int BucketIndex(UtilityClass c)
     {
-        // Media variants always go last, in a single bucket. Their extra selectors
-        // (theme class and/or pseudo-class) give them enough specificity to win
-        // over the base and media-only rules they need to override.
-        if (!string.IsNullOrWhiteSpace(c.MediaQuery))
-        {
-            return 4;
-        }
-
+        // Media variants are emitted separately (and sorted) by AppendMedia.
         bool themed = !string.IsNullOrWhiteSpace(c.Theme);
         bool pseudo = !string.IsNullOrWhiteSpace(c.Pseudo);
 
@@ -139,6 +147,158 @@ public class ClassRegistry : IEnumerable<UtilityClass>
         }
 
         return pseudo ? 1 : 0;
+    }
+
+    /// <summary>
+    /// Appends the media rules in a deterministic order that matches Tailwind's
+    /// mobile-first behaviour:
+    /// <list type="bullet">
+    /// <item>max-width rules first, descending by width (smaller ranges win);</item>
+    /// <item>min-width rules last, ascending by width (larger breakpoints win);</item>
+    /// <item>queries that cannot be classified keep their registration order last.</item>
+    /// </list>
+    /// </summary>
+    private void AppendMedia(StringBuilder result)
+    {
+        int count = _mediaClasses.Count;
+
+        if (count == 0)
+        {
+            return;
+        }
+
+        MediaEntry[] entries = new MediaEntry[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            UtilityClass c = _mediaClasses[i];
+            bool known = TryParseMediaKey(c.MediaQuery, out bool isMax, out double value);
+
+            // 0 = max, 1 = min, 2 = unknown
+            int group = known ? (isMax ? 0 : 1) : 2;
+            entries[i] = new MediaEntry(c, i, group, value);
+        }
+
+        Array.Sort(entries, static (a, b) =>
+        {
+            int comparison = a.Group.CompareTo(b.Group);
+
+            if (comparison != 0)
+            {
+                return comparison;
+            }
+
+            comparison = a.Group switch
+            {
+                0 => b.Value.CompareTo(a.Value), // max: descending
+                1 => a.Value.CompareTo(b.Value), // min: ascending
+                _ => 0
+            };
+
+            // Stable tie breaker: keep the order in which classes were registered.
+            return comparison != 0 ? comparison : a.Index.CompareTo(b.Index);
+        });
+
+        for (int i = 0; i < count; i++)
+        {
+            result.Append('\n');
+            result.Append(entries[i].Class.CssString);
+        }
+    }
+
+    /// <summary>
+    /// Extracts a sort key from a media query. Returns false for queries that are not
+    /// a width comparison (for example <c>prefers-color-scheme</c>) or use a unit that
+    /// cannot be compared with width (for example percentages).
+    /// </summary>
+    private static bool TryParseMediaKey(string? query, out bool isMax, out double value)
+    {
+        isMax = false;
+        value = 0;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return false;
+        }
+
+        string q = query!.ToLowerInvariant().Replace(" ", string.Empty).Replace("(", string.Empty).Replace(")", string.Empty);
+
+        // "not all and (min-width: ...)" is the older, negated way to describe a max width.
+        if (q.Contains("notall") || q.Contains("max-width") || q.Contains("<"))
+        {
+            isMax = true;
+        }
+        else if (q.Contains("min-width") || q.Contains(">"))
+        {
+            isMax = false;
+        }
+        else
+        {
+            return false;
+        }
+
+        for (int i = 0; i < q.Length; i++)
+        {
+            if (!char.IsDigit(q[i]) && q[i] != '.')
+            {
+                continue;
+            }
+
+            int numberStart = i;
+
+            while (i < q.Length && (char.IsDigit(q[i]) || q[i] == '.'))
+            {
+                i++;
+            }
+
+            int numberEnd = i;
+            int unitStart = i;
+
+            while (i < q.Length && char.IsLetter(q[i]))
+            {
+                i++;
+            }
+
+            string number = q.Substring(numberStart, numberEnd - numberStart);
+            string unit = q.Substring(unitStart, i - unitStart);
+
+            if (!double.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed) || parsed < 0)
+            {
+                return false;
+            }
+
+            switch (unit)
+            {
+                case "rem":
+                case "em":
+                    value = parsed;
+                    return true;
+                case "px":
+                    // Approximate conversion so px and rem breakpoints sort together.
+                    value = parsed / 16.0;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        return false;
+    }
+
+    private readonly struct MediaEntry
+    {
+        public MediaEntry(UtilityClass @class, int index, int group, double value)
+        {
+            Class = @class;
+            Index = index;
+            Group = group;
+            Value = value;
+        }
+
+        public UtilityClass Class { get; }
+        public int Index { get; }
+        public int Group { get; }
+        public double Value { get; }
     }
 
     public IEnumerator<UtilityClass> GetEnumerator() => _classes.GetEnumerator();

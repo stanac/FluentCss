@@ -1,0 +1,210 @@
+@page "/docs/extensibility"
+
+<PageTitle>Extensibility - FluentCss</PageTitle>
+
+<DocHeader Title="Extensibility"
+           Description="FluentCss is a small set of primitives. Because utilities are ordinary C# methods and values are typed, you can grow the API with your own tokens and helper methods." />
+
+<h2 class="@DocsStyles.H2">Primitives, not a fixed API</h2>
+
+<p class="@DocsStyles.P">
+    The library gives you typed values (<code class="@DocsStyles.InlineCode">Color</code>,
+    <code class="@DocsStyles.InlineCode">Length</code>, <code class="@DocsStyles.InlineCode">Size</code>,
+    <code class="@DocsStyles.InlineCode">FontFamily</code>)
+    and builder methods that accept them. Anything project-specific — a spacing scale, a brand palette,
+    a card helper — belongs in your application, not in the library.
+</p>
+
+<h2 class="@DocsStyles.H2">Define your own tokens</h2>
+
+<p class="@DocsStyles.P">
+    A token is just a named value. Group related <code class="@DocsStyles.InlineCode">Length</code> values
+    in a static class; the name becomes the class fragment and the value is emitted as-is.
+</p>
+
+<CodeBlock Code="@SpacingTokens" />
+
+<h2 class="@DocsStyles.H2">Add helper methods</h2>
+
+<p class="@DocsStyles.P">
+    Turn repeated chains into extension methods. A helper is a normal static method whose first
+    parameter is the builder; return the same interface so calls keep chaining.
+</p>
+
+<CodeBlock Code="@SimpleHelpers" />
+
+<Callout Kind="CalloutKind.Info" Title="Which interface should I extend?">
+    <ul class="@DocsStyles.Ul">
+        <li class="@DocsStyles.Li">
+            <code class="@DocsStyles.InlineCode">IStyleBuilder&lt;T&gt;</code> — implemented by every
+            builder. Best for helpers that only set values, and the only choice that also works inside
+            <code class="@DocsStyles.InlineCode">Hover</code>, <code class="@DocsStyles.InlineCode">Focus</code>
+            and <code class="@DocsStyles.InlineCode">Active</code>.
+        </li>
+        <li class="@DocsStyles.Li">
+            <code class="@DocsStyles.InlineCode">IFluentCssBuilder</code> — the normal builder returned by
+            <code class="@DocsStyles.InlineCode">Css</code>, <code class="@DocsStyles.InlineCode">Dark</code>
+            and <code class="@DocsStyles.InlineCode">Theme(...)</code>. Use it when the helper chains
+            several utilities.
+        </li>
+        <li class="@DocsStyles.Li">
+            <code class="@DocsStyles.InlineCode">IRootFluentCssBuilder</code> — the root only. Required
+            for <code class="@DocsStyles.InlineCode">Min</code>, <code class="@DocsStyles.InlineCode">Max</code>
+            and <code class="@DocsStyles.InlineCode">Media</code>.
+        </li>
+        <li class="@DocsStyles.Li">
+            <code class="@DocsStyles.InlineCode">IOnlyStyleBuilder</code> — the parameter passed to the
+            <code class="@DocsStyles.InlineCode">Hover</code>/<code class="@DocsStyles.InlineCode">Focus</code>/<code class="@DocsStyles.InlineCode">Active</code>
+            callbacks.
+        </li>
+    </ul>
+</Callout>
+
+<h2 class="@DocsStyles.H2">Composite helpers</h2>
+
+<p class="@DocsStyles.P">
+    The same pattern works for component-level styles: one method that expands to a full set of
+    utilities. The call site stays readable and the definition lives in one place.
+</p>
+
+<CodeBlock Code="@CompositeHelpers" />
+
+<Example Code="@CompositeExample">
+    <div class="@(Css.P(Spacing.Lg).Gap(Spacing.Md).Flex(FlexDirection.Col).RoundedLg().Border().BorderColor(Color.Slate200).Background(Color.White))">
+        <p class="@Css.FontBold().Color(Color.Slate900)">Card</p>
+        <p class="@Css.TextSm().Color(Color.Slate600)">Composed from Length tokens.</p>
+    </div>
+</Example>
+
+<h2 class="@DocsStyles.H2">Arbitrary declarations</h2>
+
+<p class="@DocsStyles.P">
+    When no typed helper covers a CSS property, use the
+    <code class="@DocsStyles.InlineCode">Arbitrary</code> escape hatch. It emits one utility with a
+    class name, a property and a value. The class name is the identity used for deduplication, so keep
+    it unique and stable.
+</p>
+
+<CodeBlock Code="@ArbitraryHelpers" />
+
+<Callout Kind="CalloutKind.Warning" Title="Prefer typed helpers">
+    <code class="@DocsStyles.InlineCode">Arbitrary</code> is stringly-typed. Prefer
+    <code class="@DocsStyles.InlineCode">Color</code>, <code class="@DocsStyles.InlineCode">Length</code>,
+    <code class="@DocsStyles.InlineCode">Size</code>, <code class="@DocsStyles.InlineCode">FontFamily</code>
+    and the built-in methods when they exist; reach for
+    <code class="@DocsStyles.InlineCode">Arbitrary</code> only for the gaps.
+</Callout>
+
+<h2 class="@DocsStyles.H2">Responsive and state helpers</h2>
+
+<p class="@DocsStyles.P">
+    Root and callback helpers follow the same idea, targeting the interface that has the methods you
+    need.
+</p>
+
+<CodeBlock Code="@ResponsiveHelpers" />
+
+@code {
+    private static class Spacing
+    {
+        public static readonly Length Xs = new("0.25rem", "1");
+        public static readonly Length Sm = new("0.5rem", "2");
+        public static readonly Length Md = new("1rem", "4");
+        public static readonly Length Lg = new("1.5rem", "6");
+        public static readonly Length Xl = new("2rem", "8");
+    }
+
+    private const string SpacingTokens =
+        """
+        public static class Spacing
+        {
+            public static readonly Length Xs = new("0.25rem", "1"); // p-1
+            public static readonly Length Sm = new("0.5rem", "2");   // p-2
+            public static readonly Length Md = new("1rem", "4");     // p-4
+            public static readonly Length Lg = new("1.5rem", "6");   // p-6
+            public static readonly Length Xl = new("2rem", "8");     // p-8
+        }
+
+        // The name is the class token, so these reuse the numeric class names
+        // that P(1)..P(8) already produce and deduplicate with them.
+        Css.P(Spacing.Md).Gap(Spacing.Md);   // classes: p-4 gap-4
+        """;
+
+    private const string SimpleHelpers =
+        """
+        public static class StyleExtensions
+        {
+            // IStyleBuilder<T> is implemented by every builder, so this works on
+            // Css, Dark, Theme("...") and inside Hover/Focus/Active.
+            public static T Padded<T>(this IStyleBuilder<T> builder, Length length) =>
+                builder.P(length);
+
+            // A concrete interface can chain and return the same type.
+            public static IFluentCssBuilder SpacingMd(this IFluentCssBuilder builder) =>
+                builder.P(Spacing.Md).Gap(Spacing.Md);
+        }
+
+        // usage
+        Css.Padded(Spacing.Lg);
+        Css.SpacingMd();
+        """;
+
+    private const string CompositeHelpers =
+        """
+        public static class ComponentExtensions
+        {
+            public static IFluentCssBuilder Card(this IFluentCssBuilder builder) =>
+                builder
+                    .P(Spacing.Lg)
+                    .Gap(Spacing.Md)
+                    .Flex(FlexDirection.Col)
+                    .RoundedLg()
+                    .Border()
+                    .BorderColor(Color.Slate200)
+                    .Background(Color.White);
+        }
+
+        // usage
+        <div class="@Css.Card()">
+            ...
+        </div>
+        """;
+
+    private const string CompositeExample =
+        """
+        <div class="@Css.Card()">
+            <p class="@Css.FontBold()">Card</p>
+            <p class="@Css.TextSm()">Composed from Length tokens.</p>
+        </div>
+        """;
+
+    private const string ArbitraryHelpers =
+        """
+        // Arbitrary("class-name", "css-property", "css-value")
+        Css.Arbitrary("font-350", "font-weight", "350");
+        Css.Arbitrary("aspect-golden", "aspect-ratio", "1.618 / 1");
+        Css.Arbitrary("grid-dashboard", "grid-template-columns", "240px 1fr");
+
+        // It composes with states and media like any other utility:
+        Css.Hover(h => h.Arbitrary("font-350", "font-weight", "350"));
+        Css.MinMd(md => md.Arbitrary("text-huge", "font-size", "4rem"));
+        """;
+
+    private const string ResponsiveHelpers =
+        """
+        public static class ResponsiveExtensions
+        {
+            // IRootFluentCssBuilder is required for media and theme helpers.
+            public static IRootFluentCssBuilder StackOnMd(this IRootFluentCssBuilder builder) =>
+                builder.MinMd(md => md.Flex(FlexDirection.Row));
+
+            // IOnlyStyleBuilder is what Hover/Focus/Active pass to the callback.
+            public static IOnlyStyleBuilder CardHover(this IOnlyStyleBuilder builder) =>
+                builder.ShadowLg().Background(Color.Blue50);
+        }
+
+        // usage
+        Css.Card().StackOnMd();
+        Css.Hover(h => h.CardHover());
+        """;
+}
