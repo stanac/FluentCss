@@ -294,4 +294,58 @@ public class UtilityClassTests
         u1.Should().NotBe(u2);
         u1.Should().NotBe(u3);
     }
+
+    [Fact]
+    public void AddPseudo_With_Null_Or_Whitespace_Should_Return_The_Same_Instance()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.AddPseudo(null).Should().BeSameAs(sut);
+        sut.AddPseudo("").Should().BeSameAs(sut);
+        sut.AddPseudo("   ").Should().BeSameAs(sut);
+    }
+
+    [Fact]
+    public void AddPseudo_Should_Trim_The_Leading_Colon()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.AddPseudo(":hover").Pseudo.Should().Be("hover");
+    }
+
+    [Fact]
+    public void AddTheme_With_Null_Or_Whitespace_Should_Return_The_Same_Instance()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.AddTheme(null).Should().BeSameAs(sut);
+        sut.AddTheme("").Should().BeSameAs(sut);
+        sut.AddTheme("   ").Should().BeSameAs(sut);
+    }
+
+    [Fact]
+    public void AddMedia_With_Null_Or_Whitespace_Should_Return_The_Same_Instance()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.AddMedia(null, "md").Should().BeSameAs(sut);
+        sut.AddMedia("(width >= 48rem)", null).Should().BeSameAs(sut);
+        sut.AddMedia("", "").Should().BeSameAs(sut);
+    }
+
+    [Fact]
+    public void ClassName_Should_Be_Cached()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.ClassName.Should().BeSameAs(sut.ClassName);
+    }
+
+    [Fact]
+    public void CssString_Should_Be_Cached()
+    {
+        var sut = new UtilityClass("p-4", "padding", "1rem");
+
+        sut.CssString.Should().BeSameAs(sut.CssString);
+    }
 }

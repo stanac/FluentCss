@@ -9,7 +9,6 @@
 
 <p class="@DocsStyles.P">
     There is one integration package per hosting model. Install the one that matches your app.
-    You never install <code class="@DocsStyles.InlineCode">FluentCss.Core</code> yourself.
 </p>
 
 <table class="@DocsStyles.Table">
@@ -41,10 +40,9 @@
     </tbody>
 </table>
 
-<Callout Kind="CalloutKind.Tip" Title="FluentCss.Core comes with them">
+<Callout Kind="CalloutKind.Tip" Title="FluentCss.Core is transitive dependency">
     Both integration packages depend on <code class="@DocsStyles.InlineCode">FluentCss.Core</code> and bring it in
-    automatically. That is where the builder, the registry and every utility live, and it is a transitive
-    dependency: do not add it to your project on its own.
+    automatically.
 </Callout>
 
 <h2 class="@DocsStyles.H2">Blazor</h2>
@@ -69,10 +67,19 @@
 
 <CodeBlock Code="@LayoutBlazor" Language="cshtml" />
 
-<p class="@DocsStyles.P">
-    Optionally include the Tailwind preflight reset to normalize browser defaults such as margins, borders and
-    fonts:
-</p>
+<Callout Kind="CalloutKind.Tip" Title="Keep the loading and error styles as plain CSS">
+    The Blazor template's loading indicator and error UI are present in the HTML before the interactive
+    component tree renders, so in a standalone WebAssembly app they can be visible before
+    <code class="@DocsStyles.InlineCode">CssStyles</code> has emitted its stylesheet. Put those few rules
+    in a separate plain CSS file (for example
+    <code class="@DocsStyles.InlineCode">wwwroot/app.css</code>) and link it from
+    <code class="@DocsStyles.InlineCode">index.html</code> or
+    <code class="@DocsStyles.InlineCode">App.razor</code>. This documentation site does exactly that:
+    the loading and error rules live in
+    <code class="@DocsStyles.InlineCode">wwwroot/css/site.css</code>. You do not need the form
+    validation or <code class="@DocsStyles.InlineCode">form-floating</code> rules unless you use
+    <code class="@DocsStyles.InlineCode">EditForm</code> validation.
+</Callout>
 
 <h3 class="@DocsStyles.H3">Interactive rendering</h3>
 

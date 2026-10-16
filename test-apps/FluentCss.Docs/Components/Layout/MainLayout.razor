@@ -1,4 +1,6 @@
 @inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@implements IDisposable
 
 <div class="@DocsStyles.Shell">
     <aside id="fc-sidebar" class="@DocsStyles.Sidebar">
@@ -32,17 +34,49 @@
                     <DocsPager />
                 </article>
 
-                @* The list is filled in by docs.js from the headings on the page. *@
-                <aside id="fc-toc" class="@DocsStyles.Toc" hidden>
-                    <p class="@DocsStyles.TocTitle">On this page</p>
-                    <nav data-fc-toc-nav
-                         class="@DocsStyles.TocNav"
-                         data-fc-link-class="@DocsStyles.TocLink"
-                         data-fc-active-class="@DocsStyles.TocLinkActive"></nav>
-                </aside>
+                @* The list is filled in by docs.js from the headings on the page.
+                   The panel is rendered (and its column reserved) from the first
+                   paint; docs.js only toggles visibility via data-fc-toc-ready, so
+                   revealing the links never reflows the article. Only the
+                   documentation pages render the panel. *@
+                @if (ShowToc)
+                {
+                    <aside id="fc-toc" class="@DocsStyles.Toc">
+                        <p class="@DocsStyles.TocTitle">On this page</p>
+                        <nav data-fc-toc-nav
+                             class="@DocsStyles.TocNav"
+                             data-fc-link-class="@DocsStyles.TocLink"
+                             data-fc-active-class="@DocsStyles.TocLinkActive"></nav>
+                    </aside>
+                }
             </div>
         </main>
     </div>
 </div>
 
 <FluentCss.Blazor.CssStyles />
+
+@code {
+    // Only the documentation pages (/docs/...) get the "On this page" panel; the
+    // landing, error and 404 pages render without it.
+    private bool ShowToc =>
+        Navigation.ToBaseRelativePath(Navigation.Uri)
+            .Split('?', '#')[0]
+            .TrimEnd('/')
+            .StartsWith("docs", StringComparison.OrdinalIgnoreCase);
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

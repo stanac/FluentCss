@@ -1,32 +1,67 @@
-using System;
-
 namespace FluentCss.Core;
 
-/// <summary>
-/// Css builder with pseudo and media
-/// </summary>
-public interface IRootFluentCssBuilder: IFluentCssBuilder
+public interface IRootFluentCssBuilder : IMediaFluentCssBuilder
+{
+    IRootFluentCssBuilder ApplySelector(string selector, Action<IOnlyStyleBuilder> cssBuilderAction);
+}
+
+public static class RootFluentCssBuilderInterfaceExtensions
 {
     /// <summary>
-    /// Adds container name with type inline-size
+    /// Registers a selector built with the fluent <see cref="IRootSelectorBuilder"/>
+    /// API. The selector is rendered to its CSS text and handed to
+    /// <see cref="IRootFluentCssBuilder.ApplySelector(string, Action{IOnlyStyleBuilder})"/>.
     /// </summary>
-    /// <param name="name">Name of the container</param>
-    IRootFluentCssBuilder ContainerInlineSizeName(string name);
+    /// <example>
+    /// <code>
+    /// Css.ApplySelector(s => s.Class("btn").Hover(), css => css.Px(4).Py(2));
+    /// </code>
+    /// </example>
+    public static IRootFluentCssBuilder ApplySelector(
+        this IRootFluentCssBuilder cssBuilder,
+        Action<IRootSelectorBuilder> selectorBuilderAction,
+        Action<IOnlyStyleBuilder> cssBuilderAction)
+    {
+        if (cssBuilder is null)
+        {
+            throw new ArgumentNullException(nameof(cssBuilder));
+        }
 
-    /// <summary>
-    /// Adds container name with type size
-    /// </summary>
-    /// <param name="name">Name of the container</param>
-    IRootFluentCssBuilder ContainerSizeName(string name);
+        if (selectorBuilderAction is null)
+        {
+            throw new ArgumentNullException(nameof(selectorBuilderAction));
+        }
 
-    /// <summary>
-    /// Custom media query builder. This is the single primitive the responsive
-    /// helpers are built on: see <see cref="RootFluentCssBuilderExtensions.Min"/>,
-    /// <see cref="RootFluentCssBuilderExtensions.Max"/> and the named breakpoint
-    /// helpers (for example <see cref="RootFluentCssBuilderExtensions.MinMd"/>).
-    /// </summary>
-    /// <param name="query">Media query</param>
-    /// <param name="classPrefix">Class prefix for creating class names</param>
-    /// <param name="cssBuilderAction">CSS builder action</param>
-    IRootFluentCssBuilder Media(string query, string classPrefix, Action<IRootFluentCssBuilder> cssBuilderAction);
+        IRootSelectorBuilder selectorBuilder = Selector.New();
+        selectorBuilderAction(selectorBuilder);
+
+        string selector = selectorBuilder.Css;
+
+        if (string.IsNullOrWhiteSpace(selector))
+        {
+            throw new InvalidOperationException("The selector builder produced an empty selector.");
+        }
+
+        return cssBuilder.ApplySelector(selector, cssBuilderAction);
+    }
+
+    public static IRootFluentCssBuilder ApplyClass(this IRootFluentCssBuilder cssBuilder, string className, Action<IOnlyStyleBuilder> cssBuilderAction)
+    {
+        if (!className.StartsWith("."))
+        {
+            className = "." + className;
+        }
+
+        return cssBuilder.ApplySelector(className, cssBuilderAction);
+    }
+
+    public static IRootFluentCssBuilder ApplyId(this IRootFluentCssBuilder cssBuilder, string elementId, Action<IOnlyStyleBuilder> cssBuilderAction)
+    {
+        if (!elementId.StartsWith("#"))
+        {
+            elementId = "#" + elementId;
+        }
+
+        return cssBuilder.ApplySelector(elementId, cssBuilderAction);
+    }
 }

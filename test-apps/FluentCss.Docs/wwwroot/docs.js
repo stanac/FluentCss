@@ -164,7 +164,13 @@
         }
 
         var signature = entries.map(function (e) { return e.level + ':' + e.id; }).join('|');
-        if (signature === tocSignature) {
+        var hasEntries = entries.length >= 2;
+
+        // The panel reserves its column from the first paint and is revealed by the
+        // data-fc-toc-ready attribute. Re-apply it when the signature is unchanged
+        // because Blazor enhanced navigation may have replaced the element.
+        if (signature === tocSignature && nav.childElementCount === entries.length) {
+            setTocReady(container, hasEntries);
             updateTocActive();
             return;
         }
@@ -175,9 +181,9 @@
         try {
             nav.innerHTML = '';
 
-            if (entries.length < 2) {
+            if (!hasEntries) {
                 tocState = null;
-                container.hidden = true;
+                setTocReady(container, false);
             } else {
                 var linkClass = nav.getAttribute('data-fc-link-class') || '';
                 var min = entries[0].level;
@@ -205,7 +211,7 @@
                     linkClass: linkClass,
                     activeClass: nav.getAttribute('data-fc-active-class') || linkClass
                 };
-                container.hidden = false;
+                setTocReady(container, true);
             }
         } finally {
             // Ignore the mutations this build just caused.
@@ -213,6 +219,14 @@
         }
 
         updateTocActive();
+    }
+
+    function setTocReady(container, ready) {
+        if (ready) {
+            container.setAttribute('data-fc-toc-ready', '');
+        } else {
+            container.removeAttribute('data-fc-toc-ready');
+        }
     }
 
     function updateTocActive() {

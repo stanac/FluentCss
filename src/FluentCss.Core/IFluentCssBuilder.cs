@@ -5,7 +5,7 @@ namespace FluentCss.Core;
 /// <summary>
 /// Css builder with pseudo builder methods
 /// </summary>
-public interface IFluentCssBuilder: IStyleBuilder<IFluentCssBuilder>
+public interface IFluentCssBuilder: IImportantStyleBuilder<IFluentCssBuilder>
 {
     /// <summary>
     /// Matches when a user designates an item with a pointing device, such as holding the mouse pointer over the item.

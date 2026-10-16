@@ -3,9 +3,9 @@ namespace FluentCss.Core;
 /// <summary>
 /// Named <see cref="Length"/> values for the common breakpoints, mirroring the
 /// values already used by <see cref="Size"/>. Use them with
-/// <see cref="RootFluentCssBuilderExtensions.Min"/> and
-/// <see cref="RootFluentCssBuilderExtensions.Max"/> (or the named helpers such as
-/// <see cref="RootFluentCssBuilderExtensions.MinMd"/>), or define your own
+/// <see cref="MediaFluentCssBuilderExtensions.Min"/> and
+/// <see cref="MediaFluentCssBuilderExtensions.Max"/> (or the named helpers such as
+/// <see cref="MediaFluentCssBuilderExtensions.MinMd"/>), or define your own
 /// <see cref="Length"/> for a project-specific breakpoint.
 /// </summary>
 public static class Breakpoints
@@ -25,7 +25,7 @@ public static class Breakpoints
     /// <summary>80rem, matches <see cref="Size.Xl"/>.</summary>
     public static Length XLarge { get; } = new("80rem", "xl");
 
-    /// <summary>96rem, matches <see cref="Size._2Xl"/>.</summary>
+    /// <summary>96rem, matches <see cref="Size.Xxl"/>.</summary>
     // ReSharper disable once InconsistentNaming
     public static Length XXLarge { get; } = new("96rem", "2xl");
 }

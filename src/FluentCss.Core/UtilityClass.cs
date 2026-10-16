@@ -32,6 +32,11 @@ public class UtilityClass
                 sb.Append(Pseudo).Append(':');
             }
 
+            if (Important)
+            {
+                sb.Append('!');
+            }
+
             sb.Append(_classNameNoPseudo);
 
             field = sb.ToString();
@@ -48,6 +53,13 @@ public class UtilityClass
     public string? MediaQuery { get; private set; }
     public string? MediaPrefix { get; private set; }
 
+    /// <summary>
+    /// True when the value is emitted with <c>!important</c>. A class can have at
+    /// most one identity, so the flag is part of the class name (for example
+    /// <c>!p-4</c>) as well as the declaration.
+    /// </summary>
+    public bool Important { get; private set; }
+
     private string? _cssString;
     public string CssString => _cssString ??= BuildCssString();
 
@@ -58,14 +70,20 @@ public class UtilityClass
         _classNameNoPseudo = className;
     }
 
-    internal UtilityClass AddPseudo(string pseudo)
+    internal UtilityClass AddPseudo(string? pseudo)
     {
+        if (string.IsNullOrWhiteSpace(pseudo))
+        {
+            return this;
+        }
+
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
-            Pseudo = pseudo.Trim(':'),
+            Pseudo = pseudo!.Trim(':'),
             Theme = Theme,
             MediaPrefix = MediaPrefix,
-            MediaQuery = MediaQuery
+            MediaQuery = MediaQuery,
+            Important = Important
         };
     }
 
@@ -81,7 +99,8 @@ public class UtilityClass
             Pseudo = Pseudo,
             Theme = theme,
             MediaPrefix = MediaPrefix,
-            MediaQuery = MediaQuery
+            MediaQuery = MediaQuery,
+            Important = Important
         };
     }
 
@@ -101,7 +120,25 @@ public class UtilityClass
             Pseudo = Pseudo,
             Theme = Theme,
             MediaPrefix = prefix,
-            MediaQuery = query
+            MediaQuery = query,
+            Important = Important
+        };
+    }
+
+    internal UtilityClass AddImportant()
+    {
+        if (Important)
+        {
+            return this;
+        }
+
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
+        {
+            Pseudo = Pseudo,
+            Theme = Theme,
+            MediaPrefix = MediaPrefix,
+            MediaQuery = MediaQuery,
+            Important = true
         };
     }
 
@@ -152,6 +189,11 @@ public class UtilityClass
             sb.Append(Escape(Pseudo!)).Append("\\:");
         }
 
+        if (Important)
+        {
+            sb.Append("\\!");
+        }
+
         sb.Append(Escape(_classNameNoPseudo));
 
         if (!string.IsNullOrWhiteSpace(Pseudo))
@@ -159,7 +201,14 @@ public class UtilityClass
             sb.Append(':').Append(Pseudo);
         }
 
-        sb.Append(" { ").Append(Property).Append(": ").Append(Value).Append(" } ");
+        sb.Append(" { ").Append(Property).Append(": ").Append(Value);
+
+        if (Important)
+        {
+            sb.Append(" !important");
+        }
+
+        sb.Append(" } ");
 
         if (!string.IsNullOrWhiteSpace(MediaQuery))
         {
@@ -177,7 +226,7 @@ public class UtilityClass
     /// keeps the readable form (for example <c>min-1.5rem</c>); only the selector
     /// needs the escapes (<c>.min-1\\.5rem\\:</c>).
     /// </summary>
-    private static string Escape(string value)
+    internal static string Escape(string value)
     {
         int firstSpecial = -1;
 
@@ -190,15 +239,28 @@ public class UtilityClass
             }
         }
 
-        if (firstSpecial < 0)
+        // A CSS identifier cannot start with a digit. Even though a digit is a
+        // "safe" character mid-identifier, it has to be hex-escaped when it is
+        // first (for example "2xl" becomes "\32 xl", which is the class .2xl).
+        bool leadingDigit = value.Length > 0 && value[0] >= '0' && value[0] <= '9';
+
+        if (firstSpecial < 0 && !leadingDigit)
         {
             return value;
         }
 
         StringBuilder sb = StringBuilderBag.TakeOrNew();
-        sb.Append(value, 0, firstSpecial);
+        int start = 0;
 
-        for (int i = firstSpecial; i < value.Length; i++)
+        if (leadingDigit)
+        {
+            sb.Append('\\').Append(((int)value[0]).ToString("x")).Append(' ');
+            start = 1;
+        }
+
+        sb.Append(value, start, (firstSpecial < 0 ? value.Length : firstSpecial) - start);
+
+        for (int i = firstSpecial < 0 ? value.Length : firstSpecial; i < value.Length; i++)
         {
             char c = value[i];
 

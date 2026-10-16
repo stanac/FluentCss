@@ -23,6 +23,8 @@ public static class DocsNavigation
         [
             new("Utility classes", "/docs/utility-classes"),
             new("Extensibility", "/docs/extensibility"),
+            new("Custom selectors", "/docs/selectors"),
+            new("!important", "/docs/important"),
             new("Hover & focus", "/docs/states"),
             new("Responsive design", "/docs/responsive"),
             new("Dark mode", "/docs/dark-mode"),

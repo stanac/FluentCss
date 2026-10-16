@@ -1,3 +1,3 @@
 namespace FluentCss.Core;
 
-public interface IOnlyStyleBuilder : IStyleBuilder<IOnlyStyleBuilder>;
+public interface IOnlyStyleBuilder : IImportantStyleBuilder<IOnlyStyleBuilder>;

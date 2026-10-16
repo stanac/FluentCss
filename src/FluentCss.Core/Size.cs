@@ -15,8 +15,8 @@ public class Size
     public static Size Md { get; } = new("48rem", "md");
     public static Size Lg { get; } = new("64rem", "lg");
     public static Size Xl { get; } = new("80rem", "xl");
-    public static Size _2Xl { get; } = new("96rem", "2l");
-    public static Size _3Xl { get; } = new("96rem", "3l");
+    public static Size Xxl { get; } = new("96rem", "2xl");
+    public static Size Xxxl { get; } = new("128rem", "3xl");
 
     public static Size Full { get; } = new("100%", "full");
     public static Size ScreenH { get; } = new("100vh", "screen");

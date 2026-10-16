@@ -1,0 +1,266 @@
+@page "/docs/selectors"
+
+<PageTitle>Custom selectors - FluentCss</PageTitle>
+
+<DocHeader Title="Custom selectors"
+           Description="Utility classes cover most styling. When you need a real selector — descendant or child combinators, attributes, :has, :not or a pseudo-element — build it with the typed selector builder and attach declarations with ApplySelector." />
+
+<h2 class="@DocsStyles.H2">Why a selector builder</h2>
+
+<p class="@DocsStyles.P">
+    Utilities produce single-class selectors such as
+    <code class="@DocsStyles.InlineCode">.p-4</code>. Component styles often need more:
+    <code class="@DocsStyles.InlineCode">.card &gt; h2</code>,
+    <code class="@DocsStyles.InlineCode">input[type="text"]</code>,
+    <code class="@DocsStyles.InlineCode">.card:has(&gt; img)</code> or
+    <code class="@DocsStyles.InlineCode">.prose h2::before</code>. The selector builder lets you
+    write those with typed calls instead of hand-written strings, then registers the declarations
+    through the same registry the utilities use.
+</p>
+
+<h2 class="@DocsStyles.H2">ApplySelector</h2>
+
+<p class="@DocsStyles.P">
+    The <code class="@DocsStyles.InlineCode">ApplySelector</code> overload takes two lambdas: the
+    first builds the selector, the second declares the styles with
+    <code class="@DocsStyles.InlineCode">IOnlyStyleBuilder</code> — the same builder used by
+    <code class="@DocsStyles.InlineCode">Hover</code> and <code class="@DocsStyles.InlineCode">Focus</code>.
+</p>
+
+<CodeBlock Code="@BasicUsage" />
+
+<p class="@DocsStyles.P">
+    A string overload, <code class="@DocsStyles.InlineCode">ApplySelector(selector, css =&gt; ...)</code>,
+    is the manual escape hatch: pass any selector text and it is emitted exactly as written, without
+    escaping or validation. Use it for selectors the typed builder does not cover. The
+    <code class="@DocsStyles.InlineCode">ApplyClass</code> and
+    <code class="@DocsStyles.InlineCode">ApplyId</code> helpers are thin sugar over it.
+</p>
+
+<CodeBlock Code="@ManualSelector" />
+
+<p class="@DocsStyles.P">
+    The chain reads in the same order the selector is emitted: media, theme, target, then pseudo.
+    A selector that ends with a combinator such as
+    <code class="@DocsStyles.InlineCode">Child()</code> returns to the target stage, so
+    <code class="@DocsStyles.InlineCode">.prose &gt; h2</code> is
+    <code class="@DocsStyles.InlineCode">s.Class("prose").Child().Element("h2")</code>.
+</p>
+
+<CodeBlock Code="@Anatomy" />
+
+<h2 class="@DocsStyles.H2">Compound selectors</h2>
+
+<p class="@DocsStyles.P">
+    Classes, ids, attributes and pseudo-classes all belong to the same compound and can be chained
+    in any order. <code class="@DocsStyles.InlineCode">Element</code> adds the type selector, and
+    <code class="@DocsStyles.InlineCode">Universal</code> adds <code class="@DocsStyles.InlineCode">*</code>.
+</p>
+
+<CodeBlock Code="@Compound" />
+
+<h2 class="@DocsStyles.H2">Attributes</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Attribute</code> has three shapes: presence, equality and an
+    explicit operator with an optional case flag. Class names are escaped automatically, and a
+    leading digit is hex-escaped so <code class="@DocsStyles.InlineCode">Class("2xl")</code> becomes
+    the valid selector <code class="@DocsStyles.InlineCode">.\32 xl</code>.
+</p>
+
+<ApiTable Rows="@AttributeRows" />
+
+<h2 class="@DocsStyles.H2">Selector lists</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Targets</code> builds a comma-separated selector list. Every
+    target shares the surrounding media and theme, and each target is written with the normal fluent
+    chain.
+</p>
+
+<CodeBlock Code="@Targets" />
+
+<h2 class="@DocsStyles.H2">Functional pseudo-classes</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Not</code>, <code class="@DocsStyles.InlineCode">Is</code> and
+    <code class="@DocsStyles.InlineCode">Where</code> accept a selector list, just like
+    <code class="@DocsStyles.InlineCode">Targets</code>. <code class="@DocsStyles.InlineCode">Has</code>
+    accepts relative selectors, so a <code class="@DocsStyles.InlineCode">:has(...)</code> argument may
+    start with a combinator.
+</p>
+
+<CodeBlock Code="@FunctionalPseudos" />
+
+<h2 class="@DocsStyles.H2">Pseudo-elements</h2>
+
+<p class="@DocsStyles.P">
+    A keyword pseudo-element such as <code class="@DocsStyles.InlineCode">Before</code> ends the
+    selector. Functional pseudo-elements such as <code class="@DocsStyles.InlineCode">::part(...)</code>
+    return to the compound stage, so a pseudo-class can follow.
+</p>
+
+<CodeBlock Code="@PseudoElements" />
+
+<h2 class="@DocsStyles.H2">A registered component</h2>
+
+<p class="@DocsStyles.P">
+    The pill below is a class registered once at startup. Its base rule comes from
+    <code class="@DocsStyles.InlineCode">ApplyClass</code>; the hover rule is built with the fluent
+    selector builder. Applied rules are emitted before utility rules, so a plain utility class can
+    still override a component style.
+</p>
+
+<Example Code="@AppliedSelectorUsage">
+    <span class="@DocsStyles.PillClass">Registered with ApplySelector</span>
+</Example>
+
+<h2 class="@DocsStyles.H2">Good to know</h2>
+
+<Callout Kind="CalloutKind.Info" Title="Applied rules come first">
+    Rules registered by <code class="@DocsStyles.InlineCode">ApplySelector</code> are emitted before
+    the utility rules, following component/utility layering. This means a utility class always wins
+    over an applied selector when both have the same specificity.
+</Callout>
+
+<Callout Kind="CalloutKind.Warning" Title="Media sorting">
+    A selector that carries its own at-rule
+    (<code class="@DocsStyles.InlineCode">@("@media")</code>, <code class="@DocsStyles.InlineCode">@("@supports")</code>,
+    <code class="@DocsStyles.InlineCode">@("@container")</code>) is emitted verbatim with the declarations
+    nested inside it. It is not part of the breakpoint sorting that utility media rules get.
+</Callout>
+
+<Callout Kind="CalloutKind.Tip" Title="Startup, not render">
+    Register applied selectors once — in a static constructor, a module initializer or your app's
+    startup code. Unlike utilities, applied rules are not deduplicated, so calling
+    <code class="@DocsStyles.InlineCode">ApplySelector</code> on every render would append the same
+    rule repeatedly.
+</Callout>
+
+<Callout Kind="CalloutKind.Warning" Title="One registration per process">
+    <code class="@DocsStyles.InlineCode">ApplySelector</code> writes to
+    <code class="@DocsStyles.InlineCode">ClassRegistry.DefaultRegistry</code>, which lives in the
+    current process. An interactive WebAssembly app runs your components twice: once on the server
+    while prerendering and again in the browser. Put applied-selector registrations in code that runs
+    on both — a shared static constructor or module initializer — not only in a server-only startup
+    path such as <code class="@DocsStyles.InlineCode">Program.cs</code> or a hosted service. Utilities
+    are registered as components render, so they are present on both sides automatically; only applied
+    selectors need this.
+</Callout>
+
+@code {
+    private static readonly (string Utility, string Css)[] AttributeRows =
+    [
+        ("Attribute(\"required\")", "[required]"),
+        ("Attribute(\"type\", \"text\")", "[type=\"text\"]"),
+        ("Attribute(\"href\", \"https\", AttributeOperator.Prefix)", "[href^=\"https\"]"),
+        ("Attribute(\"href\", \".pdf\", AttributeOperator.Suffix)", "[href$=\".pdf\"]"),
+        ("Attribute(\"class\", \"note\", AttributeOperator.Includes)", "[class~=\"note\"]"),
+        ("Attribute(\"lang\", \"en\", AttributeOperator.HyphenPrefix)", "[lang|=\"en\"]"),
+        ("Attribute(\"data-x\", \"y\", AttributeOperator.Contains)", "[data-x*=\"y\"]"),
+        ("Attribute(\"data-state\", \"open\", AttributeOperator.Exact, AttributeCase.Insensitive)", "[data-state=\"open\" i]"),
+    ];
+
+    private const string BasicUsage =
+        """
+        Css.ApplySelector(
+            s => s.Class("btn").Hover(),
+            css => css.Px(4).Py(2).Background(Color.Blue600).Color(Color.White));
+
+        // generated
+        .btn:hover { padding-inline: 1rem; padding-block: 0.5rem; ... }
+        """;
+
+    private const string ManualSelector =
+        """
+        // Manual selector text, emitted exactly as written.
+        Css.ApplySelector(".card > h2, .card > h3", css => css.Mt(0));
+        Css.ApplySelector("dialog::backdrop", css => css.Background(Color.Black));
+
+        // Sugar: ApplyClass prefixes '.', ApplyId prefixes '#'.
+        Css.ApplyClass("docs-pill", css => css.Px(3).Py(1));
+        Css.ApplyId("hero", css => css.Py(12));
+        """;
+
+    private const string Anatomy =
+        """
+        s => s.Media("(min-width: 48rem)").Dark().Class("card").Hover()
+        // @media (min-width: 48rem) { .dark .card:hover }
+
+        s => s.Class("prose").Child().Element("h2").Hover()
+        // .prose > h2:hover
+
+        s => s.Class("a").AdjacentSibling().Class("b")
+        // .a + .b
+
+        s => s.Class("a").GeneralSibling().Class("b")
+        // .a ~ .b
+        """;
+
+    private const string Compound =
+        """
+        s => s.Class("btn").Class("primary").Hover()   // .btn.primary:hover
+        s => s.Class("btn").Id("submit")               // .btn#submit
+        s => s.Element("input").Attribute("type", "text")  // input[type="text"]
+        s => s.Class("a").Child().Universal()          // .a > *
+        s => s.Element("li").NthChild("2n+1")          // li:nth-child(2n+1)
+        """;
+
+    private const string Targets =
+        """
+        Css.ApplySelector(
+            s => s.Media("(min-width: 48rem)").Dark().Targets(
+                t => t.Class("btn").Hover(),
+                t => t.Class("card"),
+                t => t.Class("panel").Child().Class("title")),
+            css => css.P(6).RoundedLg());
+
+        // @media (min-width: 48rem) {
+        //     .dark .btn:hover, .dark .card, .dark .panel > .title { ... }
+        // }
+        """;
+
+    private const string FunctionalPseudos =
+        """
+        s => s.Class("input").Not(
+                t => t.Class("disabled"),
+                t => t.Attribute("readonly"))
+        // .input:not(.disabled, [readonly])
+
+        s => s.Element("h2").Is(t => t.Class("title"), t => t.Id("main"))
+        // h2:is(.title, #main)
+
+        s => s.Class("card").Has(r => r.Child().Element("img"))
+        // .card:has(> img)
+
+        s => s.Class("card").Has(
+                r => r.Child().Element("img"),
+                r => r.AdjacentSibling().Class("title").Hover())
+        // .card:has(> img, + .title:hover)
+        """;
+
+    private const string PseudoElements =
+        """
+        s => s.Class("btn").Before()                       // .btn::before
+        s => s.Class("quote").After()                      // .quote::after
+        s => s.Element("my-button")
+              .FunctionalPseudoElement("part", "button")
+              .Hover()                                     // my-button::part(button):hover
+        """;
+
+    private const string AppliedSelectorUsage =
+        """
+        // once, at startup
+        Css.ApplyClass("docs-pill", css => css
+            .InlineBlock().Px(3).Py(1).RoundedFull()
+            .TextXs().FontBold()
+            .Background(Color.Blue100).Color(Color.Blue700));
+
+        Css.ApplySelector(
+            s => s.Class("docs-pill").Hover(),
+            css => css.Background(Color.Blue200).Color(Color.Blue800));
+
+        // usage
+        <span class="docs-pill">Registered with ApplySelector</span>
+        """;
+}

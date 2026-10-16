@@ -216,7 +216,7 @@ Spacing scale: `n × 0.25rem`. E.g., `P(4)` = `1rem`.
 .MaxH(Size.Lg)    .MinH(Size.Zero)
 ```
 
-Predefined sizes: `Size.Sm`, `Size.Md`, `Size.Lg`, `Size.Xl`, `Size._2Xl`, `Size._3Xl`, `Size.Full`, `Size.ScreenH`, `Size.ScreenW`, `Size.Zero`, `Size.Min`, `Size.Max`, `Size.Fit`.
+Predefined sizes: `Size.Sm`, `Size.Md`, `Size.Lg`, `Size.Xl`, `Size.Xxl`, `Size.Xxxl`, `Size.Full`, `Size.ScreenH`, `Size.ScreenW`, `Size.Zero`, `Size.Min`, `Size.Max`, `Size.Fit`.
 
 ### Typography
 

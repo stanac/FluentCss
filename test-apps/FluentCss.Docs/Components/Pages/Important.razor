@@ -1,0 +1,100 @@
+@page "/docs/important"
+
+<PageTitle>Overriding with !important - FluentCss</PageTitle>
+
+<DocHeader Title="Overriding with !important"
+           Description="Force a handful of declarations to win the cascade. Important blocks are scoped to a single lambda, compose with states, themes and media, and cannot be nested." />
+
+<h2 class="@DocsStyles.H2">When to use it</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">!important</code> should be the last resort. Prefer the normal
+    tools first: reorder utilities, add a state or theme variant, or write a component selector with
+    enough specificity. Reach for an important block when you have to beat a style you do not control,
+    such as a vendor stylesheet or an inline style.
+</p>
+
+<Callout Kind="CalloutKind.Warning" Title="Hard to override later">
+    A rule that uses <code class="@DocsStyles.InlineCode">!important</code> can only be overridden by
+    another <code class="@DocsStyles.InlineCode">!important</code> with higher specificity. Keep the
+    blocks small and close to the reason you needed them.
+</Callout>
+
+<h2 class="@DocsStyles.H2">The Important block</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Important</code> takes a lambda that receives a styles-only
+    builder. Every declaration added inside the lambda is emitted with
+    <code class="@DocsStyles.InlineCode">!important</code>, and the returned class names carry a leading
+    <code class="@DocsStyles.InlineCode">!</code>. Several declarations can go in one block.
+</p>
+
+<CodeBlock Code="@BasicUsage" />
+
+<p class="@DocsStyles.P">
+    Because the <code class="@DocsStyles.InlineCode">!</code> is part of the class name, the important
+    utility is a different class from the plain one. Both can live on the page without deduplicating
+    into each other.
+</p>
+
+<CodeBlock Code="@Naming" />
+
+<h2 class="@DocsStyles.H2">Composing with states, themes and media</h2>
+
+<p class="@DocsStyles.P">
+    An important block is a normal utility chain, so it works anywhere a state, theme or breakpoint
+    callback does. The prefix ends up before the declaration, exactly like any other variant.
+</p>
+
+<CodeBlock Code="@Composition" />
+
+<h2 class="@DocsStyles.H2">One level only</h2>
+
+<p class="@DocsStyles.P">
+    The lambda does not receive the full builder: it only exposes the style utilities, not
+    <code class="@DocsStyles.InlineCode">Important</code> itself. That makes an important block inside
+    another important block a compile error, and stops an accidental flag from cascading through a
+    longer chain.
+</p>
+
+<Callout Kind="CalloutKind.Info" Title="Why not expose Important in the scope?">
+    If the scope exposed <code class="@DocsStyles.InlineCode">Important</code>, the first declaration in
+    the lambda would return the full builder again and the flag could nest. A dedicated
+    <code class="@DocsStyles.InlineCode">IStyleScopeBuilder</code> keeps override blocks flat. You can
+    still add as many declarations as you need inside one block.
+</Callout>
+
+@code {
+    private const string BasicUsage =
+        """
+        Css.Important(c => c.P(4).Background(Color.Red500));
+
+        // classes: !p-4 !bg-red-500
+        // .\!p-4        { padding: 1rem !important }
+        // .\!bg-red-500 { background-color: oklch(0.637 0.237 25.331) !important }
+        """;
+
+    private const string Naming =
+        """
+        Css.P(4);                     // class: p-4
+        Css.Important(c => c.P(4));   // class: !p-4  (a separate class, keeps both rules)
+
+        Css.Hover(h => h.P(4));                       // hover:p-4
+        Css.Hover(h => h.Important(c => c.P(4)));     // hover:!p-4
+        """;
+
+    private const string Composition =
+        """
+        // state
+        Css.Hover(h => h.Important(c => c.Background(Color.Blue600)));
+        // .hover\:\!bg-blue-600:hover { background-color: ... !important }
+
+        // theme
+        Dark.Important(c => c.Color(Color.White));
+        // .theme-dark .theme-dark\:\!text-white { color: ... !important }
+
+        // media
+        Css.MinMd(md => md.Important(c => c.P(6)));
+        // @media (min-width: 48rem) { .min-md\:\!p-6 { padding: 1.5rem !important } }
+        """;
+}

@@ -36,6 +36,32 @@ public static class DocsStyles
         $"{Theme("ocean").Background(Color.Sky50).Color(Color.Slate900)} " +
         $"{Theme("sunset").Background(Color.Orange50).Color(Color.Slate900)}";
 
+    /// <summary>
+    /// A component class documented on the /docs/selectors page. The base rule is
+    /// registered with <c>ApplyClass</c> and the hover rule with the fluent selector
+    /// builder, once, in the static constructor below.
+    /// </summary>
+    public const string PillClass = "docs-pill";
+
+    static DocsStyles()
+    {
+        DocsAppliedStyles.Initialize();
+
+        Css.ApplyClass(PillClass, css => css
+            .InlineBlock()
+            .Px(3)
+            .Py(1)
+            .RoundedFull()
+            .TextXs()
+            .FontBold()
+            .Background(Color.Blue100)
+            .Color(Color.Blue700));
+
+        Css.ApplySelector(s => s.Class(PillClass).Hover(), css => css
+            .Background(Color.Blue200)
+            .Color(Color.Blue800));
+    }
+
     // ---------------------------------------------------------------------
     // Layout shell
     // ---------------------------------------------------------------------
@@ -421,9 +447,9 @@ public static class DocsStyles
     // how the "On this page" nav passes its classes to docs.js.
     // ---------------------------------------------------------------------
 
-    // Centred in the header by the .fc-header-search rule in docs.css. It is
-    // positioned without transform so the fixed-position palette inside is not
-    // trapped by a transformed containing block.
+    // Centred in the header by the "fc-header-search" applied selector in
+    // DocsAppliedStyles. It is positioned without transform so the fixed-position
+    // palette inside is not trapped by a transformed containing block.
     public static string HeaderSearch { get; } = "fc-header-search";
 
     public static string SearchButton { get; } =

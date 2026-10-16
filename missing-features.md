@@ -129,9 +129,6 @@ Legend:
   `Length` (arbitrary values/units, including `none`/`auto`/`min`/`max`/`fit`
   passed as a `Length`); missing a dedicated numeric scale and per-axis keyword
   helpers.
-- **[bug/parity] Named sizes.** `Size._2Xl` and `Size._3Xl` both resolve to
-  `96rem` and generate the class prefixes `2l` and `3l` (instead of `2xl` and
-  `3xl`).
 
 ---
 
@@ -324,3 +321,85 @@ Tailwind's behavior in practice.
   stylesheet through the builder.
 - **[missing] Variant constraints.** Only one media, one theme and one pseudo
   can be combined, and there are no arbitrary/custom variants.
+
+---
+
+## Implementation roadmap (working notes)
+
+Notes captured for planning. Nothing here is committed work; it is a proposed
+ordering of the gaps above, grouped by how they interact with the current
+architecture (`BaseStyleBuilder` → `UtilityClass` → `ClassRegistry`).
+
+### Tier 1 — correctness and architecture (do first)
+
+These are not new features. They make the existing API trustworthy and they
+unblock the families in Tier 3 that need to compose a shared CSS property.
+
+- **[conflict] Per-element property resolution / canonical utility ordering.**
+  Give every utility a stable sort key (category → property) so base rules are
+  emitted in a deterministic, Tailwind-like order instead of registration order.
+  This is the real fix for the `box-shadow` collision, duplicate base utilities,
+  and future composing families (transforms, filters, transitions).
+  - Alternative for `Ring` / `Shadow`: make them compose through CSS custom
+    properties (`--tw-ring-*`, `--tw-shadow`) with one shared `box-shadow` rule.
+- **[runtime] Instance registry + scoped builder.** Add a registry-instance path
+  and a builder entry point that accepts a `ClassRegistry`, so Blazor
+  (`CssStyles.razor`) and MVC (`FluentCssMiddleware`) can isolate per request /
+  content hash. Keep `DefaultRegistry` as the default for compatibility.
+- **[bug] Negative values.** The `int` overloads accept negatives but produce
+  broken class names (`GetSpacingValue(-4)` → class `m--4`). Add proper negative
+  helpers (`-mt-4`, `-inset-2`, `-z-10`) and negative `inset` / `z` / spacing.
+
+### Tier 2 — small, high-value parity wins
+
+- **[missing] Opacity modifier on colors.** Colors are `oklch(...)`, so
+  `Background(Color.Red500, 50)` can emit `oklch(... / 0.5)` and class
+  `bg-red-500/50`. Apply to `Color`, `Background`, `BorderColor`, `Ring` and the
+  shadow colors. Biggest missing "feel" feature.
+- **[missing] Pseudo-element variants.** `UtilityClass` currently strips colons
+  and always emits a single `:`, so `::before` is not expressible. Carry the
+  full pseudo token so `before`, `after`, `placeholder`, `marker`, `selection`,
+  `file` work.
+- **[missing] More state + structural pseudo variants.** Thin `Pseudo(...)`
+  wrappers: `FocusVisible`, `FocusWithin`, `Visited`, `Disabled`, `Checked`,
+  `First`, `Last`, `Odd`, `Even`, `Nth(n)`.
+- **Mechanical utility gaps.** `size-*`; `inline-flex` / `inline-grid` /
+  `contents` / `flow-root` / table family; `Static()`; `Order`; `FlexBasis`;
+  `flex-1/auto/initial/none`; `AlignSelf` / `JustifySelf`; `AlignContent`;
+  `Place*`; grid auto-flow / auto rows-cols; `col-end` / `row-start` /
+  `row-end`; named `Leading*`; full `Whitespace*`; all font weights;
+  `Tracking`; `TextWrap`.
+
+### Tier 3 — whole missing families (self-contained features)
+
+- Transforms: rotate, scale, translate, skew, transform-origin, perspective
+  (needs the Tier 1 composition fix).
+- Transitions & animation: duration, timing, delay, property, `@keyframes`.
+- Filters / backdrop-filters: blur, brightness, contrast, grayscale, … (shared
+  `filter` property, same composition issue).
+- Backgrounds: gradients (linear/radial/conic), size/position/repeat/
+  attachment/clip/origin.
+- Tables and SVG: `border-collapse`, `border-spacing`, `fill`, `stroke`,
+  `stroke-width`.
+
+### Tier 4 — complex variant system
+
+- **[broken] Container queries.** Implement the throwing stubs and add
+  `@container` / `@min-*` / `@max-*` variants. Good candidate: the interface and
+  stubs already exist.
+- `group-*`, `peer-*`, `has-*` — compound selectors (`.group:hover .x`), not a
+  pseudo suffix, so they need a selector-model extension in `UtilityClass`.
+- Data / ARIA / attribute variants, `motion-safe` / `motion-reduce`, `print`,
+  `rtl` / `ltr` + logical properties, dark-mode media strategy.
+
+### Candidate next PR
+
+1. **Correctness first (recommended):** canonical utility ordering + fix
+   `Ring` / `Shadow` composition, negative values, `Size` bug. Makes the current
+   API trustworthy and unblocks transforms/filters.
+2. **Feature first:** opacity color modifiers + negative values + pseudo-element
+   and state variants. Large, immediately visible parity jump; touches mostly
+   `BaseStyleBuilder` and `UtilityClass`.
+
+Avoid starting with `group-*` / container queries until the selector model and
+registry ordering are settled — those changes depend on them.

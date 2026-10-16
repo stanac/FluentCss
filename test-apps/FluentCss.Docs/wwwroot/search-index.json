@@ -80,15 +80,15 @@
           "id": "choose-a-package",
           "heading": "Choose a package",
           "level": 2,
-          "text": "There is one integration package per hosting model. Install the one that matches your app. You never install yourself. Package Hosting model What it gives you Blazor The component and the preflight stylesheet. Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web Apps using the Interactive Server, Interactive WebAssembly or Auto render mode. ASP.NET Core MVC and Razor Pages The tag helper, the stylesheet middleware and the preflight stylesheet. FluentCss.Core comes with them Both integration packages depend on and bring it in automatically. That is where the builder, the registry and every utility live, and it is a transitive dependency: do not add it to your project on its own.",
-          "code": "FluentCss.Core FluentCss.Blazor CssStyles FluentCss.MvcRazor \u003Cfluent-css /\u003E FluentCss.Core"
+          "text": "There is one integration package per hosting model. Install the one that matches your app. Package Hosting model What it gives you Blazor The component and the preflight stylesheet. Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web Apps using the Interactive Server, Interactive WebAssembly or Auto render mode. ASP.NET Core MVC and Razor Pages The tag helper, the stylesheet middleware and the preflight stylesheet. FluentCss.Core is transitive dependency Both integration packages depend on and bring it in automatically.",
+          "code": "FluentCss.Blazor CssStyles FluentCss.MvcRazor \u003Cfluent-css /\u003E FluentCss.Core"
         },
         {
           "id": "blazor",
           "heading": "Blazor",
           "level": 2,
-          "text": "Add the Blazor package: For the shortest syntax add the following to your . Importing the static builder means you can start a chain with or directly. Drop the component into your layout. It renders a block with every class registered while the page is built. Optionally include the Tailwind preflight reset to normalize browser defaults such as margins, borders and fonts:",
-          "code": "dotnet add package FluentCss.Blazor _Imports.razor Css Dark @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core CssStyles \u003Cstyle\u003E \u003C!-- MainLayout.razor or App.razor --\u003E ... \u003Chead\u003E ... \u003C!-- Add Tailwind CSS preflight, optional but strongly recommended --\u003E \u003Clink rel=\u0022stylesheet\u0022 href=\u0022_content/FluentCss.Blazor/preflight.css\u0022 /\u003E \u003CFluentCss.Blazor.CssStyles /\u003E ... \u003C/head\u003E \u003Cbody\u003E...\u003C/body\u003E"
+          "text": "Add the Blazor package: For the shortest syntax add the following to your . Importing the static builder means you can start a chain with or directly. Drop the component into your layout. It renders a block with every class registered while the page is built. Keep the loading and error styles as plain CSS The Blazor template\u0027s loading indicator and error UI are present in the HTML before the interactive component tree renders, so in a standalone WebAssembly app they can be visible before has emitted its stylesheet. Put those few rules in a separate plain CSS file (for example ) and link it from or . This documentation site does exactly that: the loading and error rules live in . You do not need the form validation or rules unless you use validation.",
+          "code": "dotnet add package FluentCss.Blazor _Imports.razor Css Dark @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core CssStyles \u003Cstyle\u003E \u003C!-- MainLayout.razor or App.razor --\u003E ... \u003Chead\u003E ... \u003C!-- Add Tailwind CSS preflight, optional but strongly recommended --\u003E \u003Clink rel=\u0022stylesheet\u0022 href=\u0022_content/FluentCss.Blazor/preflight.css\u0022 /\u003E \u003CFluentCss.Blazor.CssStyles /\u003E ... \u003C/head\u003E \u003Cbody\u003E...\u003C/body\u003E CssStyles wwwroot/app.css index.html App.razor wwwroot/css/site.css form-floating EditForm"
         },
         {
           "id": "interactive-rendering",
@@ -327,6 +327,125 @@
           "level": 2,
           "text": "Root and callback helpers follow the same idea, targeting the interface that has the methods you need.",
           "code": "public static class ResponsiveExtensions { // IRootFluentCssBuilder is required for media and theme helpers. public static IRootFluentCssBuilder StackOnMd(this IRootFluentCssBuilder builder) =\u003E builder.MinMd(md =\u003E md.Flex(FlexDirection.Row)); // IOnlyStyleBuilder is what Hover/Focus/Active pass to the callback. public static IOnlyStyleBuilder CardHover(this IOnlyStyleBuilder builder) =\u003E builder.ShadowLg().Background(Color.Blue50); } // usage Css.Card().StackOnMd(); Css.Hover(h =\u003E h.CardHover());"
+        }
+      ]
+    },
+    {
+      "route": "/docs/selectors",
+      "title": "Custom selectors",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "custom-selectors",
+          "heading": "Custom selectors",
+          "level": 1,
+          "text": "Utility classes cover most styling. When you need a real selector \u2014 descendant or child combinators, attributes, :has, :not or a pseudo-element \u2014 build it with the typed selector builder and attach declarations with ApplySelector.",
+          "code": ""
+        },
+        {
+          "id": "why-a-selector-builder",
+          "heading": "Why a selector builder",
+          "level": 2,
+          "text": "Utilities produce single-class selectors such as . Component styles often need more: , , or . The selector builder lets you write those with typed calls instead of hand-written strings, then registers the declarations through the same registry the utilities use.",
+          "code": ".p-4 .card \u003E h2 input[type=\u0022text\u0022] .card:has(\u003E img) .prose h2::before"
+        },
+        {
+          "id": "applyselector",
+          "heading": "ApplySelector",
+          "level": 2,
+          "text": "The overload takes two lambdas: the first builds the selector, the second declares the styles with \u2014 the same builder used by and . A string overload, , is the manual escape hatch: pass any selector text and it is emitted exactly as written, without escaping or validation. Use it for selectors the typed builder does not cover. The and helpers are thin sugar over it. The chain reads in the same order the selector is emitted: media, theme, target, then pseudo. A selector that ends with a combinator such as returns to the target stage, so is .",
+          "code": "ApplySelector IOnlyStyleBuilder Hover Focus Css.ApplySelector( s =\u003E s.Class(\u0022btn\u0022).Hover(), css =\u003E css.Px(4).Py(2).Background(Color.Blue600).Color(Color.White)); // generated .btn:hover { padding-inline: 1rem; padding-block: 0.5rem; ... } ApplySelector(selector, css =\u003E ...) ApplyClass ApplyId // Manual selector text, emitted exactly as written. Css.ApplySelector(\u0022.card \u003E h2, .card \u003E h3\u0022, css =\u003E css.Mt(0)); Css.ApplySelector(\u0022dialog::backdrop\u0022, css =\u003E css.Background(Color.Black)); // Sugar: ApplyClass prefixes \u0027.\u0027, ApplyId prefixes \u0027#\u0027. Css.ApplyClass(\u0022docs-pill\u0022, css =\u003E css.Px(3).Py(1)); Css.ApplyId(\u0022hero\u0022, css =\u003E css.Py(12)); Child() .prose \u003E h2 s.Class(\u0022prose\u0022).Child().Element(\u0022h2\u0022) s =\u003E s.Media(\u0022(min-width: 48rem)\u0022).Dark().Class(\u0022card\u0022).Hover() // @media (min-width: 48rem) { .dark .card:hover } s =\u003E s.Class(\u0022prose\u0022).Child().Element(\u0022h2\u0022).Hover() // .prose \u003E h2:hover s =\u003E s.Class(\u0022a\u0022).AdjacentSibling().Class(\u0022b\u0022) // .a \u002B .b s =\u003E s.Class(\u0022a\u0022).GeneralSibling().Class(\u0022b\u0022) // .a ~ .b"
+        },
+        {
+          "id": "compound-selectors",
+          "heading": "Compound selectors",
+          "level": 2,
+          "text": "Classes, ids, attributes and pseudo-classes all belong to the same compound and can be chained in any order. adds the type selector, and adds .",
+          "code": "Element Universal * s =\u003E s.Class(\u0022btn\u0022).Class(\u0022primary\u0022).Hover() // .btn.primary:hover s =\u003E s.Class(\u0022btn\u0022).Id(\u0022submit\u0022) // .btn#submit s =\u003E s.Element(\u0022input\u0022).Attribute(\u0022type\u0022, \u0022text\u0022) // input[type=\u0022text\u0022] s =\u003E s.Class(\u0022a\u0022).Child().Universal() // .a \u003E * s =\u003E s.Element(\u0022li\u0022).NthChild(\u00222n\u002B1\u0022) // li:nth-child(2n\u002B1)"
+        },
+        {
+          "id": "attributes",
+          "heading": "Attributes",
+          "level": 2,
+          "text": "has three shapes: presence, equality and an explicit operator with an optional case flag. Class names are escaped automatically, and a leading digit is hex-escaped so becomes the valid selector . Utility Generated CSS",
+          "code": "Attribute Class(\u00222xl\u0022) .\\32 xl Attribute(\u0022required\u0022) [required] Attribute(\u0022type\u0022, \u0022text\u0022) [type=\u0022text\u0022] Attribute(\u0022href\u0022, \u0022https\u0022, AttributeOperator.Prefix) [href^=\u0022https\u0022] Attribute(\u0022href\u0022, \u0022.pdf\u0022, AttributeOperator.Suffix) [href$=\u0022.pdf\u0022] Attribute(\u0022class\u0022, \u0022note\u0022, AttributeOperator.Includes) [class~=\u0022note\u0022] Attribute(\u0022lang\u0022, \u0022en\u0022, AttributeOperator.HyphenPrefix) [lang|=\u0022en\u0022] Attribute(\u0022data-x\u0022, \u0022y\u0022, AttributeOperator.Contains) [data-x*=\u0022y\u0022] Attribute(\u0022data-state\u0022, \u0022open\u0022, AttributeOperator.Exact, AttributeCase.Insensitive) [data-state=\u0022open\u0022 i]"
+        },
+        {
+          "id": "selector-lists",
+          "heading": "Selector lists",
+          "level": 2,
+          "text": "builds a comma-separated selector list. Every target shares the surrounding media and theme, and each target is written with the normal fluent chain.",
+          "code": "Targets Css.ApplySelector( s =\u003E s.Media(\u0022(min-width: 48rem)\u0022).Dark().Targets( t =\u003E t.Class(\u0022btn\u0022).Hover(), t =\u003E t.Class(\u0022card\u0022), t =\u003E t.Class(\u0022panel\u0022).Child().Class(\u0022title\u0022)), css =\u003E css.P(6).RoundedLg()); // @media (min-width: 48rem) { // .dark .btn:hover, .dark .card, .dark .panel \u003E .title { ... } // }"
+        },
+        {
+          "id": "functional-pseudo-classes",
+          "heading": "Functional pseudo-classes",
+          "level": 2,
+          "text": ", and accept a selector list, just like . accepts relative selectors, so a argument may start with a combinator.",
+          "code": "Not Is Where Targets Has :has(...) s =\u003E s.Class(\u0022input\u0022).Not( t =\u003E t.Class(\u0022disabled\u0022), t =\u003E t.Attribute(\u0022readonly\u0022)) // .input:not(.disabled, [readonly]) s =\u003E s.Element(\u0022h2\u0022).Is(t =\u003E t.Class(\u0022title\u0022), t =\u003E t.Id(\u0022main\u0022)) // h2:is(.title, #main) s =\u003E s.Class(\u0022card\u0022).Has(r =\u003E r.Child().Element(\u0022img\u0022)) // .card:has(\u003E img) s =\u003E s.Class(\u0022card\u0022).Has( r =\u003E r.Child().Element(\u0022img\u0022), r =\u003E r.AdjacentSibling().Class(\u0022title\u0022).Hover()) // .card:has(\u003E img, \u002B .title:hover)"
+        },
+        {
+          "id": "pseudo-elements",
+          "heading": "Pseudo-elements",
+          "level": 2,
+          "text": "A keyword pseudo-element such as ends the selector. Functional pseudo-elements such as return to the compound stage, so a pseudo-class can follow.",
+          "code": "Before ::part(...) s =\u003E s.Class(\u0022btn\u0022).Before() // .btn::before s =\u003E s.Class(\u0022quote\u0022).After() // .quote::after s =\u003E s.Element(\u0022my-button\u0022) .FunctionalPseudoElement(\u0022part\u0022, \u0022button\u0022) .Hover() // my-button::part(button):hover"
+        },
+        {
+          "id": "a-registered-component",
+          "heading": "A registered component",
+          "level": 2,
+          "text": "The pill below is a class registered once at startup. Its base rule comes from ; the hover rule is built with the fluent selector builder. Applied rules are emitted before utility rules, so a plain utility class can still override a component style. Registered with ApplySelector",
+          "code": "ApplyClass // once, at startup Css.ApplyClass(\u0022docs-pill\u0022, css =\u003E css .InlineBlock().Px(3).Py(1).RoundedFull() .TextXs().FontBold() .Background(Color.Blue100).Color(Color.Blue700)); Css.ApplySelector( s =\u003E s.Class(\u0022docs-pill\u0022).Hover(), css =\u003E css.Background(Color.Blue200).Color(Color.Blue800)); // usage \u003Cspan class=\u0022docs-pill\u0022\u003ERegistered with ApplySelector\u003C/span\u003E"
+        },
+        {
+          "id": "good-to-know",
+          "heading": "Good to know",
+          "level": 2,
+          "text": "Applied rules come first Rules registered by are emitted before the utility rules, following component/utility layering. This means a utility class always wins over an applied selector when both have the same specificity. Media sorting A selector that carries its own at-rule ( , , ) is emitted verbatim with the declarations nested inside it. It is not part of the breakpoint sorting that utility media rules get. Startup, not render Register applied selectors once \u2014 in a static constructor, a module initializer or your app\u0027s startup code. Unlike utilities, applied rules are not deduplicated, so calling on every render would append the same rule repeatedly. One registration per process writes to , which lives in the current process. An interactive WebAssembly app runs your components twice: once on the server while prerendering and again in the browser. Put applied-selector registrations in code that runs on both \u2014 a shared static constructor or module initializer \u2014 not only in a server-only startup path such as or a hosted service. Utilities are registered as components render, so they are present on both sides automatically; only applied selectors need this.",
+          "code": "ApplySelector @media @supports @container ApplySelector ApplySelector ClassRegistry.DefaultRegistry Program.cs"
+        }
+      ]
+    },
+    {
+      "route": "/docs/important",
+      "title": "!important",
+      "section": "Core concepts",
+      "sections": [
+        {
+          "id": "overriding-with-important",
+          "heading": "Overriding with !important",
+          "level": 1,
+          "text": "Force a handful of declarations to win the cascade. Important blocks are scoped to a single lambda, compose with states, themes and media, and cannot be nested.",
+          "code": ""
+        },
+        {
+          "id": "when-to-use-it",
+          "heading": "When to use it",
+          "level": 2,
+          "text": "should be the last resort. Prefer the normal tools first: reorder utilities, add a state or theme variant, or write a component selector with enough specificity. Reach for an important block when you have to beat a style you do not control, such as a vendor stylesheet or an inline style. Hard to override later A rule that uses can only be overridden by another with higher specificity. Keep the blocks small and close to the reason you needed them.",
+          "code": "!important !important !important"
+        },
+        {
+          "id": "the-important-block",
+          "heading": "The Important block",
+          "level": 2,
+          "text": "takes a lambda that receives a styles-only builder. Every declaration added inside the lambda is emitted with , and the returned class names carry a leading . Several declarations can go in one block. Because the is part of the class name, the important utility is a different class from the plain one. Both can live on the page without deduplicating into each other.",
+          "code": "Important !important ! Css.Important(c =\u003E c.P(4).Background(Color.Red500)); // classes: !p-4 !bg-red-500 // .\\!p-4 { padding: 1rem !important } // .\\!bg-red-500 { background-color: oklch(0.637 0.237 25.331) !important } ! Css.P(4); // class: p-4 Css.Important(c =\u003E c.P(4)); // class: !p-4 (a separate class, keeps both rules) Css.Hover(h =\u003E h.P(4)); // hover:p-4 Css.Hover(h =\u003E h.Important(c =\u003E c.P(4))); // hover:!p-4"
+        },
+        {
+          "id": "composing-with-states-themes-and-media",
+          "heading": "Composing with states, themes and media",
+          "level": 2,
+          "text": "An important block is a normal utility chain, so it works anywhere a state, theme or breakpoint callback does. The prefix ends up before the declaration, exactly like any other variant.",
+          "code": "// state Css.Hover(h =\u003E h.Important(c =\u003E c.Background(Color.Blue600))); // .hover\\:\\!bg-blue-600:hover { background-color: ... !important } // theme Dark.Important(c =\u003E c.Color(Color.White)); // .theme-dark .theme-dark\\:\\!text-white { color: ... !important } // media Css.MinMd(md =\u003E md.Important(c =\u003E c.P(6))); // @media (min-width: 48rem) { .min-md\\:\\!p-6 { padding: 1.5rem !important } }"
+        },
+        {
+          "id": "one-level-only",
+          "heading": "One level only",
+          "level": 2,
+          "text": "The lambda does not receive the full builder: it only exposes the style utilities, not itself. That makes an important block inside another important block a compile error, and stops an accidental flag from cascading through a longer chain. Why not expose Important in the scope? If the scope exposed , the first declaration in the lambda would return the full builder again and the flag could nest. A dedicated keeps override blocks flat. You can still add as many declarations as you need inside one block.",
+          "code": "Important Important IStyleScopeBuilder"
         }
       ]
     },
@@ -739,7 +858,7 @@
           "heading": "Available sizes",
           "level": 3,
           "text": "Utility Generated CSS",
-          "code": "Size.Sm 40rem Size.Md 48rem Size.Lg 64rem Size.Xl 80rem Size.Full 100% Size.ScreenW 100vw Size.ScreenH 100vh Size.Zero 0px Size.Min min-content Size.Max max-content Size.Fit fit-content"
+          "code": "Size.Sm 40rem Size.Md 48rem Size.Lg 64rem Size.Xl 80rem Size.Xxl 96rem Size.Xxxl 128rem Size.Full 100% Size.ScreenW 100vw Size.ScreenH 100vh Size.Zero 0px Size.Min min-content Size.Max max-content Size.Fit fit-content"
         },
         {
           "id": "arbitrary-sizes-with-length",

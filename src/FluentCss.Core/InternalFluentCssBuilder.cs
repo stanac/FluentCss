@@ -19,6 +19,9 @@ internal class InternalFluentCssBuilder : BaseStyleBuilder<IFluentCssBuilder>, I
 
     protected override IFluentCssBuilder ReturnSelf() => this;
 
+    protected override IStyleScopeBuilder CreateImportantScope() =>
+        new ImportantScopeBuilder(_registry, Theme, MediaQuery, MediaPrefix, null);
+
     public IFluentCssBuilder Hover(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("hover", pseudoBuilderAction);
 
     public IFluentCssBuilder Active(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("active", pseudoBuilderAction);

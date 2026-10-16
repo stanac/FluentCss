@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace FluentCss.Core;
 
-public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
+public abstract class BaseStyleBuilder<T> : IImportantStyleBuilder<T>
 {
     private readonly List<string> _classNames = [];
     private string? _cachedToString;
@@ -328,6 +328,39 @@ public abstract class BaseStyleBuilder<T> : IStyleBuilder<T>
         if (_cachedToString != null) return _cachedToString;
         _cachedToString = string.Join(" ", _classNames);
         return _cachedToString;
+    }
+
+    /// <summary>
+    /// Creates the child builder used as the scope of an
+    /// <see cref="IImportantStyleBuilder{T}.Important"/> block. Implemented by the
+    /// concrete builders because they own the registry the scope writes to.
+    /// </summary>
+    protected abstract IStyleScopeBuilder CreateImportantScope();
+
+    /// <summary>
+    /// Adds the class names collected by a child scope to this builder. Overridden
+    /// by builders that keep their own class-name list.
+    /// </summary>
+    protected virtual void AddChildClassNames(string classNames) => AddClassName(classNames);
+
+    public T Important(Action<IStyleScopeBuilder> styles)
+    {
+        if (styles is null)
+        {
+            throw new ArgumentNullException(nameof(styles));
+        }
+
+        IStyleScopeBuilder scope = CreateImportantScope();
+        styles(scope);
+
+        string classNames = scope.ToString() ?? string.Empty;
+
+        if (classNames.Length > 0)
+        {
+            AddChildClassNames(classNames);
+        }
+
+        return ReturnSelf();
     }
 
     protected void AddClassName(string className)
