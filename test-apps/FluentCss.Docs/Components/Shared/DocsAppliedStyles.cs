@@ -27,6 +27,11 @@ internal static class DocsAppliedStyles
 
         _initialized = true;
 
+        // Chrome/Edge/Safari on Windows show a thick, always-on, white scrollbar.
+        // Style the WebKit scrollbar so it matches the thin, grey, auto-hiding one
+        // Firefox already renders. Firefox ignores these selectors entirely.
+        Css.ApplySlimScrollbars();
+
         // Global code colour (was "code { color: #c02d76 }").
         Css.ApplySelector("code", css => css.Arbitrary("docs-code", "color", "#c02d76"));
 
