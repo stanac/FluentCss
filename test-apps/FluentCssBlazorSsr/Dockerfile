@@ -12,7 +12,7 @@ WORKDIR /src
 # Restore layer: copy only the project files first so Docker can cache the
 # NuGet restore and only re-run it when a project file changes.
 COPY src/FluentCss.Core/FluentCss.Core.csproj src/FluentCss.Core/
-COPY src/FluentCss.Blazor/FluentCss.Blazor.csproj src/FluentCss.Blazor/
+COPY src/FluentCss/FluentCss.csproj src/FluentCss/
 COPY test-apps/FluentCss.Docs/FluentCss.Docs.csproj test-apps/FluentCss.Docs/
 COPY test-apps/FluentCssBlazorSsr/FluentCssBlazorSsr.csproj test-apps/FluentCssBlazorSsr/
 RUN dotnet restore test-apps/FluentCssBlazorSsr/FluentCssBlazorSsr.csproj

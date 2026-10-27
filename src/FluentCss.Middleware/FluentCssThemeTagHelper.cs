@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace FluentCss.MvcRazor;
+namespace FluentCss.Middleware;
 
 /// <summary>
 /// Applies the persisted theme class to the <c>html</c> element, so a dark theme
@@ -14,7 +14,7 @@ namespace FluentCss.MvcRazor;
 /// <remarks>
 /// The class is read from the <see cref="FluentCssTheme.CookieName"/> cookie that
 /// the theme toggle script writes. Registered by the
-/// <c>@addTagHelper *, FluentCss.MvcRazor</c> directive already used by the
+/// <c>@addTagHelper *, FluentCss.Middleware</c> directive already used by the
 /// layouts; no markup change is required.
 /// </remarks>
 [HtmlTargetElement("html")]

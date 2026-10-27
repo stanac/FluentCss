@@ -1,0 +1,96 @@
+@page "/docs/interactivity"
+
+<PageTitle>Interactivity - FluentCss</PageTitle>
+
+<DocHeader Title="Interactivity"
+           Description="Pointer events, selection, resizing, cursors, scrolling, form control appearance and other user-interaction properties." />
+
+<h2 class="@DocsStyles.H2">Pointer events and selection</h2>
+
+<ApiTable Rows="@PointerSelectionUtilities" />
+
+<h2 class="@DocsStyles.H2">Resize and scrolling</h2>
+
+<ApiTable Rows="@ResizeScrollUtilities" />
+
+<h2 class="@DocsStyles.H2">Form control appearance</h2>
+
+<ApiTable Rows="@AppearanceUtilities" />
+
+<h2 class="@DocsStyles.H2">Accent, caret and color scheme</h2>
+
+<ApiTable Rows="@ColorSchemeUtilities" />
+
+<h2 class="@DocsStyles.H2">Cursor</h2>
+
+<ApiTable Rows="@CursorUtilities" />
+
+<h2 class="@DocsStyles.H2">Touch action and will-change</h2>
+
+<ApiTable Rows="@TouchWillChangeUtilities" />
+
+@code {
+    private static readonly (string Utility, string Css)[] PointerSelectionUtilities =
+    [
+        ("PointerEventsNone()", "pointer-events: none"),
+        ("PointerEventsAuto()", "pointer-events: auto"),
+        ("UserSelectNone()", "user-select: none"),
+        ("UserSelectText()", "user-select: text"),
+        ("UserSelectAll()", "user-select: all"),
+        ("UserSelectAuto()", "user-select: auto"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ResizeScrollUtilities =
+    [
+        ("ResizeNone()", "resize: none"),
+        ("ResizeY()", "resize: vertical"),
+        ("ResizeX()", "resize: horizontal"),
+        ("ResizeBoth()", "resize: both"),
+        ("ScrollBehaviorSmooth()", "scroll-behavior: smooth"),
+        ("ScrollBehaviorAuto()", "scroll-behavior: auto"),
+    ];
+
+    private static readonly (string Utility, string Css)[] AppearanceUtilities =
+    [
+        ("AppearanceNone()", "appearance: none"),
+        ("AppearanceAuto()", "appearance: auto"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ColorSchemeUtilities =
+    [
+        ("AccentColor(Color.Blue500)", "accent-color: <value>"),
+        ("CaretColor(Color.Red500)", "caret-color: <value>"),
+        ("ColorSchemeLight()", "color-scheme: light"),
+        ("ColorSchemeDark()", "color-scheme: dark"),
+        ("ColorSchemeNormal()", "color-scheme: normal"),
+    ];
+
+    private static readonly (string Utility, string Css)[] CursorUtilities =
+    [
+        ("CursorDefault()", "cursor: default"),
+        ("CursorPointer()", "cursor: pointer"),
+        ("CursorText()", "cursor: text"),
+        ("CursorWait()", "cursor: wait"),
+        ("CursorMove()", "cursor: move"),
+        ("CursorHelp()", "cursor: help"),
+        ("CursorNotAllowed()", "cursor: not-allowed"),
+        ("CursorCrosshair()", "cursor: crosshair"),
+        ("CursorGrab()", "cursor: grab"),
+        ("CursorGrabbing()", "cursor: grabbing"),
+        ("CursorNone()", "cursor: none"),
+        ("CursorProgress()", "cursor: progress"),
+    ];
+
+    private static readonly (string Utility, string Css)[] TouchWillChangeUtilities =
+    [
+        ("TouchActionNone()", "touch-action: none"),
+        ("TouchActionAuto()", "touch-action: auto"),
+        ("TouchActionPanX()", "touch-action: pan-x"),
+        ("TouchActionPanY()", "touch-action: pan-y"),
+        ("TouchActionManipulation()", "touch-action: manipulation"),
+        ("WillChangeAuto()", "will-change: auto"),
+        ("WillChangeScroll()", "will-change: scroll-position"),
+        ("WillChangeContents()", "will-change: contents"),
+        ("WillChangeTransform()", "will-change: transform"),
+    ];
+}

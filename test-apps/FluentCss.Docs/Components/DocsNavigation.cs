@@ -38,7 +38,10 @@ public static class DocsNavigation
             new("Spacing", "/docs/spacing"),
             new("Sizing", "/docs/sizing"),
             new("Typography", "/docs/typography"),
+            new("Backgrounds", "/docs/backgrounds"),
             new("Borders & effects", "/docs/borders-effects"),
+            new("Interactivity", "/docs/interactivity"),
+            new("Tables & SVG", "/docs/tables-svg"),
         ]),
     ];
 }

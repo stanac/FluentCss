@@ -5,9 +5,9 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/FluentCss.Blazor/FluentCss.Blazor.csproj" />
+    <Project Path="src/FluentCss/FluentCss.csproj" />
     <Project Path="src/FluentCss.Core/FluentCss.Core.csproj" />
-    <Project Path="src/FluentCss.MvcRazor/FluentCss.MvcRazor.csproj" />
+    <Project Path="src/FluentCss.Middleware/FluentCss.Middleware.csproj" />
   </Folder>
   <Folder Name="/test-apps/">
     <Project Path="test-apps/FluentCss.Docs/FluentCss.Docs.csproj" />

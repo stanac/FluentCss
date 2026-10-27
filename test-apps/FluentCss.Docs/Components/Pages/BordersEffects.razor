@@ -110,6 +110,12 @@
         ("Border()", "border-width: 1px"),
         ("Border(2)", "border-width: 2px"),
         ("Border(4)", "border-width: 4px"),
+        ("BorderT() / BorderT(2)", "border-top-width: 1px / 2px"),
+        ("BorderR() / BorderR(2)", "border-right-width: 1px / 2px"),
+        ("BorderB() / BorderB(2)", "border-bottom-width: 1px / 2px"),
+        ("BorderL() / BorderL(2)", "border-left-width: 1px / 2px"),
+        ("BorderX() / BorderX(2)", "border-inline-width: 1px / 2px"),
+        ("BorderY() / BorderY(2)", "border-block-width: 1px / 2px"),
     ];
 
     private static readonly (string Utility, string Css)[] BorderStyles =
@@ -118,6 +124,7 @@
         ("BorderSolid()", "border-style: solid"),
         ("BorderDashed()", "border-style: dashed"),
         ("BorderDotted()", "border-style: dotted"),
+        ("BorderDouble()", "border-style: double"),
     ];
 
     private static readonly (string Utility, string Css)[] RadiusUtilities =
@@ -135,6 +142,8 @@
     [
         ("Ring(3, Color.Blue300)", "box-shadow: 0 0 0 3px <value>"),
         ("Outline(2)", "outline-width: 2px"),
+        ("OutlineColor(Color.Blue500)", "outline-color: <value>"),
+        ("OutlineOffset(4)", "outline-offset: 4px"),
         ("OutlineHidden()", "outline: 2px solid transparent"),
     ];
 

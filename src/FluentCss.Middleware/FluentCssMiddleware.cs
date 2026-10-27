@@ -3,7 +3,7 @@ using System.Text;
 using FluentCss.Core;
 using Microsoft.AspNetCore.Http;
 
-namespace FluentCss.MvcRazor;
+namespace FluentCss.Middleware;
 
 /// <summary>
 /// Serves the FluentCss stylesheet and its current hash.
@@ -21,7 +21,7 @@ namespace FluentCss.MvcRazor;
 /// </para>
 /// <para>
 /// The preflight reset is not part of this stylesheet. It is shipped as a static
-/// asset at <c>_content/FluentCss.MvcRazor/preflight.css</c> and linked separately.
+/// asset at <c>_content/FluentCss.Middleware/preflight.css</c> and linked separately.
 /// </para>
 /// </remarks>
 public sealed class FluentCssMiddleware

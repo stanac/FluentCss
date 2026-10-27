@@ -81,28 +81,28 @@
           "heading": "Choose a package",
           "level": 2,
           "text": "There is one integration package per hosting model. Install the one that matches your app. Package Hosting model What it gives you Blazor The component and the preflight stylesheet. Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web Apps using the Interactive Server, Interactive WebAssembly or Auto render mode. ASP.NET Core MVC and Razor Pages The tag helper, the stylesheet middleware and the preflight stylesheet. FluentCss.Core is transitive dependency Both integration packages depend on and bring it in automatically.",
-          "code": "FluentCss.Blazor CssStyles FluentCss.MvcRazor \u003Cfluent-css /\u003E FluentCss.Core"
+          "code": "FluentCss CssStyles FluentCss.Middleware \u003Cfluent-css /\u003E FluentCss.Core"
         },
         {
           "id": "blazor",
           "heading": "Blazor",
           "level": 2,
           "text": "Add the Blazor package: For the shortest syntax add the following to your . Importing the static builder means you can start a chain with or directly. Drop the component into your layout. It renders a block with every class registered while the page is built. Keep the loading and error styles as plain CSS The Blazor template\u0027s loading indicator and error UI are present in the HTML before the interactive component tree renders, so in a standalone WebAssembly app they can be visible before has emitted its stylesheet. Put those few rules in a separate plain CSS file (for example ) and link it from or . This documentation site does exactly that: the loading and error rules live in . You do not need the form validation or rules unless you use validation.",
-          "code": "dotnet add package FluentCss.Blazor _Imports.razor Css Dark @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core CssStyles \u003Cstyle\u003E \u003C!-- MainLayout.razor or App.razor --\u003E ... \u003Chead\u003E ... \u003C!-- Add Tailwind CSS preflight, optional but strongly recommended --\u003E \u003Clink rel=\u0022stylesheet\u0022 href=\u0022_content/FluentCss.Blazor/preflight.css\u0022 /\u003E \u003CFluentCss.Blazor.CssStyles /\u003E ... \u003C/head\u003E \u003Cbody\u003E...\u003C/body\u003E CssStyles wwwroot/app.css index.html App.razor wwwroot/css/site.css form-floating EditForm"
+          "code": "dotnet add package FluentCss _Imports.razor Css Dark @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core CssStyles \u003Cstyle\u003E \u003C!-- MainLayout.razor or App.razor --\u003E ... \u003Chead\u003E ... \u003C!-- Add Tailwind CSS preflight, optional but strongly recommended --\u003E \u003Clink rel=\u0022stylesheet\u0022 href=\u0022_content/FluentCss/preflight.css\u0022 /\u003E \u003CFluentCss.CssStyles /\u003E ... \u003C/head\u003E \u003Cbody\u003E...\u003C/body\u003E CssStyles wwwroot/app.css index.html App.razor wwwroot/css/site.css form-floating EditForm"
         },
         {
           "id": "interactive-rendering",
           "heading": "Interactive rendering",
           "level": 3,
           "text": "is more than a snapshot of the classes seen so far: it subscribes to the class registry and re-renders its block whenever a new class is registered. A component that renders later on the client - a dialog, a tab or anything that only appears after a click - is therefore styled as soon as it renders, with no page reload. For that to work has to live inside the interactive render boundary. In a Blazor Web App that means the layout, or anything else under , rather than the statically rendered head: Registration follows the process Classes are registered in the process that renders the component. A prerender fills the server registry; interactive WebAssembly fills one inside the browser; an interactive server circuit runs in the server process and shares its registry with the prerender. Whichever runtime is active owns a instance and re-emits the stylesheet when that runtime registers new classes. The Interactive Server, Interactive WebAssembly and Auto render modes are all supported.",
-          "code": "CssStyles \u003Cstyle\u003E CssStyles \u003CRoutes\u003E App.razor \u003C!-- App.razor: the render mode decides where interactivity runs --\u003E \u003CRoutes @rendermode=\u0022InteractiveWebAssembly\u0022 /\u003E \u003C!-- MainLayout.razor: CssStyles is part of the interactive tree --\u003E @inherits LayoutComponentBase \u003CFluentCss.Blazor.CssStyles /\u003E \u003Cmain\u003E@Body\u003C/main\u003E CssStyles"
+          "code": "CssStyles \u003Cstyle\u003E CssStyles \u003CRoutes\u003E App.razor \u003C!-- App.razor: the render mode decides where interactivity runs --\u003E \u003CRoutes @rendermode=\u0022InteractiveWebAssembly\u0022 /\u003E \u003C!-- MainLayout.razor: CssStyles is part of the interactive tree --\u003E @inherits LayoutComponentBase \u003CFluentCss.CssStyles /\u003E \u003Cmain\u003E@Body\u003C/main\u003E CssStyles"
         },
         {
           "id": "mvc-and-razor-pages",
           "heading": "MVC and Razor Pages",
           "level": 2,
           "text": "Add the MVC/Razor Pages package: Register the middleware in . It serves the current hash at and the stylesheet at , with gzip and an ETag. Razor Pages apps map their pages instead with ; the middleware and the tag helper are identical for both models. Register the tag helper and the namespaces in (or ): Finally add the tag helper and the preflight stylesheet to your layout. The tag helper renders the stylesheet and a small script that keeps it in sync after client-side DOM changes, such as a partial view loaded over AJAX. No need to add hash or timestamp The tag helper resolves the current hash when the layout renders, but classes can still be registered after that point. The injected script re-reads on load and watches the document for later changes, swapping the stylesheet when it changes.",
-          "code": "dotnet add package FluentCss.MvcRazor Program.cs /fluentcss/hash /fluentcss/{hash}.css var app = builder.Build(); app.UseRouting(); app.UseFluentCssMvcRazor(); // serve /fluentcss/hash and /fluentcss/{hash}.css app.UseAuthorization(); app.MapStaticAssets(); app.MapControllerRoute(\u0022default\u0022, \u0022{controller=Home}/{action=Index}/{id?}\u0022); app.MapRazorPages() _ViewImports.cshtml Pages/_ViewImports.cshtml @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core @addTagHelper *, FluentCss.MvcRazor \u003Clink\u003E \u003Chead\u003E ... \u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_content/FluentCss.MvcRazor/preflight.css\u0022 /\u003E \u003Cfluent-css /\u003E \u003C/head\u003E /fluentcss/hash"
+          "code": "dotnet add package FluentCss.Middleware Program.cs /fluentcss/hash /fluentcss/{hash}.css var app = builder.Build(); app.UseRouting(); app.UseFluentCss(); // serve /fluentcss/hash and /fluentcss/{hash}.css app.UseAuthorization(); app.MapStaticAssets(); app.MapControllerRoute(\u0022default\u0022, \u0022{controller=Home}/{action=Index}/{id?}\u0022); app.MapRazorPages() _ViewImports.cshtml Pages/_ViewImports.cshtml @using static FluentCss.Core.FluentCssBuilder @using FluentCss.Core @addTagHelper *, FluentCss.Middleware \u003Clink\u003E \u003Chead\u003E ... \u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_content/FluentCss.Middleware/preflight.css\u0022 /\u003E \u003Cfluent-css /\u003E \u003C/head\u003E /fluentcss/hash"
         },
         {
           "id": "any-other-net-project",
@@ -690,21 +690,28 @@
           "heading": "Display",
           "level": 2,
           "text": "Utility Generated CSS Block Inline block Inline Hidden",
-          "code": "Block() display: block InlineBlock() display: inline-block Inline() display: inline Flex() display: flex Grid() display: grid Hidden() display: none \u003Cdiv class=\u0022@Css.Block().Background(Color.Blue100).P(3)\u0022\u003EBlock\u003C/div\u003E \u003Cspan class=\u0022@Css.InlineBlock().Background(Color.Emerald100).P(3)\u0022\u003EInline block\u003C/span\u003E \u003Cspan class=\u0022@Css.Inline().Background(Color.Amber100).P(1)\u0022\u003EInline\u003C/span\u003E \u003Cdiv class=\u0022@Css.Hidden()\u0022\u003EHidden\u003C/div\u003E"
+          "code": "Block() display: block InlineBlock() display: inline-block Inline() display: inline Flex() display: flex InlineFlex() display: inline-flex Grid() display: grid InlineGrid() display: inline-grid FlowRoot() display: flow-root Contents() display: contents ListItem() display: list-item Hidden() display: none \u003Cdiv class=\u0022@Css.Block().Background(Color.Blue100).P(3)\u0022\u003EBlock\u003C/div\u003E \u003Cspan class=\u0022@Css.InlineBlock().Background(Color.Emerald100).P(3)\u0022\u003EInline block\u003C/span\u003E \u003Cspan class=\u0022@Css.Inline().Background(Color.Amber100).P(1)\u0022\u003EInline\u003C/span\u003E \u003Cdiv class=\u0022@Css.Hidden()\u0022\u003EHidden\u003C/div\u003E"
         },
         {
           "id": "position",
           "heading": "Position",
           "level": 2,
           "text": "Utility Generated CSS Combine a position with the offset helpers. Offsets use the spacing scale, so is . Utility Generated CSS New",
-          "code": "Relative() position: relative Absolute() position: absolute Fixed() position: fixed Sticky() position: sticky Top(4) 1rem Inset(4) inset: 1rem Top(4) top: 1rem Right(4) right: 1rem Bottom(4) bottom: 1rem Left(4) left: 1rem Z(10) z-index: 10 \u003Cdiv class=\u0022@Css.Relative().H(32).RoundedLg().Background(Color.Slate100)\u0022\u003E \u003Cdiv class=\u0022@Css.Absolute().Top(2).Right(2).Px(3).Py(1) .RoundedFull().TextXs().FontBold() .Background(Color.Red500).Color(Color.White)\u0022\u003E New \u003C/div\u003E \u003C/div\u003E"
+          "code": "Static() position: static Relative() position: relative Absolute() position: absolute Fixed() position: fixed Sticky() position: sticky Top(4) 1rem Inset(4) inset: 1rem Top(4) top: 1rem Right(4) right: 1rem Bottom(4) bottom: 1rem Left(4) left: 1rem Z(10) z-index: 10 \u003Cdiv class=\u0022@Css.Relative().H(32).RoundedLg().Background(Color.Slate100)\u0022\u003E \u003Cdiv class=\u0022@Css.Absolute().Top(2).Right(2).Px(3).Py(1) .RoundedFull().TextXs().FontBold() .Background(Color.Red500).Color(Color.White)\u0022\u003E New \u003C/div\u003E \u003C/div\u003E"
         },
         {
           "id": "stacking",
           "heading": "Stacking",
           "level": 2,
           "text": "Utility Generated CSS",
-          "code": "Z(0) z-index: 0 Z(10) z-index: 10 Z(50) z-index: 50"
+          "code": "Z(0) z-index: 0 Z(10) z-index: 10 Z(50) z-index: 50 ZAuto() z-index: auto"
+        },
+        {
+          "id": "float-clear-isolation-and-visibility",
+          "heading": "Float, clear, isolation and visibility",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "FloatLeft() float: left FloatRight() float: right FloatNone() float: none ClearLeft() clear: left ClearRight() clear: right ClearBoth() clear: both ClearNone() clear: none Isolate() isolation: isolate IsolationAuto() isolation: auto BoxBorder() box-sizing: border-box BoxContent() box-sizing: content-box Visible() visibility: visible Invisible() visibility: hidden"
         },
         {
           "id": "overflow",
@@ -718,7 +725,7 @@
           "heading": "Object fit and aspect ratio",
           "level": 2,
           "text": "Utility Generated CSS",
-          "code": "ObjectCover() object-fit: cover ObjectContain() object-fit: contain AspectSquare() aspect-ratio: 1 / 1 AspectVideo() aspect-ratio: 16 / 9 \u003Cdiv class=\u0022@Css.Grid().GridCols(2).Gap(4)\u0022\u003E \u003Cdiv class=\u0022@Css.AspectSquare().RoundedMd().Background(Color.Indigo500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.AspectVideo().RoundedMd().Background(Color.Violet500)\u0022\u003E\u003C/div\u003E \u003C/div\u003E"
+          "code": "ObjectCover() object-fit: cover ObjectContain() object-fit: contain ObjectFill() object-fit: fill ObjectScaleDown() object-fit: scale-down ObjectNone() object-fit: none AspectSquare() aspect-ratio: 1 / 1 AspectVideo() aspect-ratio: 16 / 9 \u003Cdiv class=\u0022@Css.Grid().GridCols(2).Gap(4)\u0022\u003E \u003Cdiv class=\u0022@Css.AspectSquare().RoundedMd().Background(Color.Indigo500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.AspectVideo().RoundedMd().Background(Color.Violet500)\u0022\u003E\u003C/div\u003E \u003C/div\u003E"
         }
       ]
     },
@@ -753,28 +760,42 @@
           "heading": "Justify content",
           "level": 3,
           "text": "Utility Generated CSS",
-          "code": "JustifyStart() justify-content: flex-start JustifyEnd() justify-content: flex-end JustifyCenter() justify-content: center JustifyBetween() justify-content: space-between Flex(..., Justify.Around) justify-content: space-around Flex(..., Justify.Evenly) justify-content: space-evenly"
+          "code": "JustifyStart() justify-content: flex-start JustifyEnd() justify-content: flex-end JustifyCenter() justify-content: center JustifyBetween() justify-content: space-between JustifyAround() justify-content: space-around JustifyEvenly() justify-content: space-evenly Flex(..., Justify.Around) justify-content: space-around Flex(..., Justify.Evenly) justify-content: space-evenly"
         },
         {
           "id": "align-items",
           "heading": "Align items",
           "level": 3,
           "text": "Utility Generated CSS",
-          "code": "ItemsStart() align-items: flex-start ItemsEnd() align-items: flex-end ItemsCenter() align-items: center Flex(..., align: Align.Baseline) align-items: baseline Flex(..., align: Align.Stretch) align-items: stretch"
+          "code": "ItemsStart() align-items: flex-start ItemsEnd() align-items: flex-end ItemsCenter() align-items: center ItemsBaseline() align-items: baseline ItemsStretch() align-items: stretch Flex(..., align: Align.Baseline) align-items: baseline Flex(..., align: Align.Stretch) align-items: stretch"
         },
         {
           "id": "wrap-grow-and-gap",
           "heading": "Wrap, grow and gap",
           "level": 3,
           "text": "Utility Generated CSS Fixed Grow",
-          "code": "FlexWrap() flex-wrap: wrap Flex(..., wrap: FlexWrapValue.NoWrap) flex-wrap: nowrap Grow() flex-grow: 1 Shrink() flex-shrink: 1 Gap(4) gap: 1rem GapX(4) column-gap: 1rem GapY(4) row-gap: 1rem \u003Cdiv class=\u0022@Css.Flex(FlexDirection.Row, gap: 2)\u0022\u003E \u003Cdiv\u003EFixed\u003C/div\u003E \u003Cdiv class=\u0022@Css.Grow()\u0022\u003EGrow\u003C/div\u003E \u003C/div\u003E"
+          "code": "FlexWrap() flex-wrap: wrap Flex(..., wrap: FlexWrapValue.NoWrap) flex-wrap: nowrap Grow() flex-grow: 1 Grow(2) flex-grow: 2 Shrink() flex-shrink: 1 Shrink(0) flex-shrink: 0 Gap(4) gap: 1rem GapX(4) column-gap: 1rem GapY(4) row-gap: 1rem \u003Cdiv class=\u0022@Css.Flex(FlexDirection.Row, gap: 2)\u0022\u003E \u003Cdiv\u003EFixed\u003C/div\u003E \u003Cdiv class=\u0022@Css.Grow()\u0022\u003EGrow\u003C/div\u003E \u003C/div\u003E"
+        },
+        {
+          "id": "basis-and-order",
+          "heading": "Basis and order",
+          "level": 3,
+          "text": "Utility Generated CSS",
+          "code": "Basis(4) flex-basis: 1rem Basis(Length.Percent(50)) flex-basis: 50% BasisAuto() flex-basis: auto BasisFull() flex-basis: 100% Order(2) order: 2 OrderFirst() order: -9999 OrderLast() order: 9999 OrderNone() order: 0"
+        },
+        {
+          "id": "justify-and-align-self-content",
+          "heading": "Justify and align self / content",
+          "level": 3,
+          "text": "Utility Generated CSS",
+          "code": "JustifyItemsStart() justify-items: flex-start JustifyItemsCenter() justify-items: center JustifyItemsEnd() justify-items: flex-end JustifyItemsStretch() justify-items: stretch JustifySelfAuto() justify-self: auto JustifySelfStart() justify-self: flex-start JustifySelfCenter() justify-self: center JustifySelfEnd() justify-self: flex-end JustifySelfStretch() justify-self: stretch AlignContentStart() align-content: flex-start AlignContentCenter() align-content: center AlignContentEnd() align-content: flex-end AlignContentBetween() align-content: space-between AlignContentAround() align-content: space-around AlignContentEvenly() align-content: space-evenly AlignContentBaseline() align-content: baseline AlignContentStretch() align-content: stretch AlignSelfAuto() align-self: auto AlignSelfStart() align-self: flex-start AlignSelfCenter() align-self: center AlignSelfEnd() align-self: flex-end AlignSelfBaseline() align-self: baseline AlignSelfStretch() align-self: stretch"
         },
         {
           "id": "grid",
           "heading": "Grid",
           "level": 2,
           "text": "Utility Generated CSS span 2 1 1 1 start 3",
-          "code": "GridCols(3) grid-template-columns: repeat(3, minmax(0, 1fr)) GridRows(2) grid-template-rows: repeat(2, minmax(0, 1fr)) ColSpan(2) grid-column: span 2 / span 2 RowSpan(2) grid-row: span 2 / span 2 ColStart(3) grid-column-start: 3 \u003Cdiv class=\u0022@Css.Grid().GridCols(4).Gap(3)\u0022\u003E \u003Cdiv class=\u0022@Css.ColSpan(2)\u0022\u003Espan 2\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv class=\u0022@Css.ColStart(3)\u0022\u003Estart 3\u003C/div\u003E \u003C/div\u003E"
+          "code": "GridCols(3) grid-template-columns: repeat(3, minmax(0, 1fr)) GridRows(2) grid-template-rows: repeat(2, minmax(0, 1fr)) GridAutoFlowRow() grid-auto-flow: row GridAutoFlowColumn() grid-auto-flow: column GridAutoFlowRowDense() grid-auto-flow: row dense GridAutoFlowColumnDense() grid-auto-flow: column dense ColSpan(2) grid-column: span 2 / span 2 RowSpan(2) grid-row: span 2 / span 2 ColStart(3) grid-column-start: 3 ColEnd(4) grid-column-end: 4 RowStart(2) grid-row-start: 2 RowEnd(3) grid-row-end: 3 \u003Cdiv class=\u0022@Css.Grid().GridCols(4).Gap(3)\u0022\u003E \u003Cdiv class=\u0022@Css.ColSpan(2)\u0022\u003Espan 2\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv\u003E1\u003C/div\u003E \u003Cdiv class=\u0022@Css.ColStart(3)\u0022\u003Estart 3\u003C/div\u003E \u003C/div\u003E"
         }
       ]
     },
@@ -900,7 +921,7 @@
           "heading": "Font weight and style",
           "level": 2,
           "text": "Utility Generated CSS Thin weight Normal weight Bold weight Italic Not italic",
-          "code": "FontThin() font-weight: 100 FontNormal() font-weight: 400 FontBold() font-weight: 700 Italic() font-style: italic NotItalic() font-style: normal \u003Cp class=\u0022@Css.FontThin()\u0022\u003EThin weight\u003C/p\u003E \u003Cp class=\u0022@Css.FontBold()\u0022\u003EBold weight\u003C/p\u003E \u003Cp class=\u0022@Css.Italic()\u0022\u003EItalic\u003C/p\u003E"
+          "code": "FontThin() font-weight: 100 FontExtralight() font-weight: 200 FontLight() font-weight: 300 FontNormal() font-weight: 400 FontMedium() font-weight: 500 FontSemibold() font-weight: 600 FontBold() font-weight: 700 FontExtrabold() font-weight: 800 FontBlack() font-weight: 900 Italic() font-style: italic NotItalic() font-style: normal \u003Cp class=\u0022@Css.FontThin()\u0022\u003EThin weight\u003C/p\u003E \u003Cp class=\u0022@Css.FontBold()\u0022\u003EBold weight\u003C/p\u003E \u003Cp class=\u0022@Css.Italic()\u0022\u003EItalic\u003C/p\u003E"
         },
         {
           "id": "font-family",
@@ -914,21 +935,84 @@
           "heading": "Alignment and decoration",
           "level": 2,
           "text": "Utility Generated CSS Left aligned Center aligned Right aligned Underlined and not underlined",
-          "code": "TextLeft() text-align: left TextCenter() text-align: center TextRight() text-align: right Underline() text-decoration-line: underline NoUnderline() text-decoration-line: none \u003Cp class=\u0022@Css.TextCenter()\u0022\u003ECenter aligned\u003C/p\u003E \u003Cp class=\u0022@Css.TextRight()\u0022\u003ERight aligned\u003C/p\u003E \u003Cp\u003E\u003Cspan class=\u0022@Css.Underline()\u0022\u003EUnderlined\u003C/span\u003E\u003C/p\u003E"
+          "code": "TextLeft() text-align: left TextCenter() text-align: center TextRight() text-align: right Underline() text-decoration-line: underline NoUnderline() text-decoration-line: none LineThrough() text-decoration-line: line-through Overline() text-decoration-line: overline Truncate() overflow: hidden; text-overflow: ellipsis; white-space: nowrap TextEllipsis() text-overflow: ellipsis TextClip() text-overflow: clip \u003Cp class=\u0022@Css.TextCenter()\u0022\u003ECenter aligned\u003C/p\u003E \u003Cp class=\u0022@Css.TextRight()\u0022\u003ERight aligned\u003C/p\u003E \u003Cp\u003E\u003Cspan class=\u0022@Css.Underline()\u0022\u003EUnderlined\u003C/span\u003E\u003C/p\u003E"
         },
         {
           "id": "casing-and-whitespace",
           "heading": "Casing and whitespace",
           "level": 2,
           "text": "Utility Generated CSS uppercase text LOWERCASE TEXT capitalize each word this line will not wrap no matter how long it becomes in the container",
-          "code": "Uppercase() text-transform: uppercase Lowercase() text-transform: lowercase Capitalize() text-transform: capitalize WhitespaceNoWrap() white-space: nowrap \u003Cp class=\u0022@Css.Uppercase()\u0022\u003Euppercase text\u003C/p\u003E \u003Cp class=\u0022@Css.Capitalize()\u0022\u003Ecapitalize each word\u003C/p\u003E \u003Cp class=\u0022@Css.WhitespaceNoWrap()\u0022\u003Ewill not wrap\u003C/p\u003E"
+          "code": "Uppercase() text-transform: uppercase Lowercase() text-transform: lowercase Capitalize() text-transform: capitalize WhitespaceNoWrap() white-space: nowrap WhitespaceNormal() white-space: normal WhitespacePre() white-space: pre WhitespacePreLine() white-space: pre-line WhitespacePreWrap() white-space: pre-wrap WhitespaceBreakSpaces() white-space: break-spaces \u003Cp class=\u0022@Css.Uppercase()\u0022\u003Euppercase text\u003C/p\u003E \u003Cp class=\u0022@Css.Capitalize()\u0022\u003Ecapitalize each word\u003C/p\u003E \u003Cp class=\u0022@Css.WhitespaceNoWrap()\u0022\u003Ewill not wrap\u003C/p\u003E"
+        },
+        {
+          "id": "letter-spacing",
+          "heading": "Letter spacing",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "TrackingTighter() letter-spacing: -0.05em TrackingTight() letter-spacing: -0.025em TrackingNormal() letter-spacing: 0em TrackingWide() letter-spacing: 0.025em TrackingWider() letter-spacing: 0.05em TrackingWidest() letter-spacing: 0.1em Tracking(Length.Em(0.2)) letter-spacing: 0.2em"
         },
         {
           "id": "line-height",
           "heading": "Line height",
           "level": 2,
-          "text": "uses the spacing scale for : is .",
-          "code": "Leading(n) line-height Leading(6) 1.5rem Css.TextSm().Leading(6); // class: text-sm leading-6 // CSS: .leading-6 { line-height: 1.5rem }"
+          "text": "uses the spacing scale for : is . The named helpers set the common unitless ratios. Utility Generated CSS",
+          "code": "Leading(n) line-height Leading(6) 1.5rem LeadingNone() line-height: 1 LeadingTight() line-height: 1.25 LeadingSnug() line-height: 1.375 LeadingNormal() line-height: 1.5 LeadingRelaxed() line-height: 1.625 LeadingLoose() line-height: 2 Leading(6) line-height: 1.5rem Css.TextSm().Leading(6); // class: text-sm leading-6 // CSS: .leading-6 { line-height: 1.5rem }"
+        },
+        {
+          "id": "text-wrapping-and-overflow",
+          "heading": "Text wrapping and overflow",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "TextIndent(4) text-indent: 1rem TextIndent(Length.Rem(2)) text-indent: 2rem WordBreakNormal() word-break: normal WordBreakAll() word-break: break-all WordBreakKeepAll() word-break: keep-all OverflowWrapNormal() overflow-wrap: normal OverflowWrapBreakWord() overflow-wrap: break-word OverflowWrapAnywhere() overflow-wrap: anywhere HyphensNone() hyphens: none HyphensManual() hyphens: manual HyphensAuto() hyphens: auto"
+        },
+        {
+          "id": "list-styles",
+          "heading": "List styles",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "ListStyleNone() list-style-type: none ListDisc() list-style-type: disc ListDecimal() list-style-type: decimal ListInside() list-style-position: inside ListOutside() list-style-position: outside"
+        }
+      ]
+    },
+    {
+      "route": "/docs/backgrounds",
+      "title": "Backgrounds",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "backgrounds",
+          "heading": "Backgrounds",
+          "level": 1,
+          "text": "Set the background color with Background(Color), then control how a background image is attached, clipped, repeated and sized.",
+          "code": ""
+        },
+        {
+          "id": "background-color",
+          "heading": "Background color",
+          "level": 2,
+          "text": "sets from the palette or an arbitrary . See Colors for the full palette.",
+          "code": "Background(Color) background-color Color"
+        },
+        {
+          "id": "attachment",
+          "heading": "Attachment",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "BgAttachmentFixed() background-attachment: fixed BgAttachmentLocal() background-attachment: local BgAttachmentScroll() background-attachment: scroll"
+        },
+        {
+          "id": "clip-and-origin",
+          "heading": "Clip and origin",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "BgClipBorder() background-clip: border-box BgClipPadding() background-clip: padding-box BgClipContent() background-clip: content-box BgClipText() background-clip: text BgOriginBorder() background-origin: border-box BgOriginPadding() background-origin: padding-box BgOriginContent() background-origin: content-box"
+        },
+        {
+          "id": "repeat-and-size",
+          "heading": "Repeat and size",
+          "level": 2,
+          "text": "Utility Generated CSS clears the background image. The other helpers carry the image, so pair them with an image set through plain CSS or .",
+          "code": "BgRepeat() background-repeat: repeat BgRepeatX() background-repeat: repeat-x BgRepeatY() background-repeat: repeat-y BgNoRepeat() background-repeat: no-repeat BgRepeatRound() background-repeat: round BgRepeatSpace() background-repeat: space BgCover() background-size: cover BgContain() background-size: contain BgAuto() background-size: auto BgNone() background-image: none BgNone() Arbitrary"
         }
       ]
     },
@@ -949,14 +1033,14 @@
           "heading": "Border width",
           "level": 2,
           "text": "Utility Generated CSS 1px border 2px border Dashed blue border",
-          "code": "Border() border-width: 1px Border(2) border-width: 2px Border(4) border-width: 4px \u003Cdiv class=\u0022@Css.Border().BorderColor(Color.Slate300).P(4)\u0022\u003E1px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2).BorderColor(Color.Slate300).P(4)\u0022\u003E2px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2, Color.Blue400, BorderStyle.Dashed).P(4)\u0022\u003EDashed blue border\u003C/div\u003E"
+          "code": "Border() border-width: 1px Border(2) border-width: 2px Border(4) border-width: 4px BorderT() / BorderT(2) border-top-width: 1px / 2px BorderR() / BorderR(2) border-right-width: 1px / 2px BorderB() / BorderB(2) border-bottom-width: 1px / 2px BorderL() / BorderL(2) border-left-width: 1px / 2px BorderX() / BorderX(2) border-inline-width: 1px / 2px BorderY() / BorderY(2) border-block-width: 1px / 2px \u003Cdiv class=\u0022@Css.Border().BorderColor(Color.Slate300).P(4)\u0022\u003E1px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2).BorderColor(Color.Slate300).P(4)\u0022\u003E2px border\u003C/div\u003E \u003Cdiv class=\u0022@Css.Border(2, Color.Blue400, BorderStyle.Dashed).P(4)\u0022\u003EDashed blue border\u003C/div\u003E"
         },
         {
           "id": "border-style-and-color",
           "heading": "Border style and color",
           "level": 2,
           "text": "Utility Generated CSS The composite overload combines the three border pieces in a single call:",
-          "code": "BorderColor(Color.Slate300) border-color: \u003Cvalue\u003E BorderSolid() border-style: solid BorderDashed() border-style: dashed BorderDotted() border-style: dotted Css.Border(2, Color.Slate300, BorderStyle.Dashed); // expands to three utilities: // border-2 border-width: 2px // border-slate-300 border-color: ... // border-dashed border-style: dashed"
+          "code": "BorderColor(Color.Slate300) border-color: \u003Cvalue\u003E BorderSolid() border-style: solid BorderDashed() border-style: dashed BorderDotted() border-style: dotted BorderDouble() border-style: double Css.Border(2, Color.Slate300, BorderStyle.Dashed); // expands to three utilities: // border-2 border-width: 2px // border-slate-300 border-color: ... // border-dashed border-style: dashed"
         },
         {
           "id": "border-radius",
@@ -977,7 +1061,7 @@
           "heading": "Rings and outlines",
           "level": 2,
           "text": "A ring is a based outline that follows the border radius, which makes it ideal for focus states. The outline helpers map to the native property. Utility Generated CSS Focus me Ring",
-          "code": "box-shadow outline Ring(3, Color.Blue300) box-shadow: 0 0 0 3px \u003Cvalue\u003E Outline(2) outline-width: 2px OutlineHidden() outline: 2px solid transparent \u003Cbutton class=\u0022@Css.Px(5).Py(2).RoundedMd().FontBold() @Css.Focus(f =\u003E f.Ring(3, Color.Blue300).OutlineHidden())\u0022\u003E Focus me \u003C/button\u003E"
+          "code": "box-shadow outline Ring(3, Color.Blue300) box-shadow: 0 0 0 3px \u003Cvalue\u003E Outline(2) outline-width: 2px OutlineColor(Color.Blue500) outline-color: \u003Cvalue\u003E OutlineOffset(4) outline-offset: 4px OutlineHidden() outline: 2px solid transparent \u003Cbutton class=\u0022@Css.Px(5).Py(2).RoundedMd().FontBold() @Css.Focus(f =\u003E f.Ring(3, Color.Blue300).OutlineHidden())\u0022\u003E Focus me \u003C/button\u003E"
         },
         {
           "id": "shadows",
@@ -992,6 +1076,90 @@
           "level": 2,
           "text": "Utility Generated CSS",
           "code": "Opacity(50) opacity: 0.5 Opacity(0) opacity: 0 Opacity(100) opacity: 1 CursorPointer() cursor: pointer \u003Cdiv class=\u0022@Css.Opacity(100).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(75).P(4).RoundedMd().Background(Color.Blue500).CursorPointer()\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(50).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E \u003Cdiv class=\u0022@Css.Opacity(25).P(4).RoundedMd().Background(Color.Blue500)\u0022\u003E\u003C/div\u003E"
+        }
+      ]
+    },
+    {
+      "route": "/docs/interactivity",
+      "title": "Interactivity",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "interactivity",
+          "heading": "Interactivity",
+          "level": 1,
+          "text": "Pointer events, selection, resizing, cursors, scrolling, form control appearance and other user-interaction properties.",
+          "code": ""
+        },
+        {
+          "id": "pointer-events-and-selection",
+          "heading": "Pointer events and selection",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "PointerEventsNone() pointer-events: none PointerEventsAuto() pointer-events: auto UserSelectNone() user-select: none UserSelectText() user-select: text UserSelectAll() user-select: all UserSelectAuto() user-select: auto"
+        },
+        {
+          "id": "resize-and-scrolling",
+          "heading": "Resize and scrolling",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "ResizeNone() resize: none ResizeY() resize: vertical ResizeX() resize: horizontal ResizeBoth() resize: both ScrollBehaviorSmooth() scroll-behavior: smooth ScrollBehaviorAuto() scroll-behavior: auto"
+        },
+        {
+          "id": "form-control-appearance",
+          "heading": "Form control appearance",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "AppearanceNone() appearance: none AppearanceAuto() appearance: auto"
+        },
+        {
+          "id": "accent-caret-and-color-scheme",
+          "heading": "Accent, caret and color scheme",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "AccentColor(Color.Blue500) accent-color: \u003Cvalue\u003E CaretColor(Color.Red500) caret-color: \u003Cvalue\u003E ColorSchemeLight() color-scheme: light ColorSchemeDark() color-scheme: dark ColorSchemeNormal() color-scheme: normal"
+        },
+        {
+          "id": "cursor",
+          "heading": "Cursor",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "CursorDefault() cursor: default CursorPointer() cursor: pointer CursorText() cursor: text CursorWait() cursor: wait CursorMove() cursor: move CursorHelp() cursor: help CursorNotAllowed() cursor: not-allowed CursorCrosshair() cursor: crosshair CursorGrab() cursor: grab CursorGrabbing() cursor: grabbing CursorNone() cursor: none CursorProgress() cursor: progress"
+        },
+        {
+          "id": "touch-action-and-will-change",
+          "heading": "Touch action and will-change",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "TouchActionNone() touch-action: none TouchActionAuto() touch-action: auto TouchActionPanX() touch-action: pan-x TouchActionPanY() touch-action: pan-y TouchActionManipulation() touch-action: manipulation WillChangeAuto() will-change: auto WillChangeScroll() will-change: scroll-position WillChangeContents() will-change: contents WillChangeTransform() will-change: transform"
+        }
+      ]
+    },
+    {
+      "route": "/docs/tables-svg",
+      "title": "Tables \u0026 SVG",
+      "section": "Utilities",
+      "sections": [
+        {
+          "id": "tables-and-svg",
+          "heading": "Tables and SVG",
+          "level": 1,
+          "text": "Table layout helpers and the SVG paint utilities fill, stroke and stroke-width.",
+          "code": ""
+        },
+        {
+          "id": "tables",
+          "heading": "Tables",
+          "level": 2,
+          "text": "Utility Generated CSS Display values such as , and are grouped with the other display helpers on the Layout page.",
+          "code": "BorderCollapse() border-collapse: collapse BorderSeparate() border-collapse: separate TableLayoutAuto() table-layout: auto TableLayoutFixed() table-layout: fixed CaptionTop() caption-side: top CaptionBottom() caption-side: bottom InlineFlex() FlowRoot() Contents()"
+        },
+        {
+          "id": "svg-paint",
+          "heading": "SVG paint",
+          "level": 2,
+          "text": "Utility Generated CSS",
+          "code": "Fill(Color.Blue500) fill: \u003Cvalue\u003E Stroke(Color.Red500) stroke: \u003Cvalue\u003E StrokeWidth(2) stroke-width: 2px"
         }
       ]
     }

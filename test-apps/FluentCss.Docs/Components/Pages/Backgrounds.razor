@@ -1,0 +1,67 @@
+@page "/docs/backgrounds"
+
+<PageTitle>Backgrounds - FluentCss</PageTitle>
+
+<DocHeader Title="Backgrounds"
+           Description="Set the background color with Background(Color), then control how a background image is attached, clipped, repeated and sized." />
+
+<h2 class="@DocsStyles.H2">Background color</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">Background(Color)</code> sets
+    <code class="@DocsStyles.InlineCode">background-color</code> from the palette or an arbitrary
+    <code class="@DocsStyles.InlineCode">Color</code>. See <a class="@DocsStyles.Link" href="/docs/colors">Colors</a>
+    for the full palette.
+</p>
+
+<h2 class="@DocsStyles.H2">Attachment</h2>
+
+<ApiTable Rows="@AttachmentUtilities" />
+
+<h2 class="@DocsStyles.H2">Clip and origin</h2>
+
+<ApiTable Rows="@ClipOriginUtilities" />
+
+<h2 class="@DocsStyles.H2">Repeat and size</h2>
+
+<ApiTable Rows="@RepeatSizeUtilities" />
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">BgNone()</code> clears the background image. The other
+    helpers carry the image, so pair them with an image set through plain CSS or
+    <code class="@DocsStyles.InlineCode">Arbitrary</code>.
+</p>
+
+@code {
+    private static readonly (string Utility, string Css)[] AttachmentUtilities =
+    [
+        ("BgAttachmentFixed()", "background-attachment: fixed"),
+        ("BgAttachmentLocal()", "background-attachment: local"),
+        ("BgAttachmentScroll()", "background-attachment: scroll"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ClipOriginUtilities =
+    [
+        ("BgClipBorder()", "background-clip: border-box"),
+        ("BgClipPadding()", "background-clip: padding-box"),
+        ("BgClipContent()", "background-clip: content-box"),
+        ("BgClipText()", "background-clip: text"),
+        ("BgOriginBorder()", "background-origin: border-box"),
+        ("BgOriginPadding()", "background-origin: padding-box"),
+        ("BgOriginContent()", "background-origin: content-box"),
+    ];
+
+    private static readonly (string Utility, string Css)[] RepeatSizeUtilities =
+    [
+        ("BgRepeat()", "background-repeat: repeat"),
+        ("BgRepeatX()", "background-repeat: repeat-x"),
+        ("BgRepeatY()", "background-repeat: repeat-y"),
+        ("BgNoRepeat()", "background-repeat: no-repeat"),
+        ("BgRepeatRound()", "background-repeat: round"),
+        ("BgRepeatSpace()", "background-repeat: space"),
+        ("BgCover()", "background-size: cover"),
+        ("BgContain()", "background-size: contain"),
+        ("BgAuto()", "background-size: auto"),
+        ("BgNone()", "background-image: none"),
+    ];
+}

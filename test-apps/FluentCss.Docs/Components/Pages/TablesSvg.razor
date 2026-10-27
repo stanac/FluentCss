@@ -1,0 +1,40 @@
+@page "/docs/tables-svg"
+
+<PageTitle>Tables &amp; SVG - FluentCss</PageTitle>
+
+<DocHeader Title="Tables and SVG"
+           Description="Table layout helpers and the SVG paint utilities fill, stroke and stroke-width." />
+
+<h2 class="@DocsStyles.H2">Tables</h2>
+
+<ApiTable Rows="@TableUtilities" />
+
+<p class="@DocsStyles.P">
+    Display values such as <code class="@DocsStyles.InlineCode">InlineFlex()</code>,
+    <code class="@DocsStyles.InlineCode">FlowRoot()</code> and
+    <code class="@DocsStyles.InlineCode">Contents()</code> are grouped with the other display
+    helpers on the <a class="@DocsStyles.Link" href="/docs/layout">Layout</a> page.
+</p>
+
+<h2 class="@DocsStyles.H2">SVG paint</h2>
+
+<ApiTable Rows="@SvgUtilities" />
+
+@code {
+    private static readonly (string Utility, string Css)[] TableUtilities =
+    [
+        ("BorderCollapse()", "border-collapse: collapse"),
+        ("BorderSeparate()", "border-collapse: separate"),
+        ("TableLayoutAuto()", "table-layout: auto"),
+        ("TableLayoutFixed()", "table-layout: fixed"),
+        ("CaptionTop()", "caption-side: top"),
+        ("CaptionBottom()", "caption-side: bottom"),
+    ];
+
+    private static readonly (string Utility, string Css)[] SvgUtilities =
+    [
+        ("Fill(Color.Blue500)", "fill: <value>"),
+        ("Stroke(Color.Red500)", "stroke: <value>"),
+        ("StrokeWidth(2)", "stroke-width: 2px"),
+    ];
+}

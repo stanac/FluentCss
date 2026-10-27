@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace FluentCss.MvcRazor;
+namespace FluentCss.Middleware;
 
-public static class FluentCssMvcRazorApplicationBuilderExtensions
+public static class FluentCssApplicationBuilderExtensions
 {
     /// <summary>
     /// Adds the middleware that serves the stylesheet and its current hash.
     /// </summary>
-    public static IApplicationBuilder UseFluentCssMvcRazor(this IApplicationBuilder app) =>
+    public static IApplicationBuilder UseFluentCss(this IApplicationBuilder app) =>
         app.UseMiddleware<FluentCssMiddleware>();
 }

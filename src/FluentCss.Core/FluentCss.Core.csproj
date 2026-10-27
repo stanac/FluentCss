@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="FluentCss.Blazor" />
+		<InternalsVisibleTo Include="FluentCss" />
 		<InternalsVisibleTo Include="FluentCss.Core.Tests" />
 	</ItemGroup>
 

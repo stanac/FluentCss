@@ -113,15 +113,29 @@
     </div>
 </Example>
 
+<h2 class="@DocsStyles.H2">Letter spacing</h2>
+
+<ApiTable Rows="@TrackingUtilities" />
+
 <h2 class="@DocsStyles.H2">Line height</h2>
 
 <p class="@DocsStyles.P">
     <code class="@DocsStyles.InlineCode">Leading(n)</code> uses the spacing scale for
     <code class="@DocsStyles.InlineCode">line-height</code>: <code class="@DocsStyles.InlineCode">Leading(6)</code>
-    is <code class="@DocsStyles.InlineCode">1.5rem</code>.
+    is <code class="@DocsStyles.InlineCode">1.5rem</code>. The named helpers set the common unitless ratios.
 </p>
 
+<ApiTable Rows="@LeadingUtilities" />
+
 <CodeBlock Code="@LeadingExample" />
+
+<h2 class="@DocsStyles.H2">Text wrapping and overflow</h2>
+
+<ApiTable Rows="@WrappingUtilities" />
+
+<h2 class="@DocsStyles.H2">List styles</h2>
+
+<ApiTable Rows="@ListUtilities" />
 
 @code {
     private static readonly (string Utility, string Css)[] FontSizes =
@@ -140,8 +154,14 @@
     private static readonly (string Utility, string Css)[] FontStyles =
     [
         ("FontThin()", "font-weight: 100"),
+        ("FontExtralight()", "font-weight: 200"),
+        ("FontLight()", "font-weight: 300"),
         ("FontNormal()", "font-weight: 400"),
+        ("FontMedium()", "font-weight: 500"),
+        ("FontSemibold()", "font-weight: 600"),
         ("FontBold()", "font-weight: 700"),
+        ("FontExtrabold()", "font-weight: 800"),
+        ("FontBlack()", "font-weight: 900"),
         ("Italic()", "font-style: italic"),
         ("NotItalic()", "font-style: normal"),
     ];
@@ -164,6 +184,11 @@
         ("TextRight()", "text-align: right"),
         ("Underline()", "text-decoration-line: underline"),
         ("NoUnderline()", "text-decoration-line: none"),
+        ("LineThrough()", "text-decoration-line: line-through"),
+        ("Overline()", "text-decoration-line: overline"),
+        ("Truncate()", "overflow: hidden; text-overflow: ellipsis; white-space: nowrap"),
+        ("TextEllipsis()", "text-overflow: ellipsis"),
+        ("TextClip()", "text-overflow: clip"),
     ];
 
     private static readonly (string Utility, string Css)[] TransformUtilities =
@@ -172,6 +197,57 @@
         ("Lowercase()", "text-transform: lowercase"),
         ("Capitalize()", "text-transform: capitalize"),
         ("WhitespaceNoWrap()", "white-space: nowrap"),
+        ("WhitespaceNormal()", "white-space: normal"),
+        ("WhitespacePre()", "white-space: pre"),
+        ("WhitespacePreLine()", "white-space: pre-line"),
+        ("WhitespacePreWrap()", "white-space: pre-wrap"),
+        ("WhitespaceBreakSpaces()", "white-space: break-spaces"),
+    ];
+
+    private static readonly (string Utility, string Css)[] TrackingUtilities =
+    [
+        ("TrackingTighter()", "letter-spacing: -0.05em"),
+        ("TrackingTight()", "letter-spacing: -0.025em"),
+        ("TrackingNormal()", "letter-spacing: 0em"),
+        ("TrackingWide()", "letter-spacing: 0.025em"),
+        ("TrackingWider()", "letter-spacing: 0.05em"),
+        ("TrackingWidest()", "letter-spacing: 0.1em"),
+        ("Tracking(Length.Em(0.2))", "letter-spacing: 0.2em"),
+    ];
+
+    private static readonly (string Utility, string Css)[] LeadingUtilities =
+    [
+        ("LeadingNone()", "line-height: 1"),
+        ("LeadingTight()", "line-height: 1.25"),
+        ("LeadingSnug()", "line-height: 1.375"),
+        ("LeadingNormal()", "line-height: 1.5"),
+        ("LeadingRelaxed()", "line-height: 1.625"),
+        ("LeadingLoose()", "line-height: 2"),
+        ("Leading(6)", "line-height: 1.5rem"),
+    ];
+
+    private static readonly (string Utility, string Css)[] WrappingUtilities =
+    [
+        ("TextIndent(4)", "text-indent: 1rem"),
+        ("TextIndent(Length.Rem(2))", "text-indent: 2rem"),
+        ("WordBreakNormal()", "word-break: normal"),
+        ("WordBreakAll()", "word-break: break-all"),
+        ("WordBreakKeepAll()", "word-break: keep-all"),
+        ("OverflowWrapNormal()", "overflow-wrap: normal"),
+        ("OverflowWrapBreakWord()", "overflow-wrap: break-word"),
+        ("OverflowWrapAnywhere()", "overflow-wrap: anywhere"),
+        ("HyphensNone()", "hyphens: none"),
+        ("HyphensManual()", "hyphens: manual"),
+        ("HyphensAuto()", "hyphens: auto"),
+    ];
+
+    private static readonly (string Utility, string Css)[] ListUtilities =
+    [
+        ("ListStyleNone()", "list-style-type: none"),
+        ("ListDisc()", "list-style-type: disc"),
+        ("ListDecimal()", "list-style-type: decimal"),
+        ("ListInside()", "list-style-position: inside"),
+        ("ListOutside()", "list-style-position: outside"),
     ];
 
     private const string FontSizeExample =

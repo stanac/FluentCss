@@ -357,8 +357,8 @@ The project structure:
 FluentCss/
 ├── src/
 │   ├── FluentCss.Core/       # Core library (netstandard2.0)
-│   ├── FluentCss.Blazor/     # Blazor component (net10.0)
-│   └── FluentCss.MvcRazor/   # MVC + Razor Pages integration (tag helper + middleware)
+│   ├── FluentCss/            # Blazor component + tag helpers (net10.0)
+│   └── FluentCss.Middleware/ # Middleware + DI extension
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/

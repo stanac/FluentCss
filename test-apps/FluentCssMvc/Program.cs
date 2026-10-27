@@ -1,4 +1,4 @@
-using FluentCss.MvcRazor;
+using FluentCss.Middleware;
 
 namespace FluentCssMvc
 {
@@ -21,7 +21,7 @@ namespace FluentCssMvc
             app.UseRouting();
 
             // Serves {prefix}/hash and {prefix}/{hash}.css.
-            app.UseFluentCssMvcRazor();
+            app.UseFluentCss();
 
             app.UseAuthorization();
 

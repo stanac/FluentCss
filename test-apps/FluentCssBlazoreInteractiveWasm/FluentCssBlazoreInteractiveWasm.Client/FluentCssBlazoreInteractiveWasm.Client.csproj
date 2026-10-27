@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\FluentCss.Blazor\FluentCss.Blazor.csproj" />
+    <ProjectReference Include="..\..\..\src\FluentCss\FluentCss.csproj" />
   </ItemGroup>
 
 </Project>

@@ -175,50 +175,37 @@ the surrounding gaps are easy to misread as "unsupported".
 - **[missing]** `columns`
 - **[missing]** `break-after`, `break-before`, `break-inside`
 - **[missing]** `box-decoration-break`
-- **[missing]** `box-sizing`
-- **[missing]** `float`, `clear`
-- **[missing]** `isolation`
 - **[missing]** `object-position`
 - **[missing]** `overscroll-behavior`
-- **[missing]** `visibility`
-- **[partial] display.** Only `block`, `inline-block`, `inline`, `flex`,
-  `grid`, `none`. Missing `inline-flex`, `inline-grid`, `table` family,
-  `contents`, `flow-root`, `list-item`, etc.
-- **[partial] position.** `relative`, `absolute`, `fixed`, `sticky`; missing
-  `static` (and no `inset` logical variants).
+- **[partial] display.** `block`, `inline-block`, `inline`, `flex`,
+  `inline-flex`, `grid`, `inline-grid`, `flow-root`, `contents`, `list-item`
+  and `none` are implemented. Missing the `table` family.
+- **[partial] position.** `relative`, `absolute`, `fixed`, `sticky` and
+  `static`; missing inset logical variants.
 - **[partial] inset / top / right / bottom / left.** Numeric spacing scale plus
   arbitrary lengths via `Length` (negatives included); missing dedicated `auto`,
   `full` and fraction helpers (all still expressible with a `Length`).
-- **[partial] z-index.** Only integers (negatives included); missing `auto`.
 - **[partial] aspect-ratio.** Only `square` (1/1) and `video` (16/9); missing
   `3/2`, `4/3`, `21/9`, arbitrary values and custom properties.
-- **[partial] object-fit.** Only `cover` and `contain`; missing `fill`,
-  `scale-down`, `none`.
 
 ---
 
 ## Flexbox and grid
 
-- **[missing]** `flex-basis`
 - **[missing]** `flex` shorthand (`flex-1`, `flex-auto`, `flex-initial`,
   `flex-none`)
-- **[missing]** `order`
-- **[missing]** `grid-auto-flow`, `grid-auto-columns`, `grid-auto-rows`
-- **[missing]** `justify-items`, `justify-self`
-- **[missing]** `align-content`, `align-self`
+- **[partial] grid-auto-flow / grid-auto-columns / grid-auto-rows.**
+  `GridAutoFlowRow`, `GridAutoFlowColumn`, `GridAutoFlowRowDense` and
+  `GridAutoFlowColumnDense` are implemented; missing `grid-auto-columns`,
+  `grid-auto-rows` and arbitrary tracks.
 - **[missing]** `place-content`, `place-items`, `place-self`
-- **[partial] flex-grow / flex-shrink.** Only `Grow()` and `Shrink()` (value
-  `1`); missing `0`, arbitrary values and the `flex` shorthands.
+- **[partial] flex-grow / flex-shrink.** `Grow()` / `Shrink()` (value `1`) plus
+  `Grow(n)` / `Shrink(n)`; missing the `flex` shorthands.
 - **[partial] grid-template-columns / grid-template-rows.** `GridCols(n)` and
   `GridRows(n)` only emit `repeat(n, minmax(0, 1fr))`; missing named lines,
   subgrid, arbitrary tracks and `none`.
-- **[partial] grid-column / grid-row.** Only `span` (`ColSpan`, `RowSpan`) and
-  `ColStart`; missing end lines, `auto` and arbitrary placement.
-- **[partial] justify-content / align-items.** Standalone helpers cover only a
-  subset: `JustifyStart`, `JustifyEnd`, `JustifyCenter`, `JustifyBetween`,
-  `ItemsStart`, `ItemsEnd`, `ItemsCenter`. `Around` / `Evenly` (justify) and
-  `Baseline` / `Stretch` (align) are reachable only through the composite
-  `Flex(...)` call.
+- **[partial] grid-column / grid-row.** `ColSpan`, `RowSpan`, `ColStart`,
+  `ColEnd`, `RowStart` and `RowEnd`; missing `auto` and arbitrary placement.
 - **[partial] gap.** Numeric spacing scale plus arbitrary lengths via
   `Gap(Length)` / `GapX` / `GapY`; missing a `gap-px` shorthand (use
   `Gap(Length.Px(1))`).
@@ -263,63 +250,49 @@ the surrounding gaps are easy to misread as "unsupported".
 - **[missing]** `font-stretch`
 - **[missing]** `font-variant-numeric`
 - **[missing]** `font-feature-settings`
-- **[missing]** `letter-spacing` (tracking)
 - **[missing]** `line-clamp`
-- **[missing]** `list-style-image`, `list-style-position`, `list-style-type`
+- **[partial] list-style.** `list-style-type` (`ListStyleNone`, `ListDisc`,
+  `ListDecimal`) and `list-style-position` (`ListInside`, `ListOutside`) are
+  implemented; missing `list-style-image`.
 - **[missing]** text-decoration color, style, thickness and underline offset
-- **[missing]** `text-overflow`
 - **[missing]** `text-wrap` (`balance`, `pretty`, `nowrap`, `wrap`)
-- **[missing]** `text-indent`
 - **[missing]** `tab-size`
 - **[missing]** `vertical-align`
-- **[missing]** `word-break`
-- **[missing]** `overflow-wrap`
-- **[missing]** `hyphens`
 - **[missing]** `content`
 - **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`) plus
   arbitrary sizes via `Text(Length)`; missing the wider named scale and
   per-size line heights (the `Text*` helpers set `font-size` only).
-- **[partial] line-height.** Numeric `Leading(n)` scale plus arbitrary lengths
-  via `Leading(Length)`; missing the named `leading-none` / `tight` / `snug` /
-  `normal` / `relaxed` / `loose` helpers.
-- **[partial] white-space.** Only `nowrap`; missing `normal`, `pre`, `pre-line`,
-  `pre-wrap`, `break-spaces`.
-- **[partial] font-weight.** Only `100`, `400`, `700`; missing the other
-  weights and arbitrary values.
-- **[partial] text-transform / font-style / text-align / decoration.** Only the
-  common values, no overline/line-through or `normal` variants for every axis.
+- **[partial] font-weight.** All standard weights (`100`–`900`) are implemented;
+  missing arbitrary values (use `Arbitrary`).
+- **[partial] text-transform / font-style / text-align / decoration.** Common
+  values plus `LineThrough` and `Overline`; missing `normal` variants for every
+  axis.
 
 ---
 
 ## Backgrounds
 
-- **[missing]** `background-attachment`
-- **[missing]** `background-clip`
 - **[missing]** `background-image` (linear/radial/conic gradients)
-- **[missing]** `background-origin`
 - **[missing]** `background-position`
-- **[missing]** `background-repeat`
-- **[missing]** `background-size`
-- Only `background-color` via `Background(Color)` is implemented (arbitrary
-  colors via the `Color(name, value)` constructor); no opacity modifier or
-  gradients.
+- `background-color` via `Background(Color)`, `background-attachment`,
+  `background-clip`, `background-origin`, `background-repeat` and
+  `background-size` are implemented (`BgAttachment*`, `BgClip*`, `BgOrigin*`,
+  `BgRepeat*`, `BgCover` / `BgContain` / `BgAuto`), plus `BgNone`. No opacity
+  modifier or gradients.
 
 ---
 
 ## Borders
 
-- **[missing]** per-side border widths (`border-t`, `border-r`, `border-b`,
-  `border-l`, `border-x`, `border-y`)
 - **[missing]** per-side border styles and colors
 - **[missing]** per-corner / logical border radius (`rounded-t`, `rounded-l`,
   `rounded-ss`, …)
-- **[missing]** `outline-color`
 - **[missing]** `outline-style`
-- **[missing]** `outline-offset`
 - **[missing]** `divide-*` utilities
-- **[partial] border-style.** Only `solid`, `dashed`, `dotted` (and `none`
-  through the `Border(width, color, BorderStyle)` composite overload).
-- **[partial] outline.** Only `Outline(width)` and `OutlineHidden`.
+- **[partial] border-style.** `solid`, `dashed`, `dotted` and `double` (and
+  `none` through the `Border(width, color, BorderStyle)` composite overload).
+- **[partial] outline.** `Outline(width)`, `OutlineHidden()`, `OutlineColor`
+  and `OutlineOffset`; missing `outline-style`.
 - **[partial] ring.** A single hard-coded `box-shadow` ring; missing
   `ring-inset`, `ring-offset-*`, ring color-only utilities and composable
   shadows. See also the box-shadow conflict note below.
@@ -351,10 +324,7 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Tables
 
-- **[missing]** `border-collapse`
 - **[missing]** `border-spacing`
-- **[missing]** `table-layout`
-- **[missing]** `caption-side`
 
 ---
 
@@ -384,29 +354,17 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Interactivity
 
-- **[missing]** `accent-color`
-- **[missing]** `appearance`
-- **[missing]** `caret-color`
-- **[missing]** `color-scheme`
 - **[missing]** `field-sizing`
-- **[missing]** `pointer-events`
-- **[missing]** `resize`
-- **[missing]** `scroll-behavior`
 - **[missing]** `scrollbar-color`, `scrollbar-width`, `scrollbar-gutter`
 - **[missing]** `scroll-margin`, `scroll-padding`
 - **[missing]** `scroll-snap-align`, `scroll-snap-stop`, `scroll-snap-type`
-- **[missing]** `touch-action`
-- **[missing]** `user-select`
-- **[missing]** `will-change`
-- **[partial] cursor.** Only `CursorPointer()`; missing the full cursor set.
 
 ---
 
 ## SVG
 
-- **[missing]** `fill`
-- **[missing]** `stroke`
-- **[missing]** `stroke-width`
+`fill`, `stroke` and `stroke-width` are implemented (`Fill(Color)`,
+`Stroke(Color)`, `StrokeWidth(int)`).
 
 ---
 
@@ -459,8 +417,10 @@ Tailwind's behavior in practice.
 2. **Canonical property ordering within `ClassRegistry` buckets.** Unblocks
    transforms / filters / transitions and fixes the `Ring` / `Shadow` conflict
    and duplicate base-utility behavior.
-3. Supporting middleware in blazor, rename FluentCss.Blazor project to 
-   FluentCss, it should contain blazor component and tag helpers,
-   FluentCss.MvcRazor should be renamed to FluentCss.Middleware and it should
-   have only middleware and DI extension. Users can choose to use middleare
-   and script as link even in Blazor projects.
+3. **Rename projects.** Done: `FluentCss.Blazor` → `FluentCss` (Blazor
+   component and static assets) and `FluentCss.MvcRazor` → `FluentCss.Middleware`
+   (middleware and the `UseFluentCss()` DI extension). The tag helpers stayed in
+   `FluentCss.Middleware` rather than `FluentCss`, because a browser-facing Razor
+   class library cannot reference `Microsoft.AspNetCore.App` without breaking
+   Blazor WebAssembly consumers. Users can still choose the middleware and
+   script-link path in Blazor projects.

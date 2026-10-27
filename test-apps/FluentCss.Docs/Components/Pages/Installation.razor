@@ -21,7 +21,7 @@
     </thead>
     <tbody>
         <tr class="@DocsStyles.Tr">
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Blazor</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss</code></td>
             <td class="@DocsStyles.Td">Blazor</td>
             <td class="@DocsStyles.Td">
                 The <code class="@DocsStyles.InlineCode">CssStyles</code> component and the preflight stylesheet.
@@ -30,7 +30,7 @@
             </td>
         </tr>
         <tr class="@DocsStyles.Tr">
-            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.MvcRazor</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Middleware</code></td>
             <td class="@DocsStyles.Td">ASP.NET Core MVC and Razor Pages</td>
             <td class="@DocsStyles.Td">
                 The <code class="@DocsStyles.InlineCode">&lt;fluent-css /&gt;</code> tag helper, the stylesheet
@@ -168,7 +168,7 @@
 @code {
     private const string InstallBlazor =
         """
-        dotnet add package FluentCss.Blazor
+        dotnet add package FluentCss
         """;
 
     private const string ImportsBlazor =
@@ -185,8 +185,8 @@
         ...
         
         <!-- Add Tailwind CSS preflight, optional but strongly recommended -->
-        <link rel="stylesheet" href="_content/FluentCss.Blazor/preflight.css" />
-        <FluentCss.Blazor.CssStyles />
+        <link rel="stylesheet" href="_content/FluentCss/preflight.css" />
+        <FluentCss.CssStyles />
         
         ...
         </head>
@@ -203,14 +203,14 @@
         <!-- MainLayout.razor: CssStyles is part of the interactive tree -->
         @inherits LayoutComponentBase
         
-        <FluentCss.Blazor.CssStyles />
+        <FluentCss.CssStyles />
         
         <main>@Body</main>
         """;
 
     private const string InstallMvcRazor =
         """
-        dotnet add package FluentCss.MvcRazor
+        dotnet add package FluentCss.Middleware
         """;
 
     private const string ProgramMvcRazor =
@@ -218,7 +218,7 @@
         var app = builder.Build();
 
         app.UseRouting();
-        app.UseFluentCssMvcRazor();   // serve /fluentcss/hash and /fluentcss/{hash}.css
+        app.UseFluentCss();   // serve /fluentcss/hash and /fluentcss/{hash}.css
         app.UseAuthorization();
 
         app.MapStaticAssets();
@@ -229,14 +229,14 @@
         """
         @using static FluentCss.Core.FluentCssBuilder
         @using FluentCss.Core
-        @addTagHelper *, FluentCss.MvcRazor
+        @addTagHelper *, FluentCss.Middleware
         """;
 
     private const string LayoutMvcRazor =
         """
         <head>
             ...
-            <link rel="stylesheet" href="/_content/FluentCss.MvcRazor/preflight.css" />
+            <link rel="stylesheet" href="/_content/FluentCss.Middleware/preflight.css" />
             <fluent-css />
         </head>
         """;

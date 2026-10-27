@@ -320,6 +320,258 @@ public abstract class BaseStyleBuilder<T> : IImportantStyleBuilder<T>
     public T Rounded(Length radius) => LengthUtility("rounded", "border-radius", radius);
     public T Text(Length size) => LengthUtility("text", "font-size", size);
 
+    public T InlineFlex() => AddInternal(new UtilityClass("inline-flex", "display", "inline-flex"));
+    public T InlineGrid() => AddInternal(new UtilityClass("inline-grid", "display", "inline-grid"));
+    public T FlowRoot() => AddInternal(new UtilityClass("flow-root", "display", "flow-root"));
+    public T Contents() => AddInternal(new UtilityClass("contents", "display", "contents"));
+    public T ListItem() => AddInternal(new UtilityClass("list-item", "display", "list-item"));
+
+    public T Static() => AddInternal(new UtilityClass("static", "position", "static"));
+
+    public T ZAuto() => AddInternal(new UtilityClass("z-auto", "z-index", "auto"));
+
+    public T FloatLeft() => AddInternal(new UtilityClass("float-left", "float", "left"));
+    public T FloatRight() => AddInternal(new UtilityClass("float-right", "float", "right"));
+    public T FloatNone() => AddInternal(new UtilityClass("float-none", "float", "none"));
+
+    public T ClearLeft() => AddInternal(new UtilityClass("clear-left", "clear", "left"));
+    public T ClearRight() => AddInternal(new UtilityClass("clear-right", "clear", "right"));
+    public T ClearBoth() => AddInternal(new UtilityClass("clear-both", "clear", "both"));
+    public T ClearNone() => AddInternal(new UtilityClass("clear-none", "clear", "none"));
+
+    public T Isolate() => AddInternal(new UtilityClass("isolate", "isolation", "isolate"));
+    public T IsolationAuto() => AddInternal(new UtilityClass("isolation-auto", "isolation", "auto"));
+
+    public T BoxBorder() => AddInternal(new UtilityClass("box-border", "box-sizing", "border-box"));
+    public T BoxContent() => AddInternal(new UtilityClass("box-content", "box-sizing", "content-box"));
+
+    public T Visible() => AddInternal(new UtilityClass("visible", "visibility", "visible"));
+    public T Invisible() => AddInternal(new UtilityClass("invisible", "visibility", "hidden"));
+
+    public T ObjectFill() => AddInternal(new UtilityClass("object-fill", "object-fit", "fill"));
+    public T ObjectScaleDown() => AddInternal(new UtilityClass("object-scale-down", "object-fit", "scale-down"));
+    public T ObjectNone() => AddInternal(new UtilityClass("object-none", "object-fit", "none"));
+
+    public T Basis(int scale) => AddInternal(new UtilityClass($"basis-{scale}", "flex-basis", GetSpacingValue(scale)));
+    public T Basis(Length length) => LengthUtility("basis", "flex-basis", length);
+    public T BasisAuto() => AddInternal(new UtilityClass("basis-auto", "flex-basis", "auto"));
+    public T BasisFull() => AddInternal(new UtilityClass("basis-full", "flex-basis", "100%"));
+
+    public T Order(int order) => AddInternal(new UtilityClass($"order-{order}", "order", order.ToString(CultureInfo.InvariantCulture)));
+    public T OrderFirst() => AddInternal(new UtilityClass("order-first", "order", "-9999"));
+    public T OrderLast() => AddInternal(new UtilityClass("order-last", "order", "9999"));
+    public T OrderNone() => AddInternal(new UtilityClass("order-none", "order", "0"));
+
+    public T Grow(int value) => AddInternal(new UtilityClass($"grow-{value}", "flex-grow", value.ToString(CultureInfo.InvariantCulture)));
+    public T Shrink(int value) => AddInternal(new UtilityClass($"shrink-{value}", "flex-shrink", value.ToString(CultureInfo.InvariantCulture)));
+
+    public T GridAutoFlowRow() => AddInternal(new UtilityClass("grid-flow-row", "grid-auto-flow", "row"));
+    public T GridAutoFlowColumn() => AddInternal(new UtilityClass("grid-flow-col", "grid-auto-flow", "column"));
+    public T GridAutoFlowRowDense() => AddInternal(new UtilityClass("grid-flow-row-dense", "grid-auto-flow", "row dense"));
+    public T GridAutoFlowColumnDense() => AddInternal(new UtilityClass("grid-flow-col-dense", "grid-auto-flow", "column dense"));
+
+    public T ColEnd(int n) => AddInternal(new UtilityClass($"col-end-{n}", "grid-column-end", n.ToString(CultureInfo.InvariantCulture)));
+    public T RowStart(int n) => AddInternal(new UtilityClass($"row-start-{n}", "grid-row-start", n.ToString(CultureInfo.InvariantCulture)));
+    public T RowEnd(int n) => AddInternal(new UtilityClass($"row-end-{n}", "grid-row-end", n.ToString(CultureInfo.InvariantCulture)));
+
+    public T JustifyItemsStart() => AddInternal(new UtilityClass("justify-items-start", "justify-items", "flex-start"));
+    public T JustifyItemsCenter() => AddInternal(new UtilityClass("justify-items-center", "justify-items", "center"));
+    public T JustifyItemsEnd() => AddInternal(new UtilityClass("justify-items-end", "justify-items", "flex-end"));
+    public T JustifyItemsStretch() => AddInternal(new UtilityClass("justify-items-stretch", "justify-items", "stretch"));
+
+    public T JustifySelfAuto() => AddInternal(new UtilityClass("justify-self-auto", "justify-self", "auto"));
+    public T JustifySelfStart() => AddInternal(new UtilityClass("justify-self-start", "justify-self", "flex-start"));
+    public T JustifySelfCenter() => AddInternal(new UtilityClass("justify-self-center", "justify-self", "center"));
+    public T JustifySelfEnd() => AddInternal(new UtilityClass("justify-self-end", "justify-self", "flex-end"));
+    public T JustifySelfStretch() => AddInternal(new UtilityClass("justify-self-stretch", "justify-self", "stretch"));
+
+    public T AlignContentStart() => AddInternal(new UtilityClass("content-start", "align-content", "flex-start"));
+    public T AlignContentCenter() => AddInternal(new UtilityClass("content-center", "align-content", "center"));
+    public T AlignContentEnd() => AddInternal(new UtilityClass("content-end", "align-content", "flex-end"));
+    public T AlignContentBetween() => AddInternal(new UtilityClass("content-between", "align-content", "space-between"));
+    public T AlignContentAround() => AddInternal(new UtilityClass("content-around", "align-content", "space-around"));
+    public T AlignContentEvenly() => AddInternal(new UtilityClass("content-evenly", "align-content", "space-evenly"));
+    public T AlignContentBaseline() => AddInternal(new UtilityClass("content-baseline", "align-content", "baseline"));
+    public T AlignContentStretch() => AddInternal(new UtilityClass("content-stretch", "align-content", "stretch"));
+
+    public T AlignSelfAuto() => AddInternal(new UtilityClass("self-auto", "align-self", "auto"));
+    public T AlignSelfStart() => AddInternal(new UtilityClass("self-start", "align-self", "flex-start"));
+    public T AlignSelfCenter() => AddInternal(new UtilityClass("self-center", "align-self", "center"));
+    public T AlignSelfEnd() => AddInternal(new UtilityClass("self-end", "align-self", "flex-end"));
+    public T AlignSelfBaseline() => AddInternal(new UtilityClass("self-baseline", "align-self", "baseline"));
+    public T AlignSelfStretch() => AddInternal(new UtilityClass("self-stretch", "align-self", "stretch"));
+
+    public T JustifyAround() => AddInternal(new UtilityClass("justify-around", "justify-content", "space-around"));
+    public T JustifyEvenly() => AddInternal(new UtilityClass("justify-evenly", "justify-content", "space-evenly"));
+    public T ItemsBaseline() => AddInternal(new UtilityClass("items-baseline", "align-items", "baseline"));
+    public T ItemsStretch() => AddInternal(new UtilityClass("items-stretch", "align-items", "stretch"));
+
+    public T BorderT() => AddInternal(new UtilityClass("border-t", "border-top-width", "1px"));
+    public T BorderT(int width) => AddInternal(new UtilityClass($"border-t-{width}", "border-top-width", $"{width}px"));
+    public T BorderR() => AddInternal(new UtilityClass("border-r", "border-right-width", "1px"));
+    public T BorderR(int width) => AddInternal(new UtilityClass($"border-r-{width}", "border-right-width", $"{width}px"));
+    public T BorderB() => AddInternal(new UtilityClass("border-b", "border-bottom-width", "1px"));
+    public T BorderB(int width) => AddInternal(new UtilityClass($"border-b-{width}", "border-bottom-width", $"{width}px"));
+    public T BorderL() => AddInternal(new UtilityClass("border-l", "border-left-width", "1px"));
+    public T BorderL(int width) => AddInternal(new UtilityClass($"border-l-{width}", "border-left-width", $"{width}px"));
+    public T BorderX() => AddInternal(new UtilityClass("border-x", "border-inline-width", "1px"));
+    public T BorderX(int width) => AddInternal(new UtilityClass($"border-x-{width}", "border-inline-width", $"{width}px"));
+    public T BorderY() => AddInternal(new UtilityClass("border-y", "border-block-width", "1px"));
+    public T BorderY(int width) => AddInternal(new UtilityClass($"border-y-{width}", "border-block-width", $"{width}px"));
+
+    public T BorderDouble() => AddInternal(new UtilityClass("border-double", "border-style", "double"));
+
+    public T OutlineColor(Color color) => AddInternal(new UtilityClass($"outline-{color.Name}", "outline-color", color.Value));
+    public T OutlineOffset(int offset) => AddInternal(new UtilityClass($"outline-offset-{offset}", "outline-offset", $"{offset}px"));
+
+    public T FontExtralight() => AddInternal(new UtilityClass("font-extralight", "font-weight", "200"));
+    public T FontLight() => AddInternal(new UtilityClass("font-light", "font-weight", "300"));
+    public T FontMedium() => AddInternal(new UtilityClass("font-medium", "font-weight", "500"));
+    public T FontSemibold() => AddInternal(new UtilityClass("font-semibold", "font-weight", "600"));
+    public T FontExtrabold() => AddInternal(new UtilityClass("font-extrabold", "font-weight", "800"));
+    public T FontBlack() => AddInternal(new UtilityClass("font-black", "font-weight", "900"));
+
+    public T LeadingNone() => AddInternal(new UtilityClass("leading-none", "line-height", "1"));
+    public T LeadingTight() => AddInternal(new UtilityClass("leading-tight", "line-height", "1.25"));
+    public T LeadingSnug() => AddInternal(new UtilityClass("leading-snug", "line-height", "1.375"));
+    public T LeadingNormal() => AddInternal(new UtilityClass("leading-normal", "line-height", "1.5"));
+    public T LeadingRelaxed() => AddInternal(new UtilityClass("leading-relaxed", "line-height", "1.625"));
+    public T LeadingLoose() => AddInternal(new UtilityClass("leading-loose", "line-height", "2"));
+
+    public T TrackingTighter() => AddInternal(new UtilityClass("tracking-tighter", "letter-spacing", "-0.05em"));
+    public T TrackingTight() => AddInternal(new UtilityClass("tracking-tight", "letter-spacing", "-0.025em"));
+    public T TrackingNormal() => AddInternal(new UtilityClass("tracking-normal", "letter-spacing", "0em"));
+    public T TrackingWide() => AddInternal(new UtilityClass("tracking-wide", "letter-spacing", "0.025em"));
+    public T TrackingWider() => AddInternal(new UtilityClass("tracking-wider", "letter-spacing", "0.05em"));
+    public T TrackingWidest() => AddInternal(new UtilityClass("tracking-widest", "letter-spacing", "0.1em"));
+    public T Tracking(Length length) => LengthUtility("tracking", "letter-spacing", length);
+
+    public T WhitespaceNormal() => AddInternal(new UtilityClass("whitespace-normal", "white-space", "normal"));
+    public T WhitespacePre() => AddInternal(new UtilityClass("whitespace-pre", "white-space", "pre"));
+    public T WhitespacePreLine() => AddInternal(new UtilityClass("whitespace-pre-line", "white-space", "pre-line"));
+    public T WhitespacePreWrap() => AddInternal(new UtilityClass("whitespace-pre-wrap", "white-space", "pre-wrap"));
+    public T WhitespaceBreakSpaces() => AddInternal(new UtilityClass("whitespace-break-spaces", "white-space", "break-spaces"));
+
+    public T LineThrough() => AddInternal(new UtilityClass("line-through", "text-decoration-line", "line-through"));
+    public T Overline() => AddInternal(new UtilityClass("overline", "text-decoration-line", "overline"));
+
+    public T Truncate()
+    {
+        OverflowHidden();
+        TextEllipsis();
+        WhitespaceNoWrap();
+        return ReturnSelf();
+    }
+
+    public T TextEllipsis() => AddInternal(new UtilityClass("text-ellipsis", "text-overflow", "ellipsis"));
+    public T TextClip() => AddInternal(new UtilityClass("text-clip", "text-overflow", "clip"));
+
+    public T TextIndent(int scale) => AddInternal(new UtilityClass($"indent-{scale}", "text-indent", GetSpacingValue(scale)));
+    public T TextIndent(Length length) => LengthUtility("indent", "text-indent", length);
+
+    public T WordBreakNormal() => AddInternal(new UtilityClass("break-normal", "word-break", "normal"));
+    public T WordBreakAll() => AddInternal(new UtilityClass("break-all", "word-break", "break-all"));
+    public T WordBreakKeepAll() => AddInternal(new UtilityClass("break-keep", "word-break", "keep-all"));
+
+    public T OverflowWrapNormal() => AddInternal(new UtilityClass("wrap-normal", "overflow-wrap", "normal"));
+    public T OverflowWrapBreakWord() => AddInternal(new UtilityClass("wrap-break-word", "overflow-wrap", "break-word"));
+    public T OverflowWrapAnywhere() => AddInternal(new UtilityClass("wrap-anywhere", "overflow-wrap", "anywhere"));
+
+    public T HyphensNone() => AddInternal(new UtilityClass("hyphens-none", "hyphens", "none"));
+    public T HyphensManual() => AddInternal(new UtilityClass("hyphens-manual", "hyphens", "manual"));
+    public T HyphensAuto() => AddInternal(new UtilityClass("hyphens-auto", "hyphens", "auto"));
+
+    public T ListStyleNone() => AddInternal(new UtilityClass("list-none", "list-style-type", "none"));
+    public T ListDisc() => AddInternal(new UtilityClass("list-disc", "list-style-type", "disc"));
+    public T ListDecimal() => AddInternal(new UtilityClass("list-decimal", "list-style-type", "decimal"));
+    public T ListInside() => AddInternal(new UtilityClass("list-inside", "list-style-position", "inside"));
+    public T ListOutside() => AddInternal(new UtilityClass("list-outside", "list-style-position", "outside"));
+
+    public T BgAttachmentFixed() => AddInternal(new UtilityClass("bg-fixed", "background-attachment", "fixed"));
+    public T BgAttachmentLocal() => AddInternal(new UtilityClass("bg-local", "background-attachment", "local"));
+    public T BgAttachmentScroll() => AddInternal(new UtilityClass("bg-scroll", "background-attachment", "scroll"));
+
+    public T BgClipBorder() => AddInternal(new UtilityClass("bg-clip-border", "background-clip", "border-box"));
+    public T BgClipPadding() => AddInternal(new UtilityClass("bg-clip-padding", "background-clip", "padding-box"));
+    public T BgClipContent() => AddInternal(new UtilityClass("bg-clip-content", "background-clip", "content-box"));
+    public T BgClipText() => AddInternal(new UtilityClass("bg-clip-text", "background-clip", "text"));
+
+    public T BgOriginBorder() => AddInternal(new UtilityClass("bg-origin-border", "background-origin", "border-box"));
+    public T BgOriginPadding() => AddInternal(new UtilityClass("bg-origin-padding", "background-origin", "padding-box"));
+    public T BgOriginContent() => AddInternal(new UtilityClass("bg-origin-content", "background-origin", "content-box"));
+
+    public T BgRepeat() => AddInternal(new UtilityClass("bg-repeat", "background-repeat", "repeat"));
+    public T BgRepeatX() => AddInternal(new UtilityClass("bg-repeat-x", "background-repeat", "repeat-x"));
+    public T BgRepeatY() => AddInternal(new UtilityClass("bg-repeat-y", "background-repeat", "repeat-y"));
+    public T BgNoRepeat() => AddInternal(new UtilityClass("bg-no-repeat", "background-repeat", "no-repeat"));
+    public T BgRepeatRound() => AddInternal(new UtilityClass("bg-repeat-round", "background-repeat", "round"));
+    public T BgRepeatSpace() => AddInternal(new UtilityClass("bg-repeat-space", "background-repeat", "space"));
+
+    public T BgCover() => AddInternal(new UtilityClass("bg-cover", "background-size", "cover"));
+    public T BgContain() => AddInternal(new UtilityClass("bg-contain", "background-size", "contain"));
+    public T BgAuto() => AddInternal(new UtilityClass("bg-auto", "background-size", "auto"));
+    public T BgNone() => AddInternal(new UtilityClass("bg-none", "background-image", "none"));
+
+    public T BorderCollapse() => AddInternal(new UtilityClass("border-collapse", "border-collapse", "collapse"));
+    public T BorderSeparate() => AddInternal(new UtilityClass("border-separate", "border-collapse", "separate"));
+    public T TableLayoutAuto() => AddInternal(new UtilityClass("table-auto", "table-layout", "auto"));
+    public T TableLayoutFixed() => AddInternal(new UtilityClass("table-fixed", "table-layout", "fixed"));
+    public T CaptionTop() => AddInternal(new UtilityClass("caption-top", "caption-side", "top"));
+    public T CaptionBottom() => AddInternal(new UtilityClass("caption-bottom", "caption-side", "bottom"));
+
+    public T PointerEventsNone() => AddInternal(new UtilityClass("pointer-events-none", "pointer-events", "none"));
+    public T PointerEventsAuto() => AddInternal(new UtilityClass("pointer-events-auto", "pointer-events", "auto"));
+
+    public T ResizeNone() => AddInternal(new UtilityClass("resize-none", "resize", "none"));
+    public T ResizeY() => AddInternal(new UtilityClass("resize-y", "resize", "vertical"));
+    public T ResizeX() => AddInternal(new UtilityClass("resize-x", "resize", "horizontal"));
+    public T ResizeBoth() => AddInternal(new UtilityClass("resize", "resize", "both"));
+
+    public T ScrollBehaviorSmooth() => AddInternal(new UtilityClass("scroll-smooth", "scroll-behavior", "smooth"));
+    public T ScrollBehaviorAuto() => AddInternal(new UtilityClass("scroll-auto", "scroll-behavior", "auto"));
+
+    public T UserSelectNone() => AddInternal(new UtilityClass("select-none", "user-select", "none"));
+    public T UserSelectText() => AddInternal(new UtilityClass("select-text", "user-select", "text"));
+    public T UserSelectAll() => AddInternal(new UtilityClass("select-all", "user-select", "all"));
+    public T UserSelectAuto() => AddInternal(new UtilityClass("select-auto", "user-select", "auto"));
+
+    public T AppearanceNone() => AddInternal(new UtilityClass("appearance-none", "appearance", "none"));
+    public T AppearanceAuto() => AddInternal(new UtilityClass("appearance-auto", "appearance", "auto"));
+
+    public T AccentColor(Color color) => AddInternal(new UtilityClass($"accent-{color.Name}", "accent-color", color.Value));
+    public T CaretColor(Color color) => AddInternal(new UtilityClass($"caret-{color.Name}", "caret-color", color.Value));
+
+    public T ColorSchemeLight() => AddInternal(new UtilityClass("scheme-light", "color-scheme", "light"));
+    public T ColorSchemeDark() => AddInternal(new UtilityClass("scheme-dark", "color-scheme", "dark"));
+    public T ColorSchemeNormal() => AddInternal(new UtilityClass("scheme-normal", "color-scheme", "normal"));
+
+    public T CursorDefault() => AddInternal(new UtilityClass("cursor-default", "cursor", "default"));
+    public T CursorText() => AddInternal(new UtilityClass("cursor-text", "cursor", "text"));
+    public T CursorWait() => AddInternal(new UtilityClass("cursor-wait", "cursor", "wait"));
+    public T CursorMove() => AddInternal(new UtilityClass("cursor-move", "cursor", "move"));
+    public T CursorHelp() => AddInternal(new UtilityClass("cursor-help", "cursor", "help"));
+    public T CursorNotAllowed() => AddInternal(new UtilityClass("cursor-not-allowed", "cursor", "not-allowed"));
+    public T CursorCrosshair() => AddInternal(new UtilityClass("cursor-crosshair", "cursor", "crosshair"));
+    public T CursorGrab() => AddInternal(new UtilityClass("cursor-grab", "cursor", "grab"));
+    public T CursorGrabbing() => AddInternal(new UtilityClass("cursor-grabbing", "cursor", "grabbing"));
+    public T CursorNone() => AddInternal(new UtilityClass("cursor-none", "cursor", "none"));
+    public T CursorProgress() => AddInternal(new UtilityClass("cursor-progress", "cursor", "progress"));
+
+    public T TouchActionNone() => AddInternal(new UtilityClass("touch-none", "touch-action", "none"));
+    public T TouchActionAuto() => AddInternal(new UtilityClass("touch-auto", "touch-action", "auto"));
+    public T TouchActionPanX() => AddInternal(new UtilityClass("touch-pan-x", "touch-action", "pan-x"));
+    public T TouchActionPanY() => AddInternal(new UtilityClass("touch-pan-y", "touch-action", "pan-y"));
+    public T TouchActionManipulation() => AddInternal(new UtilityClass("touch-manipulation", "touch-action", "manipulation"));
+
+    public T WillChangeAuto() => AddInternal(new UtilityClass("will-change-auto", "will-change", "auto"));
+    public T WillChangeScroll() => AddInternal(new UtilityClass("will-change-scroll", "will-change", "scroll-position"));
+    public T WillChangeContents() => AddInternal(new UtilityClass("will-change-contents", "will-change", "contents"));
+    public T WillChangeTransform() => AddInternal(new UtilityClass("will-change-transform", "will-change", "transform"));
+
+    public T Fill(Color color) => AddInternal(new UtilityClass($"fill-{color.Name}", "fill", color.Value));
+    public T Stroke(Color color) => AddInternal(new UtilityClass($"stroke-{color.Name}", "stroke", color.Value));
+    public T StrokeWidth(int width) => AddInternal(new UtilityClass($"stroke-{width}", "stroke-width", $"{width}px"));
+
     public T Arbitrary(string className, string property, string value) =>
         AddInternal(new UtilityClass(className, property, value));
 
