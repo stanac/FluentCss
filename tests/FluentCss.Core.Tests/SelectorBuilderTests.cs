@@ -308,4 +308,43 @@ public class SelectorBuilderTests
 
         act.Should().Throw<ArgumentException>();
     }
+
+    [Fact]
+    public void Pseudo_Should_Append_A_Keyword_And_A_Functional_Pseudo_Class()
+    {
+        Selector.New().Class("x").Pseudo("focus-visible").Css.Should().Be(".x:focus-visible");
+        Selector.New().Class("x").Pseudo("nth-child", "2").Css.Should().Be(".x:nth-child(2)");
+    }
+
+    [Fact]
+    public void Attribute_Should_Escape_Quotes_And_Backslashes()
+    {
+        Selector.New().Attribute("title", "a\"b\\c").Css.Should().Be("[title=\"a\\\"b\\\\c\"]");
+    }
+
+    [Fact]
+    public void Empty_Identifier_Arguments_Should_Throw()
+    {
+        Action id = () => Selector.New().Id("  ");
+        Action element = () => Selector.New().Element("");
+        Action theme = () => Selector.New().Theme(" ");
+        Action pseudo = () => Selector.New().Pseudo("");
+        Action pseudoElement = () => Selector.New().PseudoElement(" ");
+        Action supports = () => Selector.New().Supports("");
+        Action container = () => Selector.New().Container("");
+        Action attributeName = () => Selector.New().Attribute(" ");
+        Action nullAttributeValue = () => Selector.New().Attribute("title", null!);
+        Action nullPseudoArgument = () => Selector.New().Pseudo("nth-child", null!);
+
+        id.Should().Throw<ArgumentException>();
+        element.Should().Throw<ArgumentException>();
+        theme.Should().Throw<ArgumentException>();
+        pseudo.Should().Throw<ArgumentException>();
+        pseudoElement.Should().Throw<ArgumentException>();
+        supports.Should().Throw<ArgumentException>();
+        container.Should().Throw<ArgumentException>();
+        attributeName.Should().Throw<ArgumentException>();
+        nullAttributeValue.Should().Throw<ArgumentNullException>();
+        nullPseudoArgument.Should().Throw<ArgumentNullException>();
+    }
 }

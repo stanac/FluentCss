@@ -196,14 +196,6 @@ internal sealed class SelectorBuilder :
     public ICompoundSelectorBuilder Has(params Func<IRelativeSelectorBuilder, ICompoundSelectorBuilder>[] selectors) =>
         AppendFunctional(":has", BuildRelativeSelectorList(selectors));
 
-    public ICompoundSelectorBuilder NthChild(int n) => AppendFunctional(":nth-child", n.ToString());
-
-    public ICompoundSelectorBuilder NthChild(string formula)
-    {
-        Require(formula, nameof(formula), "formula");
-        return AppendFunctional(":nth-child", formula.Trim());
-    }
-
     // ---------------------------------------------------------------------
     // Combinators
     // ---------------------------------------------------------------------

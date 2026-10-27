@@ -78,12 +78,6 @@ public interface ICompoundSelectorBuilder : IPseudoElementBuilder
     /// </summary>
     ICompoundSelectorBuilder Has(params Func<IRelativeSelectorBuilder, ICompoundSelectorBuilder>[] selectors);
 
-    /// <summary>Appends <c>:nth-child(n)</c>.</summary>
-    ICompoundSelectorBuilder NthChild(int n);
-
-    /// <summary>Appends <c>:nth-child(formula)</c>, for example <c>2n+1</c> or <c>odd</c>.</summary>
-    ICompoundSelectorBuilder NthChild(string formula);
-
     /// <summary>Appends the descendant combinator (a space).</summary>
     ITargetSelectorBuilder Descendant();
 
@@ -212,11 +206,203 @@ public static class SelectorBuilderExtensions
     /// <summary>Appends the <c>:disabled</c> pseudo-class.</summary>
     public static ICompoundSelectorBuilder Disabled(this ICompoundSelectorBuilder builder) => builder.Pseudo("disabled");
 
+    /// <summary>Appends the <c>:visited</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Visited(this ICompoundSelectorBuilder builder) => builder.Pseudo("visited");
+
+    /// <summary>Appends the <c>:target</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Target(this ICompoundSelectorBuilder builder) => builder.Pseudo("target");
+
+    /// <summary>Appends the <c>:focus-visible</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder FocusVisible(this ICompoundSelectorBuilder builder) => builder.Pseudo("focus-visible");
+
+    /// <summary>Appends the <c>:focus-within</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder FocusWithin(this ICompoundSelectorBuilder builder) => builder.Pseudo("focus-within");
+
+    /// <summary>Appends the <c>:enabled</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Enabled(this ICompoundSelectorBuilder builder) => builder.Pseudo("enabled");
+
+    /// <summary>Appends the <c>:checked</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Checked(this ICompoundSelectorBuilder builder) => builder.Pseudo("checked");
+
+    /// <summary>Appends the <c>:indeterminate</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Indeterminate(this ICompoundSelectorBuilder builder) => builder.Pseudo("indeterminate");
+
+    /// <summary>Appends the <c>:default</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Default(this ICompoundSelectorBuilder builder) => builder.Pseudo("default");
+
+    /// <summary>Appends the <c>:required</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Required(this ICompoundSelectorBuilder builder) => builder.Pseudo("required");
+
+    /// <summary>Appends the <c>:optional</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Optional(this ICompoundSelectorBuilder builder) => builder.Pseudo("optional");
+
+    /// <summary>Appends the <c>:valid</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Valid(this ICompoundSelectorBuilder builder) => builder.Pseudo("valid");
+
+    /// <summary>Appends the <c>:invalid</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Invalid(this ICompoundSelectorBuilder builder) => builder.Pseudo("invalid");
+
+    /// <summary>Appends the <c>:in-range</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder InRange(this ICompoundSelectorBuilder builder) => builder.Pseudo("in-range");
+
+    /// <summary>Appends the <c>:out-of-range</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder OutOfRange(this ICompoundSelectorBuilder builder) => builder.Pseudo("out-of-range");
+
+    /// <summary>Appends the <c>:read-only</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder ReadOnly(this ICompoundSelectorBuilder builder) => builder.Pseudo("read-only");
+
+    /// <summary>Appends the <c>:read-write</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder ReadWrite(this ICompoundSelectorBuilder builder) => builder.Pseudo("read-write");
+
+    /// <summary>Appends the <c>:placeholder-shown</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder PlaceholderShown(this ICompoundSelectorBuilder builder) => builder.Pseudo("placeholder-shown");
+
+    /// <summary>Appends the <c>:autofill</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Autofill(this ICompoundSelectorBuilder builder) => builder.Pseudo("autofill");
+
+    /// <summary>Appends the <c>:user-valid</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder UserValid(this ICompoundSelectorBuilder builder) => builder.Pseudo("user-valid");
+
+    /// <summary>Appends the <c>:user-invalid</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder UserInvalid(this ICompoundSelectorBuilder builder) => builder.Pseudo("user-invalid");
+
+    /// <summary>Appends the <c>:open</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Open(this ICompoundSelectorBuilder builder) => builder.Pseudo("open");
+
+    /// <summary>Appends the <c>:popover-open</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder PopoverOpen(this ICompoundSelectorBuilder builder) => builder.Pseudo("popover-open");
+
+    /// <summary>Appends the <c>:modal</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Modal(this ICompoundSelectorBuilder builder) => builder.Pseudo("modal");
+
+    /// <summary>Appends the <c>:fullscreen</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Fullscreen(this ICompoundSelectorBuilder builder) => builder.Pseudo("fullscreen");
+
+    /// <summary>Appends the <c>:picture-in-picture</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder PictureInPicture(this ICompoundSelectorBuilder builder) => builder.Pseudo("picture-in-picture");
+
+    /// <summary>Appends the <c>:defined</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Defined(this ICompoundSelectorBuilder builder) => builder.Pseudo("defined");
+
+    /// <summary>Appends the <c>:root</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Root(this ICompoundSelectorBuilder builder) => builder.Pseudo("root");
+
+    /// <summary>Appends the <c>:empty</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Empty(this ICompoundSelectorBuilder builder) => builder.Pseudo("empty");
+
+    /// <summary>Appends the <c>:first-child</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder First(this ICompoundSelectorBuilder builder) => builder.Pseudo("first-child");
+
+    /// <summary>Appends the <c>:last-child</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Last(this ICompoundSelectorBuilder builder) => builder.Pseudo("last-child");
+
+    /// <summary>Appends the <c>:only-child</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Only(this ICompoundSelectorBuilder builder) => builder.Pseudo("only-child");
+
+    /// <summary>Appends the <c>:nth-child(odd)</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Odd(this ICompoundSelectorBuilder builder) => builder.Pseudo("nth-child(odd)");
+
+    /// <summary>Appends the <c>:nth-child(even)</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder Even(this ICompoundSelectorBuilder builder) => builder.Pseudo("nth-child(even)");
+
+    /// <summary>Appends the <c>:first-of-type</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder FirstOfType(this ICompoundSelectorBuilder builder) => builder.Pseudo("first-of-type");
+
+    /// <summary>Appends the <c>:last-of-type</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder LastOfType(this ICompoundSelectorBuilder builder) => builder.Pseudo("last-of-type");
+
+    /// <summary>Appends the <c>:only-of-type</c> pseudo-class.</summary>
+    public static ICompoundSelectorBuilder OnlyOfType(this ICompoundSelectorBuilder builder) => builder.Pseudo("only-of-type");
+
+    /// <summary>Appends <c>:nth-child(n)</c>.</summary>
+    public static ICompoundSelectorBuilder NthChild(this ICompoundSelectorBuilder builder, int n) =>
+        builder.Pseudo("nth-child", n.ToString());
+
+    /// <summary>Appends <c>:nth-child(formula)</c>, for example <c>2n+1</c> or <c>odd</c>.</summary>
+    public static ICompoundSelectorBuilder NthChild(this ICompoundSelectorBuilder builder, string formula) =>
+        builder.Pseudo("nth-child", RequireArgument(formula, nameof(formula)));
+
+    /// <summary>Appends <c>:nth-last-child(n)</c>.</summary>
+    public static ICompoundSelectorBuilder NthLastChild(this ICompoundSelectorBuilder builder, int n) =>
+        builder.Pseudo("nth-last-child", n.ToString());
+
+    /// <summary>Appends <c>:nth-last-child(formula)</c>, for example <c>2n+1</c> or <c>odd</c>.</summary>
+    public static ICompoundSelectorBuilder NthLastChild(this ICompoundSelectorBuilder builder, string formula) =>
+        builder.Pseudo("nth-last-child", RequireArgument(formula, nameof(formula)));
+
+    /// <summary>Appends <c>:nth-of-type(n)</c>.</summary>
+    public static ICompoundSelectorBuilder NthOfType(this ICompoundSelectorBuilder builder, int n) =>
+        builder.Pseudo("nth-of-type", n.ToString());
+
+    /// <summary>Appends <c>:nth-of-type(formula)</c>, for example <c>2n+1</c> or <c>odd</c>.</summary>
+    public static ICompoundSelectorBuilder NthOfType(this ICompoundSelectorBuilder builder, string formula) =>
+        builder.Pseudo("nth-of-type", RequireArgument(formula, nameof(formula)));
+
+    /// <summary>Appends <c>:nth-last-of-type(n)</c>.</summary>
+    public static ICompoundSelectorBuilder NthLastOfType(this ICompoundSelectorBuilder builder, int n) =>
+        builder.Pseudo("nth-last-of-type", n.ToString());
+
+    /// <summary>Appends <c>:nth-last-of-type(formula)</c>, for example <c>2n+1</c> or <c>odd</c>.</summary>
+    public static ICompoundSelectorBuilder NthLastOfType(this ICompoundSelectorBuilder builder, string formula) =>
+        builder.Pseudo("nth-last-of-type", RequireArgument(formula, nameof(formula)));
+
+    /// <summary>Appends <c>:lang(language)</c>.</summary>
+    public static ICompoundSelectorBuilder Lang(this ICompoundSelectorBuilder builder, string language) =>
+        builder.Pseudo("lang", RequireArgument(language, nameof(language)));
+
+    /// <summary>Appends <c>:dir(direction)</c>, for example <c>:dir(rtl)</c>.</summary>
+    public static ICompoundSelectorBuilder Dir(this ICompoundSelectorBuilder builder, string direction) =>
+        builder.Pseudo("dir", RequireArgument(direction, nameof(direction)));
+
+    /// <summary>Appends a <c>[data-name]</c> presence selector.</summary>
+    public static ICompoundSelectorBuilder Data(this ICompoundSelectorBuilder builder, string name) =>
+        builder.Attribute(PrefixedAttribute("data", name));
+
+    /// <summary>Appends a <c>[data-name="value"]</c> selector.</summary>
+    public static ICompoundSelectorBuilder Data(this ICompoundSelectorBuilder builder, string name, string value) =>
+        builder.Attribute(PrefixedAttribute("data", name), value);
+
+    /// <summary>Appends a <c>[data-name op "value"]</c> selector.</summary>
+    public static ICompoundSelectorBuilder Data(this ICompoundSelectorBuilder builder, string name, string value, AttributeOperator op, AttributeCase casing = AttributeCase.Default) =>
+        builder.Attribute(PrefixedAttribute("data", name), value, op, casing);
+
+    /// <summary>Appends an <c>[aria-name]</c> presence selector.</summary>
+    public static ICompoundSelectorBuilder Aria(this ICompoundSelectorBuilder builder, string name) =>
+        builder.Attribute(PrefixedAttribute("aria", name));
+
+    /// <summary>Appends an <c>[aria-name="value"]</c> selector.</summary>
+    public static ICompoundSelectorBuilder Aria(this ICompoundSelectorBuilder builder, string name, string value) =>
+        builder.Attribute(PrefixedAttribute("aria", name), value);
+
+    /// <summary>Appends an <c>[aria-name op "value"]</c> selector.</summary>
+    public static ICompoundSelectorBuilder Aria(this ICompoundSelectorBuilder builder, string name, string value, AttributeOperator op, AttributeCase casing = AttributeCase.Default) =>
+        builder.Attribute(PrefixedAttribute("aria", name), value, op, casing);
+
     /// <summary>Appends the <c>::before</c> pseudo-element.</summary>
     public static IBuildableSelector Before(this ICompoundSelectorBuilder builder) => builder.PseudoElement("before");
 
     /// <summary>Appends the <c>::after</c> pseudo-element.</summary>
     public static IBuildableSelector After(this ICompoundSelectorBuilder builder) => builder.PseudoElement("after");
+
+    private static string PrefixedAttribute(string prefix, string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("An attribute name cannot be empty.", nameof(name));
+        }
+
+        return prefix + "-" + name.Trim();
+    }
+
+    private static string RequireArgument(string value, string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("A pseudo-class argument cannot be empty.", parameterName);
+        }
+
+        return value.Trim();
+    }
 }
 
 /// <summary>Entry point for building a selector outside of the fluent CSS builder.</summary>

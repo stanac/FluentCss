@@ -1,44 +1,165 @@
 # Missing features (Tailwind parity)
 
 FluentCss implements a focused subset of Tailwind CSS as a fluent C# builder.
-This document is a parity checklist: it lists what Tailwind offers that FluentCss
-does **not** yet provide.
+This document is a current-state checklist of where FluentCss still trails
+Tailwind. It lives outside the documentation pages on purpose: the docs only
+describe features that exist today, while everything here is a gap or a note
+about parity.
 
-It intentionally lives outside the documentation pages. The docs only describe
-features that exist today; anything below is a gap.
+## Parity, not a clone
+
+Tailwind is a reference point, not a specification. FluentCss does not have to
+mirror Tailwind one-to-one. Where a different shape makes more sense for a
+strongly-typed C# API, FluentCss deliberately does it differently, and a missing
+capability only matters when the capability itself is useful.
+
+- **Class names are an implementation detail.** The builder generates and
+  deduplicates class tokens; their spelling is not part of the public contract.
+  `mt--4` instead of Tailwind's `-mt-4` is fine. Matching Tailwind's class
+  strings is not a goal.
+- **The C# API may be shaped differently.** A separate, typed call is often
+  clearer than Tailwind's modifier syntax. Example: opacity is a standalone
+  `Opacity(n)` utility rather than Tailwind's per-color `bg-red-500/50` modifier.
+  Such a difference is a design choice, not automatically a gap.
+- **Capability is what counts.** Treat an entry as a real gap when the CSS
+  effect cannot be expressed at all through the typed API (setting `Arbitrary` /
+  `ApplySelector` aside), not merely when it is spelled differently from
+  Tailwind.
+
+The families and names below still follow Tailwind because that makes a
+convenient index. Read the tags with the above in mind.
 
 Legend:
 
 - **[missing]** – the whole category or utility family is absent.
 - **[partial]** – something exists, but the coverage is a subset of Tailwind.
+- **[not a bug]** – works today; only the class-name spelling differs from Tailwind.
+- **[runtime]** / **[conflict]** / **[mutable]** – architecture notes, not utilities.
 
 ---
 
-## Core concepts
+## Not gaps (often assumed missing)
 
-- **[missing] Important modifier.** No `!` prefix/suffix.
-- **[missing] Negative values.** No `-mt-4`, `-left-2`, etc.
-- **[missing] Opacity modifier on colors.** No `bg-red-500/50` or
-  `text-white/75`; opacity is only available globally via `.Opacity(n)`.
-- **[missing] Variant groups.** No `group-hover`, `peer-focus`, `has-*`.
-- **[missing] Data / ARIA / attribute variants.** No `data-*`, `aria-*`,
-  `supports-*`, `open`, `target`, `checked`, `disabled`, `indeterminate`, etc.
-- **[missing] Structural pseudo variants.** No `first`, `last`, `odd`, `even`,
-  `first-of-type`, `nth-*` helpers (only the raw `Pseudo(...)` escape hatch).
-- **[missing] Pseudo-element variants.** No `before`, `after`, `placeholder`,
-  `marker`, `selection`, `file`.
-- **[missing] State variants beyond hover/focus/active.** No `focus-visible`,
-  `focus-within`, `visited`, `disabled`.
+These work today and should not be listed as gaps. They are called out because
+the surrounding gaps are easy to misread as "unsupported".
+
+- **Important modifier.** `Css.Important(c => c.P(4))` yields class `!p-4` and
+  `.\!p-4 { padding: 1rem !important }`. It composes with theme, media, hover and
+  `Arbitrary`. Only the `!` *prefix* form is implemented; the Tailwind v4 `!`
+  *suffix* form (`p-4!`) is not. That is a cosmetic parity choice, not a
+  functional gap.
+- **[not a bug] Negative values.** Pass a negative `int` (`Mt(-4)` →
+  `margin-top: -1rem`) or a `Length` (`Length.Rem(-1)`). The only difference from
+  Tailwind is the generated class token (`mt--4` vs `-mt-4`); class names are an
+  internal detail.
+- **Base layer customization.** `IRootFluentCssBuilder.ApplySelector(...)` (and
+  `ApplyClass` / `ApplyId`) adds global rules. The raw-string overload can even
+  emit an at-rule such as `@layer base { ... }`.
+- **Selector builder.** `Selector.New()` builds selectors that are not tied to a
+  utility class: attribute selectors (presence, `=`, `~=`, `|=`, `^=`, `$=`,
+  `*=`, plus `i` / `s` case flags), `Data(...)` / `Aria(...)` sugar,
+  `:not` / `:is` / `:where` / `:has`, pseudo-elements, all four combinators, and
+  typed pseudo-class helpers (`Hover`, `FocusVisible`, `Checked`, `Disabled`,
+  `First`, `Odd`, `NthChild(n|formula)`, `NthLastChild(...)`, `NthOfType(...)`,
+  `Lang(...)`, …). `Pseudo(...)` remains the escape hatch. It is reachable from
+  the main builder with
+  `Css.ApplySelector(s => s.Class("btn").Hover(), css => css.Px(4).Py(2))`.
+- **Typed pseudo-class variants.** `Css.FocusVisible(x => x.Outline(2))`,
+  `Css.Checked(...)`, `Css.Disabled(...)`, `Css.Odd(...)`,
+  `Css.NthChild(2, ...)`, `Css.Lang("en", ...)` and the rest of the set generate
+  class variants (`focus-visible:outline-2`) through the single-pseudo model and
+  compose with theme, media and `!important`. `Pseudo(...)` remains the escape
+  hatch for pseudo-classes without a helper.
+- **Container / supports selectors.** `Selector.New().Container(query)` and
+  `.Supports(query)` are implemented; they wrap whatever selector follows in
+  `@container` / `@supports`.
+- **Content-hashed stylesheet.** `ClassRegistry.Sha256Hex` backs
+  `/fluentcss/{hash}.css`. `FluentCssMiddleware` serves it with an `ETag` and,
+  when the hash matches, `public, max-age=31536000, immutable`;
+  `FluentCssTagHelper` emits that hashed link. The stylesheet is still generated
+  at runtime (not a build artifact), but long-lived caching is done.
+- **Named sizes.** `Size.Xxl` is 96rem (`2xl`) and `Size.Xxxl` is 128rem
+  (`3xl`); they are correct.
+
+---
+
+## Core concepts and variants
+
+- **[missing] Variant groups.** Compound-selector variants are not supported:
+  no `group-hover`, `peer-focus`, `group-*`, `peer-*`.
+- **[partial] Data / ARIA / attribute variants.** The underlying *selectors* are
+  supported by `SelectorBuilder` (`Attribute(...)` with all operators and the
+  `i` / `s` flag, plus `Data(...)` / `Aria(...)` sugar), but there is no
+  utility-level variant surface: `IFluentCssBuilder` only offers pseudo-class
+  variants, so you cannot write a `data-*` / `aria-*` / `supports-*` variant that
+  generates a class. They are reachable only as standalone rules through
+  `ApplySelector`, for example:
+  ```csharp
+  Css.ApplySelector(
+      s => s.Attribute("data-state", "open").Class("bg-red-500"),
+      css => css.Background(Color.Red500));
+  // => [data-state="open"].bg-red-500 { background-color: … }
+  ```
+- **[partial] Functional selector-list pseudo variants.** `:not` / `:is` /
+  `:where` / `:has` are available as selector-builder methods (`Not(...)`,
+  `Is(...)`, `Where(...)`, `Has(...)`) and through `ApplySelector`, but there are
+  no matching class variants on `IFluentCssBuilder`. (The simple structural
+  pseudos — `First`, `Last`, `Odd`, `Even`, `NthChild(...)`, `NthOfType(...)` —
+  *are* available as class variants.)
+- **[partial] Pseudo-class coverage.** The typed helpers cover the commonly used
+  pseudo-classes on both `IFluentCssBuilder` (class variants) and
+  `ICompoundSelectorBuilder` (selectors): `hover`, `focus`, `active`,
+  `focus-visible`, `focus-within`, `visited`, `target`, `open`, `popover-open`,
+  `modal`, `fullscreen`, `picture-in-picture`, the form states (`disabled`,
+  `enabled`, `checked`, `indeterminate`, `default`, `required`, `optional`,
+  `valid`, `invalid`, `in-range`, `out-of-range`, `read-only`, `read-write`,
+  `placeholder-shown`, `autofill`, `user-valid`, `user-invalid`) and the
+  structural / functional set (`root`, `empty`, `first`, `last`, `only`, `odd`,
+  `even`, `first-of-type`, `last-of-type`, `only-of-type`, `defined`,
+  `nth-child(...)`, `nth-last-child(...)`, `nth-of-type(...)`,
+  `nth-last-of-type(...)`, `lang(...)`, `dir(...)`). Missing typed helpers (all
+  still reachable through `Pseudo(...)`, so a convenience gap rather than a
+  capability gap): `:link` / `:any-link` (notably absent next to `Visited`),
+  `:scope`, the shadow-DOM / custom-element pair `:host` / `:host(...)` /
+  `:host-context(...)` and `:state(...)`, and the draft / low-support
+  `:local-link`, `:blank`, `:target-within`, `:nth-col()` / `:nth-last-col()`,
+  `:current` / `:past` / `:future`, the media-element states (`:playing`,
+  `:paused`, `:seeking`, `:buffering`, `:stalled`, `:muted`,
+  `:volume-locked`) and `:active-view-transition` /
+  `:active-view-transition-type(...)` / `:has-slotted`. The nth `of S` form
+  (`:nth-child(2 of .item)`) has no typed overload; the `string` overload only
+  passes it through. `Lang(...)` / `Dir(...)` take a raw string without
+  validating the argument (`:dir` should be `ltr` / `rtl`).
+- **[partial] Pseudo-element variants.** `PseudoElement(...)`, `FunctionalPseudoElement(...)`,
+  `Before()` and `After()` exist in the selector builder, but there is no
+  `Before` / `After` variant on `IFluentCssBuilder`. `UtilityClass` still emits a
+  single `:`, so `::before` / `::after` / `::placeholder` / `::marker` /
+  `::selection` / `::file` are only available through `ApplySelector`, not as
+  class variants.
+- **[partial] Container queries.** The `@container` selector wrapper exists
+  (`Selector.New().Container(query)`). There is no utility-level `@container` /
+  `@min-*` / `@max-*` variant family.
+- **[partial] Dark mode strategies.** Only an ancestor class theme
+  (`theme-dark`, `FluentCssBuilder.Dark`, `FluentCssTheme.DarkClass`) is built in.
+  A `prefers-color-scheme` strategy is expressible with
+  `Media("(prefers-color-scheme: dark)", …)`, but there is no built-in media or
+  data-attribute dark strategy.
 - **[missing] Motion and print variants.** No `motion-safe`, `motion-reduce`,
   `print`.
 - **[missing] Direction variants.** No `rtl` / `ltr`, and no logical-property
   variants.
-- **[missing] Direct-child variant.** No `*` / `**` child combinator variants.
-- **[missing] Container queries.** No `@container` support and no
-  `@min-*` / `@max-*` container variants.
-- **[missing] Dark mode strategies.** Only an ancestor class theme
-  (`theme-dark`) is supported. There is no `prefers-color-scheme` media
-  strategy and no data-attribute strategy.
+- **[missing] Direct-child class variants.** No `*` / `**` child combinator
+  variants. (`Child()`, `Descendant()`, `AdjacentSibling()` and
+  `GeneralSibling()` exist on the selector builder.)
+- **[missing] Combinable variants.** Only one media, one theme and one pseudo can
+  be combined, and there are no arbitrary/custom variants. In particular two
+  pseudo-classes cannot be chained (`hover:focus:`) through the typed helpers,
+  because `UtilityClass` holds a single `Pseudo` string and the pseudo scope
+  passed to `Pseudo(string, Action<IOnlyStyleBuilder>)` cannot nest another
+  variant. The raw escape hatch does produce a working selector today:
+  `Css.Pseudo("hover:focus", c => c.Outline(2))` yields the class
+  `hover:focus:outline-2` and `.hover\:focus\:outline-2:hover:focus { … }`, but
+  there is no typed surface for it and no test locking it in.
 
 ---
 
@@ -46,8 +167,6 @@ Legend:
 
 - **[partial] Preflight.** The bundled reset is Tailwind CSS v3.2.4, not the v4
   preflight, and it is not wired to theme variables.
-- **[missing] Base layer customization.** There is no `@layer base` equivalent
-  and no way to add global base styles through the builder.
 
 ---
 
@@ -65,11 +184,12 @@ Legend:
 - **[partial] display.** Only `block`, `inline-block`, `inline`, `flex`,
   `grid`, `none`. Missing `inline-flex`, `inline-grid`, `table` family,
   `contents`, `flow-root`, `list-item`, etc.
-- **[partial] position.** Missing `static` (and no `inset` logical variants).
+- **[partial] position.** `relative`, `absolute`, `fixed`, `sticky`; missing
+  `static` (and no `inset` logical variants).
 - **[partial] inset / top / right / bottom / left.** Numeric spacing scale plus
-  arbitrary lengths via `Length`; missing dedicated `auto`, `full`, fraction and
-  negative helpers (all still expressible with a `Length`).
-- **[partial] z-index.** Only integers; missing `auto` and negatives.
+  arbitrary lengths via `Length` (negatives included); missing dedicated `auto`,
+  `full` and fraction helpers (all still expressible with a `Length`).
+- **[partial] z-index.** Only integers (negatives included); missing `auto`.
 - **[partial] aspect-ratio.** Only `square` (1/1) and `video` (16/9); missing
   `3/2`, `4/3`, `21/9`, arbitrary values and custom properties.
 - **[partial] object-fit.** Only `cover` and `contain`; missing `fill`,
@@ -95,9 +215,10 @@ Legend:
 - **[partial] grid-column / grid-row.** Only `span` (`ColSpan`, `RowSpan`) and
   `ColStart`; missing end lines, `auto` and arbitrary placement.
 - **[partial] justify-content / align-items.** Standalone helpers cover only a
-  subset (`Start`, `End`, `Center`, and `Between` for justify). The rest
-  (`Around`, `Evenly`, `Baseline`, `Stretch`) are reachable only through the
-  composite `Flex(...)` call.
+  subset: `JustifyStart`, `JustifyEnd`, `JustifyCenter`, `JustifyBetween`,
+  `ItemsStart`, `ItemsEnd`, `ItemsCenter`. `Around` / `Evenly` (justify) and
+  `Baseline` / `Stretch` (align) are reachable only through the composite
+  `Flex(...)` call.
 - **[partial] gap.** Numeric spacing scale plus arbitrary lengths via
   `Gap(Length)` / `GapX` / `GapY`; missing a `gap-px` shorthand (use
   `Gap(Length.Px(1))`).
@@ -110,7 +231,6 @@ Legend:
 - **[missing]** `divide-x` / `divide-y` (and divide colors/styles)
 - **[missing]** logical properties: `ps`, `pe`, `pbs`, `pbe`, `ms`, `me`,
   `mbs`, `mbe`
-- **[missing]** negative spacing values
 - Padding (`p`, `px`, `py`, `pt`, `pr`, `pb`, `pl`) and margin
   (`m`, `mx`, `my`, `mt`, `mr`, `mb`, `ml`, auto) are implemented.
 
@@ -136,8 +256,9 @@ Legend:
 
 - **[partial] font-family.** Built-in `font-sans` / `font-serif` / `font-mono`
   (Tailwind default stacks), custom stacks via `Font(FontFamily)` and prepend
-  helpers `Sans(...)` / `Serif(...)` / `Mono(...)`; missing the theme-variable
-  form (`--font-*`).
+  helpers `Sans(...)` / `Serif(...)` / `Mono(...)` (the class token includes a
+  short hash of the custom families); missing the theme-variable form
+  (`--font-*`).
 - **[missing]** `font-smoothing`
 - **[missing]** `font-stretch`
 - **[missing]** `font-variant-numeric`
@@ -157,7 +278,7 @@ Legend:
 - **[missing]** `content`
 - **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`) plus
   arbitrary sizes via `Text(Length)`; missing the wider named scale and
-  per-size line heights.
+  per-size line heights (the `Text*` helpers set `font-size` only).
 - **[partial] line-height.** Numeric `Leading(n)` scale plus arbitrary lengths
   via `Leading(Length)`; missing the named `leading-none` / `tight` / `snug` /
   `normal` / `relaxed` / `loose` helpers.
@@ -197,8 +318,8 @@ Legend:
 - **[missing]** `outline-offset`
 - **[missing]** `divide-*` utilities
 - **[partial] border-style.** Only `solid`, `dashed`, `dotted` (and `none`
-  through the composite overload).
-- **[partial] outline.** Only `OutlineWidth` and `OutlineHidden`.
+  through the `Border(width, color, BorderStyle)` composite overload).
+- **[partial] outline.** Only `Outline(width)` and `OutlineHidden`.
 - **[partial] ring.** A single hard-coded `box-shadow` ring; missing
   `ring-inset`, `ring-offset-*`, ring color-only utilities and composable
   shadows. See also the box-shadow conflict note below.
@@ -294,15 +415,17 @@ Legend:
 These are not Tailwind utilities, but they limit how closely FluentCss can match
 Tailwind's behavior in practice.
 
-- **[broken] Container query API.** `IRootFluentCssBuilder.ContainerInlineSizeName`
-  and `ContainerSizeName` are declared and throw `NotImplementedException`.
 - **[runtime] Global static registry.** `ClassRegistry.DefaultRegistry` is
-  process-wide and never resets. Utilities registered while rendering one
-  request remain visible to every other request, which grows unbounded in a
-  long-running server and makes per-request CSS isolation impossible.
+  process-wide and never resets. `ClassRegistry` is a public, instantiable type,
+  but every public builder entry point (`FluentCssBuilder.Css` / `Dark` /
+  `Theme`) still hard-wires `DefaultRegistry`, and `InternalRootFluentCssBuilder`
+  is internal. Per-request isolation is therefore not reachable from the public
+  API, and the default registry grows unbounded in a long-running server.
 - **[runtime] Runtime-generated stylesheet.** CSS is assembled per process and
-  served from the registry instead of being emitted as a static asset, so there
-  is no content-hashed stylesheet for long-lived caching.
+  served from the registry instead of being emitted as a static asset. The
+  content-hashed `/fluentcss/{hash}.css` URL, `ETag` and immutable caching are
+  implemented, but the bytes are still produced at runtime rather than as a build
+  artifact.
 - **[runtime] No class name prefixing / scoping.** You cannot namespace the
   generated classes for embedding in an existing design system.
 - **[conflict] `box-shadow` collisions.** `Shadow*` and `Ring` both set the
@@ -314,92 +437,30 @@ Tailwind's behavior in practice.
   of the value written last on the element. Variant rules (pseudo, theme, media)
   are emitted after base rules, so one base value plus one variant value behaves
   as expected.
+- **[partial] Canonical ordering.** `ClassRegistry` emits base → pseudo → theme →
+  theme+pseudo buckets and sorts media rules (max descending, min ascending,
+  unknowns last). Property/category ordering *within* a bucket is still missing,
+  which is why the duplicate base-utility and `Ring` / `Shadow` conflicts remain.
 - **[mutable] Cached class name.** `UtilityClass.ClassName` lazily caches into a
   mutable field, so a utility instance is not purely immutable on first read.
 - **[partial] Raw CSS escape hatch.** `Arbitrary(className, property, value)`
-  attaches arbitrary CSS declarations; there is still no way to attach a full
+  attaches arbitrary CSS declarations, and `ApplySelector` attaches arbitrary
+  rules/at-rules one call at a time; there is still no way to attach a full
   stylesheet through the builder.
-- **[missing] Variant constraints.** Only one media, one theme and one pseudo
-  can be combined, and there are no arbitrary/custom variants.
 
 ---
 
-## Implementation roadmap (working notes)
+## Highest-value remaining gaps
 
-Notes captured for planning. Nothing here is committed work; it is a proposed
-ordering of the gaps above, grouped by how they interact with the current
-architecture (`BaseStyleBuilder` → `UtilityClass` → `ClassRegistry`).
-
-### Tier 1 — correctness and architecture (do first)
-
-These are not new features. They make the existing API trustworthy and they
-unblock the families in Tier 3 that need to compose a shared CSS property.
-
-- **[conflict] Per-element property resolution / canonical utility ordering.**
-  Give every utility a stable sort key (category → property) so base rules are
-  emitted in a deterministic, Tailwind-like order instead of registration order.
-  This is the real fix for the `box-shadow` collision, duplicate base utilities,
-  and future composing families (transforms, filters, transitions).
-  - Alternative for `Ring` / `Shadow`: make them compose through CSS custom
-    properties (`--tw-ring-*`, `--tw-shadow`) with one shared `box-shadow` rule.
-- **[runtime] Instance registry + scoped builder.** Add a registry-instance path
-  and a builder entry point that accepts a `ClassRegistry`, so Blazor
-  (`CssStyles.razor`) and MVC (`FluentCssMiddleware`) can isolate per request /
-  content hash. Keep `DefaultRegistry` as the default for compatibility.
-- **[bug] Negative values.** The `int` overloads accept negatives but produce
-  broken class names (`GetSpacingValue(-4)` → class `m--4`). Add proper negative
-  helpers (`-mt-4`, `-inset-2`, `-z-10`) and negative `inset` / `z` / spacing.
-
-### Tier 2 — small, high-value parity wins
-
-- **[missing] Opacity modifier on colors.** Colors are `oklch(...)`, so
-  `Background(Color.Red500, 50)` can emit `oklch(... / 0.5)` and class
-  `bg-red-500/50`. Apply to `Color`, `Background`, `BorderColor`, `Ring` and the
-  shadow colors. Biggest missing "feel" feature.
-- **[missing] Pseudo-element variants.** `UtilityClass` currently strips colons
-  and always emits a single `:`, so `::before` is not expressible. Carry the
-  full pseudo token so `before`, `after`, `placeholder`, `marker`, `selection`,
-  `file` work.
-- **[missing] More state + structural pseudo variants.** Thin `Pseudo(...)`
-  wrappers: `FocusVisible`, `FocusWithin`, `Visited`, `Disabled`, `Checked`,
-  `First`, `Last`, `Odd`, `Even`, `Nth(n)`.
-- **Mechanical utility gaps.** `size-*`; `inline-flex` / `inline-grid` /
-  `contents` / `flow-root` / table family; `Static()`; `Order`; `FlexBasis`;
-  `flex-1/auto/initial/none`; `AlignSelf` / `JustifySelf`; `AlignContent`;
-  `Place*`; grid auto-flow / auto rows-cols; `col-end` / `row-start` /
-  `row-end`; named `Leading*`; full `Whitespace*`; all font weights;
-  `Tracking`; `TextWrap`.
-
-### Tier 3 — whole missing families (self-contained features)
-
-- Transforms: rotate, scale, translate, skew, transform-origin, perspective
-  (needs the Tier 1 composition fix).
-- Transitions & animation: duration, timing, delay, property, `@keyframes`.
-- Filters / backdrop-filters: blur, brightness, contrast, grayscale, … (shared
-  `filter` property, same composition issue).
-- Backgrounds: gradients (linear/radial/conic), size/position/repeat/
-  attachment/clip/origin.
-- Tables and SVG: `border-collapse`, `border-spacing`, `fill`, `stroke`,
-  `stroke-width`.
-
-### Tier 4 — complex variant system
-
-- **[broken] Container queries.** Implement the throwing stubs and add
-  `@container` / `@min-*` / `@max-*` variants. Good candidate: the interface and
-  stubs already exist.
-- `group-*`, `peer-*`, `has-*` — compound selectors (`.group:hover .x`), not a
-  pseudo suffix, so they need a selector-model extension in `UtilityClass`.
-- Data / ARIA / attribute variants, `motion-safe` / `motion-reduce`, `print`,
-  `rtl` / `ltr` + logical properties, dark-mode media strategy.
-
-### Candidate next PR
-
-1. **Correctness first (recommended):** canonical utility ordering + fix
-   `Ring` / `Shadow` composition, negative values, `Size` bug. Makes the current
-   API trustworthy and unblocks transforms/filters.
-2. **Feature first:** opacity color modifiers + negative values + pseudo-element
-   and state variants. Large, immediately visible parity jump; touches mostly
-   `BaseStyleBuilder` and `UtilityClass`.
-
-Avoid starting with `group-*` / container queries until the selector model and
-registry ordering are settled — those changes depend on them.
+1. **Non-pseudo selector variants** (data/ARIA/attribute, `supports-*`,
+   pseudo-elements, functional `:not` / `:is` / `:where` / `:has`). Needs the
+   `UtilityClass` selector-model change so `[attr]`, `::before`, at-rules and
+   compound selectors can be class variants, plus variant stacking.
+2. **Canonical property ordering within `ClassRegistry` buckets.** Unblocks
+   transforms / filters / transitions and fixes the `Ring` / `Shadow` conflict
+   and duplicate base-utility behavior.
+3. Supporting middleware in blazor, rename FluentCss.Blazor project to 
+   FluentCss, it should contain blazor component and tag helpers,
+   FluentCss.MvcRazor should be renamed to FluentCss.Middleware and it should
+   have only middleware and DI extension. Users can choose to use middleare
+   and script as link even in Blazor projects.

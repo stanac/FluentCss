@@ -22,12 +22,6 @@ internal class InternalFluentCssBuilder : BaseStyleBuilder<IFluentCssBuilder>, I
     protected override IStyleScopeBuilder CreateImportantScope() =>
         new ImportantScopeBuilder(_registry, Theme, MediaQuery, MediaPrefix, null);
 
-    public IFluentCssBuilder Hover(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("hover", pseudoBuilderAction);
-
-    public IFluentCssBuilder Active(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("active", pseudoBuilderAction);
-
-    public IFluentCssBuilder Focus(Action<IOnlyStyleBuilder> pseudoBuilderAction) => Pseudo("focus", pseudoBuilderAction);
-
     public IFluentCssBuilder Pseudo(string pseudoPrefix, Action<IOnlyStyleBuilder> pseudoBuilderAction)
     {
         IOnlyStyleBuilder builder = new OnlyStyleBuilder(_registry, Theme, MediaQuery, MediaPrefix, pseudoPrefix);
