@@ -8,7 +8,7 @@
 <h2 class="@DocsStyles.H2">Choose a package</h2>
 
 <p class="@DocsStyles.P">
-    There is one integration package per hosting model. Install the one that matches your app.
+    Install the integration package that matches your app. ASP.NET Core MVC and Razor Pages apps also need the middleware package.
 </p>
 
 <table class="@DocsStyles.Table">
@@ -22,19 +22,21 @@
     <tbody>
         <tr class="@DocsStyles.Tr">
             <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss</code></td>
-            <td class="@DocsStyles.Td">Blazor</td>
+            <td class="@DocsStyles.Td">Blazor, and MVC / Razor Pages</td>
             <td class="@DocsStyles.Td">
-                The <code class="@DocsStyles.InlineCode">CssStyles</code> component and the preflight stylesheet.
-                Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly (standalone) and Blazor Web
-                Apps using the Interactive Server, Interactive WebAssembly or Auto render mode.
+                The <code class="@DocsStyles.InlineCode">CssStyles</code> component, the
+                <code class="@DocsStyles.InlineCode">&lt;fluent-css /&gt;</code> and theme tag helpers and the
+                preflight stylesheet. Use it for Blazor static SSR, Blazor Server, Blazor WebAssembly
+                (standalone) and Blazor Web Apps using the Interactive Server, Interactive WebAssembly or Auto
+                render mode, as well as for the server-rendered markup of MVC and Razor Pages.
             </td>
         </tr>
         <tr class="@DocsStyles.Tr">
             <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">FluentCss.Middleware</code></td>
             <td class="@DocsStyles.Td">ASP.NET Core MVC and Razor Pages</td>
             <td class="@DocsStyles.Td">
-                The <code class="@DocsStyles.InlineCode">&lt;fluent-css /&gt;</code> tag helper, the stylesheet
-                middleware and the preflight stylesheet.
+                The stylesheet middleware and the <code class="@DocsStyles.InlineCode">AddFluentCss()</code> /
+                <code class="@DocsStyles.InlineCode">UseFluentCss()</code> extensions.
             </td>
         </tr>
     </tbody>
@@ -108,9 +110,21 @@
     supported.
 </Callout>
 
+<Callout Kind="CalloutKind.Info" Title="Prefer the script-link path?">
+    <code class="@DocsStyles.InlineCode">CssStyles</code> is the Blazor-native way to emit the stylesheet, but a
+    server-hosted Blazor app (Blazor Server or a Blazor Web App) can use the same middleware and script-link
+    setup as MVC and Razor Pages instead. The tag helpers ship in the
+    <code class="@DocsStyles.InlineCode">FluentCss</code> package next to
+    <code class="@DocsStyles.InlineCode">CssStyles</code>; the middleware itself is in
+    <code class="@DocsStyles.InlineCode">FluentCss.Middleware</code>. See the next section for the setup.
+</Callout>
+
 <h2 class="@DocsStyles.H2">MVC and Razor Pages</h2>
 
-<p class="@DocsStyles.P">Add the MVC/Razor Pages package:</p>
+<p class="@DocsStyles.P">
+    Add the <code class="@DocsStyles.InlineCode">FluentCss</code> package for the tag helpers and the
+    <code class="@DocsStyles.InlineCode">FluentCss.Middleware</code> package for the middleware:
+</p>
 
 <CodeBlock Code="@InstallMvcRazor" Language="bash" />
 
@@ -210,11 +224,14 @@
 
     private const string InstallMvcRazor =
         """
+        dotnet add package FluentCss
         dotnet add package FluentCss.Middleware
         """;
 
     private const string ProgramMvcRazor =
         """
+        builder.Services.AddFluentCss();
+
         var app = builder.Build();
 
         app.UseRouting();
@@ -229,14 +246,14 @@
         """
         @using static FluentCss.Core.FluentCssBuilder
         @using FluentCss.Core
-        @addTagHelper *, FluentCss.Middleware
+        @addTagHelper *, FluentCss
         """;
 
     private const string LayoutMvcRazor =
         """
         <head>
             ...
-            <link rel="stylesheet" href="/_content/FluentCss.Middleware/preflight.css" />
+            <link rel="stylesheet" href="/_content/FluentCss/preflight.css" />
             <fluent-css />
         </head>
         """;

@@ -1,0 +1,15 @@
+<Project>
+    <PropertyGroup>
+	    <Version>0.1.0</Version>
+		<PackageLicenseExpression>0BSD</PackageLicenseExpression>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>stanac</Authors>
+		<Summary>Fluent strongly typed CSS for Blazor, MVC and Razor Pages</Summary>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageTags>css</PackageTags>
+		<PackageProjectUrl>https://fluentcss.stanac.dev</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/stanac/FluentCss</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+</Project>

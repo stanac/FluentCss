@@ -1,0 +1,712 @@
+@page "/docs/interfaces"
+
+<PageTitle>Interfaces - FluentCss</PageTitle>
+
+<DocHeader Title="Interfaces"
+           Description="Reference for the public FluentCssBuilder entry points and the interfaces that make up the builder and selector API." />
+
+<p class="@DocsStyles.P">
+    This page describes the types you program against. The individual utilities are covered on the
+    other pages; here the focus is the shape of the API: the static entry points, what each interface
+    is for, and the members it declares.
+</p>
+
+<h2 class="@DocsStyles.H2">FluentCssBuilder</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">FluentCssBuilder</code> is the static entry point. Every chain
+    starts with one of its three properties, and all three return
+    <code class="@DocsStyles.InlineCode">IRootFluentCssBuilder</code>. The choice only decides the theme
+    prefix applied to the whole chain.
+</p>
+
+<CodeBlock Code="@FluentCssBuilderApi" />
+
+<h2 class="@DocsStyles.H2">Builder interfaces</h2>
+
+<p class="@DocsStyles.P">
+    The builder stages form a single inheritance chain. A method returns a later (narrower) stage where
+    the order matters: <code class="@DocsStyles.InlineCode">Pseudo</code> and
+    <code class="@DocsStyles.InlineCode">Media</code> return a stage that can still be combined with the
+    others, while only <code class="@DocsStyles.InlineCode">IRootFluentCssBuilder</code> can start a media
+    query or attach a selector.
+</p>
+
+<table class="@DocsStyles.Table">
+    <thead class="@DocsStyles.Thead">
+        <tr>
+            <th class="@DocsStyles.Th">Interface</th>
+            <th class="@DocsStyles.Th">Inherits</th>
+            <th class="@DocsStyles.Th">What it is</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IStyleBuilder&lt;out T&gt;</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">&mdash;</code></td>
+            <td class="@DocsStyles.Td">The base interface. Declares every utility and is implemented by all builders <em>and</em> by the scopes passed to <code class="@DocsStyles.InlineCode">Important</code> and <code class="@DocsStyles.InlineCode">ApplySelector</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IImportantStyleBuilder&lt;out T&gt;</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IStyleBuilder&lt;T&gt;</code></td>
+            <td class="@DocsStyles.Td">Adds <code class="@DocsStyles.InlineCode">Important</code> for marking a block of declarations <code class="@DocsStyles.InlineCode">!important</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IStyleScopeBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IStyleBuilder</code></td>
+            <td class="@DocsStyles.Td">The builder passed to <code class="@DocsStyles.InlineCode">Important</code>. Exposes the utilities but not <code class="@DocsStyles.InlineCode">Important</code>, so override blocks cannot nest.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IOnlyStyleBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IImportantStyleBuilder</code></td>
+            <td class="@DocsStyles.Td">The styles-only builder passed to <code class="@DocsStyles.InlineCode">Pseudo</code>, <code class="@DocsStyles.InlineCode">Hover</code>, <code class="@DocsStyles.InlineCode">Focus</code>, <code class="@DocsStyles.InlineCode">Active</code> and <code class="@DocsStyles.InlineCode">ApplySelector</code>. It has no variant methods, so a scope cannot start another variant.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IImportantStyleBuilder</code></td>
+            <td class="@DocsStyles.Td">The normal builder returned by <code class="@DocsStyles.InlineCode">Css</code>, <code class="@DocsStyles.InlineCode">Dark</code> and <code class="@DocsStyles.InlineCode">Theme(...)</code>. Adds <code class="@DocsStyles.InlineCode">Pseudo</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IMediaFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td">Adds <code class="@DocsStyles.InlineCode">Media</code>, the single primitive behind every responsive helper.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IRootFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IMediaFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td">The root stage. Adds <code class="@DocsStyles.InlineCode">ApplySelector</code> and is the only stage that can start a media query or attach a selector.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 class="@DocsStyles.H3">IStyleBuilder&lt;out T&gt;</h3>
+
+<p class="@DocsStyles.P">
+    The base interface declares every utility. <code class="@DocsStyles.InlineCode">T</code> is the builder
+    type returned by each call, so chaining preserves the concrete stage. The methods are listed in
+    declaration order.
+</p>
+
+<CodeBlock Code="@StyleBuilderApi" />
+
+<h3 class="@DocsStyles.H3">Variant interfaces</h3>
+
+<p class="@DocsStyles.P">
+    These interfaces add the variant and scoping methods on top of
+    <code class="@DocsStyles.InlineCode">IStyleBuilder&lt;T&gt;</code>.
+</p>
+
+<CodeBlock Code="@VariantInterfacesApi" />
+
+<h2 class="@DocsStyles.H2">Selector interfaces</h2>
+
+<p class="@DocsStyles.P">
+    The selector builder is a separate chain that produces a selector instead of a utility class. Like
+    the builder, it is a sequence of stages enforced by the return types, so an invalid order such as a
+    combinator after a pseudo-element does not compile.
+</p>
+
+<table class="@DocsStyles.Table">
+    <thead class="@DocsStyles.Thead">
+        <tr>
+            <th class="@DocsStyles.Th">Interface</th>
+            <th class="@DocsStyles.Th">Inherits</th>
+            <th class="@DocsStyles.Th">What it is</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IBuildableSelector</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">&mdash;</code></td>
+            <td class="@DocsStyles.Td">A finished selector or selector list. <code class="@DocsStyles.InlineCode">Css</code> returns the full text including any theme prefix and at-rule wrapper.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IPseudoElementBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IBuildableSelector</code></td>
+            <td class="@DocsStyles.Td">The terminal stage for pseudo-elements. <code class="@DocsStyles.InlineCode">PseudoElement</code> closes the selector; <code class="@DocsStyles.InlineCode">FunctionalPseudoElement</code> returns to the compound stage.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ICompoundSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IPseudoElementBuilder</code></td>
+            <td class="@DocsStyles.Td">The compound stage: classes, ids, attributes, pseudo-classes and combinators. Every method returns the same stage, so modifiers chain in any order.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ITargetSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ICompoundSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td">Adds <code class="@DocsStyles.InlineCode">Element</code>, the type selector such as <code class="@DocsStyles.InlineCode">div</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IRelativeSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ITargetSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td">The target builder passed to <code class="@DocsStyles.InlineCode">Has</code>. Identical to the target stage, but it may start with a combinator, for example <code class="@DocsStyles.InlineCode">:has(&gt; img)</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ISelectorContextBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ITargetSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td">A context that already carries the media/theme part of the selector and can build a selector list with <code class="@DocsStyles.InlineCode">Targets</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IThemeSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">ISelectorContextBuilder</code></td>
+            <td class="@DocsStyles.Td">Adds <code class="@DocsStyles.InlineCode">Theme(name)</code>, which prefixes the selector with <code class="@DocsStyles.InlineCode">.theme-{name}</code>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IRootSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IThemeSelectorBuilder</code></td>
+            <td class="@DocsStyles.Td">The entry point from <code class="@DocsStyles.InlineCode">Selector.New()</code>. Adds the <code class="@DocsStyles.InlineCode">Media</code>, <code class="@DocsStyles.InlineCode">Container</code> and <code class="@DocsStyles.InlineCode">Supports</code> at-rule wrappers.</td>
+        </tr>
+    </tbody>
+</table>
+
+<CodeBlock Code="@SelectorInterfacesApi" />
+
+<h2 class="@DocsStyles.H2">BaseStyleBuilder&lt;T&gt;</h2>
+
+<p class="@DocsStyles.P">
+    <code class="@DocsStyles.InlineCode">BaseStyleBuilder&lt;T&gt;</code> is the abstract class that
+    implements <code class="@DocsStyles.InlineCode">IStyleBuilder&lt;T&gt;</code> once for every builder.
+    It owns the class-name list, the theme/media/pseudo context and the
+    <code class="@DocsStyles.InlineCode">Important</code> scoping model. Its constructor is
+    <code class="@DocsStyles.InlineCode">private protected</code>, so even though the type is public it is
+    not a supported extension point outside the assembly: derive from it only if you are adding a
+    builder inside FluentCss itself. For application-level helpers, write extension methods on
+    <code class="@DocsStyles.InlineCode">IStyleBuilder&lt;T&gt;</code> instead, as shown on
+    <a href="/docs/extensibility" class="@DocsStyles.Link">Extensibility</a>.
+</p>
+
+<CodeBlock Code="@BaseStyleBuilderApi" />
+
+<h2 class="@DocsStyles.H2">Extension methods</h2>
+
+<p class="@DocsStyles.P">
+    The typed variants and the selector sugar are extension methods, which keeps the interfaces small.
+    They live in a few static classes:
+</p>
+
+<table class="@DocsStyles.Table">
+    <thead class="@DocsStyles.Thead">
+        <tr>
+            <th class="@DocsStyles.Th">Class</th>
+            <th class="@DocsStyles.Th">Target</th>
+            <th class="@DocsStyles.Th">Adds</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">StyleBuilderPseudoExtensions</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td">Typed pseudo-class variants such as <code class="@DocsStyles.InlineCode">Hover</code>, <code class="@DocsStyles.InlineCode">Focus</code>, <code class="@DocsStyles.InlineCode">FocusVisible</code>, <code class="@DocsStyles.InlineCode">Checked</code>, <code class="@DocsStyles.InlineCode">Disabled</code>, <code class="@DocsStyles.InlineCode">Odd</code> and <code class="@DocsStyles.InlineCode">NthChild</code>. See <a href="/docs/states" class="@DocsStyles.Link">Hover &amp; focus</a>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">MediaFluentCssBuilderExtensions</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IMediaFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td">The responsive helpers: <code class="@DocsStyles.InlineCode">Min</code>, <code class="@DocsStyles.InlineCode">Max</code> and the named <code class="@DocsStyles.InlineCode">MinXs</code>...<code class="@DocsStyles.InlineCode">Max2Xl</code>. See <a href="/docs/responsive" class="@DocsStyles.Link">Responsive design</a>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">RootFluentCssBuilderInterfaceExtensions</code></td>
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">IRootFluentCssBuilder</code></td>
+            <td class="@DocsStyles.Td">The selector-builder overload of <code class="@DocsStyles.InlineCode">ApplySelector</code>, plus <code class="@DocsStyles.InlineCode">ApplyClass</code> and <code class="@DocsStyles.InlineCode">ApplyId</code>. See <a href="/docs/selectors" class="@DocsStyles.Link">Custom selectors</a>.</td>
+        </tr>
+        <tr class="@DocsStyles.Tr">
+            <td class="@DocsStyles.Td"><code class="@DocsStyles.InlineCode">SelectorBuilderExtensions</code></td>
+            <td class="@DocsStyles.Td">Selector interfaces</td>
+            <td class="@DocsStyles.Td">Shortcuts such as <code class="@DocsStyles.InlineCode">Hover</code>, <code class="@DocsStyles.InlineCode">FocusVisible</code>, <code class="@DocsStyles.InlineCode">NthChild</code>, <code class="@DocsStyles.InlineCode">Data</code>, <code class="@DocsStyles.InlineCode">Aria</code>, <code class="@DocsStyles.InlineCode">Before</code> and <code class="@DocsStyles.InlineCode">After</code>. See <a href="/docs/selectors" class="@DocsStyles.Link">Custom selectors</a>.</td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    private const string FluentCssBuilderApi =
+        """
+public static class FluentCssBuilder
+{
+    /// <summary>Theme-neutral root builder. Classes get no prefix.</summary>
+    public static IRootFluentCssBuilder Css { get; }
+
+    /// <summary>Root builder for the built-in dark theme. Classes get the "theme-dark:" prefix.</summary>
+    public static IRootFluentCssBuilder Dark { get; }
+
+    /// <summary>Root builder for a custom theme. Classes get the "theme-{theme}:" prefix.</summary>
+    public static IRootFluentCssBuilder Theme(string theme);
+}
+""";
+
+    private const string VariantInterfacesApi =
+        """
+public interface IImportantStyleBuilder<out T> : IStyleBuilder<T>
+{
+    /// <summary>Marks every declaration added in the block as !important.</summary>
+    T Important(Action<IStyleScopeBuilder> styles);
+}
+
+/// <summary>The scope passed to Important. Has no Important method.</summary>
+public interface IStyleScopeBuilder : IStyleBuilder<IStyleScopeBuilder> { }
+
+/// <summary>The styles-only builder passed to pseudo scopes and ApplySelector.</summary>
+public interface IOnlyStyleBuilder : IImportantStyleBuilder<IOnlyStyleBuilder> { }
+
+public interface IFluentCssBuilder : IImportantStyleBuilder<IFluentCssBuilder>
+{
+    /// <summary>Applies the styles under an arbitrary pseudo-class, for example "hover" or "nth-child(2)".</summary>
+    IFluentCssBuilder Pseudo(string pseudoPrefix, Action<IOnlyStyleBuilder> pseudoBuilderAction);
+}
+
+public interface IMediaFluentCssBuilder : IFluentCssBuilder
+{
+    /// <summary>The primitive the responsive helpers are built on.</summary>
+    IMediaFluentCssBuilder Media(string query, string classPrefix, Action<IMediaFluentCssBuilder> cssBuilderAction);
+}
+
+public interface IRootFluentCssBuilder : IMediaFluentCssBuilder
+{
+    /// <summary>Registers a rule under an arbitrary selector, for example ".card > h2".</summary>
+    IRootFluentCssBuilder ApplySelector(string selector, Action<IOnlyStyleBuilder> cssBuilderAction);
+}
+""";
+
+    private const string SelectorInterfacesApi =
+        """
+/// <summary>A finished selector (or selector list) that can be rendered to CSS.</summary>
+public interface IBuildableSelector
+{
+    string Css { get; }
+}
+
+/// <summary>Terminal pseudo-element stage.</summary>
+public interface IPseudoElementBuilder : IBuildableSelector
+{
+    IBuildableSelector PseudoElement(string pseudoElement);
+    ICompoundSelectorBuilder FunctionalPseudoElement(string name, string argument);
+}
+
+/// <summary>Compound stage: classes, ids, attributes, pseudo-classes and combinators.</summary>
+public interface ICompoundSelectorBuilder : IPseudoElementBuilder
+{
+    ICompoundSelectorBuilder Class(string className);
+    ICompoundSelectorBuilder Id(string id);
+    ICompoundSelectorBuilder Universal();
+    ICompoundSelectorBuilder Attribute(string name);
+    ICompoundSelectorBuilder Attribute(string name, string value);
+    ICompoundSelectorBuilder Attribute(string name, string value, AttributeOperator op, AttributeCase casing = AttributeCase.Default);
+    ICompoundSelectorBuilder Pseudo(string pseudo);
+    ICompoundSelectorBuilder Pseudo(string pseudo, string argument);
+    ICompoundSelectorBuilder Not(params Func<ITargetSelectorBuilder, IBuildableSelector>[] selectors);
+    ICompoundSelectorBuilder Is(params Func<ITargetSelectorBuilder, IBuildableSelector>[] selectors);
+    ICompoundSelectorBuilder Where(params Func<ITargetSelectorBuilder, IBuildableSelector>[] selectors);
+    ICompoundSelectorBuilder Has(params Func<IRelativeSelectorBuilder, ICompoundSelectorBuilder>[] selectors);
+    ITargetSelectorBuilder Descendant();
+    ITargetSelectorBuilder Child();
+    ITargetSelectorBuilder AdjacentSibling();
+    ITargetSelectorBuilder GeneralSibling();
+}
+
+/// <summary>Compound stage with the type selector.</summary>
+public interface ITargetSelectorBuilder : ICompoundSelectorBuilder
+{
+    ICompoundSelectorBuilder Element(string tag);
+}
+
+/// <summary>The target builder passed to Has. May start with a combinator.</summary>
+public interface IRelativeSelectorBuilder : ITargetSelectorBuilder { }
+
+/// <summary>A context that carries media/theme and can build a selector list.</summary>
+public interface ISelectorContextBuilder : ITargetSelectorBuilder
+{
+    IBuildableSelector Targets(params Func<ITargetSelectorBuilder, IBuildableSelector>[] targets);
+}
+
+/// <summary>Selector stage that can set the theme prefix.</summary>
+public interface IThemeSelectorBuilder : ISelectorContextBuilder
+{
+    ISelectorContextBuilder Theme(string theme);
+}
+
+/// <summary>Entry point for building a selector. Wraps the rest in an at-rule.</summary>
+public interface IRootSelectorBuilder : IThemeSelectorBuilder
+{
+    IThemeSelectorBuilder Media(string query);
+    IThemeSelectorBuilder Container(string query);
+    IThemeSelectorBuilder Supports(string query);
+}
+""";
+
+    private const string BaseStyleBuilderApi =
+        """
+public abstract class BaseStyleBuilder<T> : IImportantStyleBuilder<T>
+{
+    // The constructor is private protected: although the type is public, only
+    // builders inside the FluentCss assembly can derive from it.
+    private protected BaseStyleBuilder(string? theme, string? mediaQuery, string? mediaPrefix);
+
+    // The three members a concrete builder must provide.
+    protected internal abstract void AddClass(UtilityClass c);
+    protected abstract T ReturnSelf();
+    protected abstract IStyleScopeBuilder CreateImportantScope();
+
+    // Hooks used by the scoping model.
+    protected virtual void AddChildClassNames(string classNames);
+    protected void AddClassName(string className);
+    protected string GetSpacingValue(int scale);
+
+    // ...and every IStyleBuilder<T> utility, implemented once for all builders.
+    public override string ToString();
+}
+""";
+
+    private const string StyleBuilderApi =
+        """
+public interface IStyleBuilder<out T>
+{
+    T Background(Color color);
+    T Color(Color color);
+    T BorderColor(Color color);
+    T P(int scale);
+    T P(Length length);
+    T Px(int scale);
+    T Px(Length length);
+    T Py(int scale);
+    T Py(Length length);
+    T Pt(int scale);
+    T Pt(Length length);
+    T Pr(int scale);
+    T Pr(Length length);
+    T Pb(int scale);
+    T Pb(Length length);
+    T Pl(int scale);
+    T Pl(Length length);
+    T M(int scale);
+    T M(Length length);
+    T Mx(int scale);
+    T Mx(Length length);
+    T My(int scale);
+    T My(Length length);
+    T Mt(int scale);
+    T Mt(Length length);
+    T Mr(int scale);
+    T Mr(Length length);
+    T Mb(int scale);
+    T Mb(Length length);
+    T Ml(int scale);
+    T Ml(Length length);
+    T MxAuto();
+    T MyAuto();
+    T Block();
+    T InlineBlock();
+    T Inline();
+    T Flex();
+    T Grid();
+    T Hidden();
+    T Relative();
+    T Absolute();
+    T Fixed();
+    T Sticky();
+    T Inset(int scale);
+    T Inset(Length length);
+    T Top(int scale);
+    T Top(Length length);
+    T Bottom(int scale);
+    T Bottom(Length length);
+    T Left(int scale);
+    T Left(Length length);
+    T Right(int scale);
+    T Right(Length length);
+    T Z(int index);
+    T W(int scale);
+    T W(Length length);
+    T WFull();
+    T WScreen();
+    T WAuto();
+    T H(int scale);
+    T H(Length length);
+    T HFull();
+    T HScreen();
+    T MaxW(Size size);
+    T MaxW(Length length);
+    T MinH(Size size);
+    T MinH(Length length);
+    T FlexRow();
+    T FlexCol();
+    T FlexWrap();
+    T ItemsCenter();
+    T ItemsStart();
+    T ItemsEnd();
+    T JustifyCenter();
+    T JustifyBetween();
+    T JustifyStart();
+    T JustifyEnd();
+    T Gap(int scale);
+    T Gap(Length length);
+    T GapX(int scale);
+    T GapX(Length length);
+    T GapY(int scale);
+    T GapY(Length length);
+    T Grow();
+    T Shrink();
+    T TextXs();
+    T TextSm();
+    T TextBase();
+    T TextLg();
+    T TextXl();
+    T Text2Xl();
+    T Text3Xl();
+    T Text(Length size);
+    T FontThin();
+    T FontNormal();
+    T FontBold();
+    T FontSans();
+    T FontSerif();
+    T FontMono();
+    T Font(FontFamily family);
+    T Sans(params string[] families);
+    T Serif(params string[] families);
+    T Mono(params string[] families);
+    T TextCenter();
+    T TextLeft();
+    T TextRight();
+    T Underline();
+    T NoUnderline();
+    T Border(int width);
+    T Border();
+    T Rounded();
+    T Rounded(Length radius);
+    T RoundedSm();
+    T RoundedMd();
+    T RoundedLg();
+    T RoundedFull();
+    T Shadow();
+    T ShadowSm();
+    T ShadowMd();
+    T ShadowLg();
+    T Opacity(int val);
+    T CursorPointer();
+    T MinW(Size size);
+    T MinW(Length length);
+    T MaxH(Size size);
+    T MaxH(Length length);
+    T GridCols(int n);
+    T GridRows(int n);
+    T ColSpan(int n);
+    T RowSpan(int n);
+    T ColStart(int n);
+    T OverflowAuto();
+    T OverflowHidden();
+    T OverflowScroll();
+    T ObjectCover();
+    T ObjectContain();
+    T AspectSquare();
+    T AspectVideo();
+    T Italic();
+    T NotItalic();
+    T Uppercase();
+    T Lowercase();
+    T Capitalize();
+    T WhitespaceNoWrap();
+    T Leading(int scale);
+    T Leading(Length length);
+    T BorderSolid();
+    T BorderDashed();
+    T BorderDotted();
+    T Ring(int width, Color c);
+    T Outline(int width);
+    T OutlineHidden();
+    T Border(int width, Color c, BorderStyle style = BorderStyle.Solid);
+    T Flex(FlexDirection direction, Justify? justify = null, Align? align = null, int? gap = null, FlexWrapValue? wrap = null);
+    T InlineFlex();
+    T InlineGrid();
+    T FlowRoot();
+    T Contents();
+    T ListItem();
+    T Static();
+    T ZAuto();
+    T FloatLeft();
+    T FloatRight();
+    T FloatNone();
+    T ClearLeft();
+    T ClearRight();
+    T ClearBoth();
+    T ClearNone();
+    T Isolate();
+    T IsolationAuto();
+    T BoxBorder();
+    T BoxContent();
+    T Visible();
+    T Invisible();
+    T ObjectFill();
+    T ObjectScaleDown();
+    T ObjectNone();
+    T Basis(int scale);
+    T Basis(Length length);
+    T BasisAuto();
+    T BasisFull();
+    T Order(int order);
+    T OrderFirst();
+    T OrderLast();
+    T OrderNone();
+    T Grow(int value);
+    T Shrink(int value);
+    T GridAutoFlowRow();
+    T GridAutoFlowColumn();
+    T GridAutoFlowRowDense();
+    T GridAutoFlowColumnDense();
+    T ColEnd(int n);
+    T RowStart(int n);
+    T RowEnd(int n);
+    T JustifyItemsStart();
+    T JustifyItemsCenter();
+    T JustifyItemsEnd();
+    T JustifyItemsStretch();
+    T JustifySelfAuto();
+    T JustifySelfStart();
+    T JustifySelfCenter();
+    T JustifySelfEnd();
+    T JustifySelfStretch();
+    T AlignContentStart();
+    T AlignContentCenter();
+    T AlignContentEnd();
+    T AlignContentBetween();
+    T AlignContentAround();
+    T AlignContentEvenly();
+    T AlignContentBaseline();
+    T AlignContentStretch();
+    T AlignSelfAuto();
+    T AlignSelfStart();
+    T AlignSelfCenter();
+    T AlignSelfEnd();
+    T AlignSelfBaseline();
+    T AlignSelfStretch();
+    T JustifyAround();
+    T JustifyEvenly();
+    T ItemsBaseline();
+    T ItemsStretch();
+    T BorderT();
+    T BorderT(int width);
+    T BorderR();
+    T BorderR(int width);
+    T BorderB();
+    T BorderB(int width);
+    T BorderL();
+    T BorderL(int width);
+    T BorderX();
+    T BorderX(int width);
+    T BorderY();
+    T BorderY(int width);
+    T BorderDouble();
+    T OutlineColor(Color color);
+    T OutlineOffset(int offset);
+    T FontExtralight();
+    T FontLight();
+    T FontMedium();
+    T FontSemibold();
+    T FontExtrabold();
+    T FontBlack();
+    T LeadingNone();
+    T LeadingTight();
+    T LeadingSnug();
+    T LeadingNormal();
+    T LeadingRelaxed();
+    T LeadingLoose();
+    T TrackingTighter();
+    T TrackingTight();
+    T TrackingNormal();
+    T TrackingWide();
+    T TrackingWider();
+    T TrackingWidest();
+    T Tracking(Length length);
+    T WhitespaceNormal();
+    T WhitespacePre();
+    T WhitespacePreLine();
+    T WhitespacePreWrap();
+    T WhitespaceBreakSpaces();
+    T LineThrough();
+    T Overline();
+    T Truncate();
+    T TextEllipsis();
+    T TextClip();
+    T TextIndent(int scale);
+    T TextIndent(Length length);
+    T WordBreakNormal();
+    T WordBreakAll();
+    T WordBreakKeepAll();
+    T OverflowWrapNormal();
+    T OverflowWrapBreakWord();
+    T OverflowWrapAnywhere();
+    T HyphensNone();
+    T HyphensManual();
+    T HyphensAuto();
+    T ListStyleNone();
+    T ListDisc();
+    T ListDecimal();
+    T ListInside();
+    T ListOutside();
+    T BgAttachmentFixed();
+    T BgAttachmentLocal();
+    T BgAttachmentScroll();
+    T BgClipBorder();
+    T BgClipPadding();
+    T BgClipContent();
+    T BgClipText();
+    T BgOriginBorder();
+    T BgOriginPadding();
+    T BgOriginContent();
+    T BgRepeat();
+    T BgRepeatX();
+    T BgRepeatY();
+    T BgNoRepeat();
+    T BgRepeatRound();
+    T BgRepeatSpace();
+    T BgCover();
+    T BgContain();
+    T BgAuto();
+    T BgNone();
+    T BorderCollapse();
+    T BorderSeparate();
+    T TableLayoutAuto();
+    T TableLayoutFixed();
+    T CaptionTop();
+    T CaptionBottom();
+    T PointerEventsNone();
+    T PointerEventsAuto();
+    T ResizeNone();
+    T ResizeY();
+    T ResizeX();
+    T ResizeBoth();
+    T ScrollBehaviorSmooth();
+    T ScrollBehaviorAuto();
+    T UserSelectNone();
+    T UserSelectText();
+    T UserSelectAll();
+    T UserSelectAuto();
+    T AppearanceNone();
+    T AppearanceAuto();
+    T AccentColor(Color color);
+    T CaretColor(Color color);
+    T ColorSchemeLight();
+    T ColorSchemeDark();
+    T ColorSchemeNormal();
+    T CursorDefault();
+    T CursorText();
+    T CursorWait();
+    T CursorMove();
+    T CursorHelp();
+    T CursorNotAllowed();
+    T CursorCrosshair();
+    T CursorGrab();
+    T CursorGrabbing();
+    T CursorNone();
+    T CursorProgress();
+    T TouchActionNone();
+    T TouchActionAuto();
+    T TouchActionPanX();
+    T TouchActionPanY();
+    T TouchActionManipulation();
+    T WillChangeAuto();
+    T WillChangeScroll();
+    T WillChangeContents();
+    T WillChangeTransform();
+    T Fill(Color color);
+    T Stroke(Color color);
+    T StrokeWidth(int width);
+    T Arbitrary(string className, string property, string value);
+}
+""";
+}

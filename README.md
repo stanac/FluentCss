@@ -21,13 +21,15 @@ FluentCss lets you build CSS utility classes directly in `.razor`/`.cshtml` file
 | Package | Target | Description |
 |---------|--------|-------------|
 | **FluentCss.Core** | `netstandard2.0` | Core builder, registry, and all CSS utilities |
-| **FluentCss** | `net10.0` | Blazor Razor component `<CssStyles>` for auto-rendering CSS |
+| **FluentCss** | `net10.0` | Blazor component `<CssStyles>`, the MVC/Razor Pages tag helpers and the preflight stylesheet |
+| **FluentCss.Middleware** | `net10.0` | ASP.NET Core middleware and the `AddFluentCss()` / `UseFluentCss()` extensions |
 
 ## Installation
 
 ```bash
 dotnet add package FluentCss.Core
-dotnet add package FluentCss         # if using Blazor
+dotnet add package FluentCss             # Blazor and MVC/Razor Pages tag helpers
+dotnet add package FluentCss.Middleware  # ASP.NET Core MVC / Razor Pages middleware
 ```
 
 ## Quick Start
@@ -119,7 +121,43 @@ and use it as
 > }
 > ```
 
-### 2. Non-Blazor / Any .NET App
+> **Blazor without the component:** A server-hosted Blazor app can also use the middleware and script-link path described in the next section. The tag helpers ship in the **`FluentCss`** package next to `<CssStyles>`; the middleware itself is in **`FluentCss.Middleware`**. The script path keeps the stylesheet in sync after client-side DOM changes, which suits Blazor Server and Blazor Web Apps.
+
+### 2. ASP.NET Core MVC / Razor Pages
+
+Add the `FluentCss` package for the tag helpers and `FluentCss.Middleware` for the middleware, then register it in `Program.cs`. It serves the current hash at `/fluentcss/hash` and the stylesheet at `/fluentcss/{hash}.css`, with gzip and an ETag:
+
+```csharp
+builder.Services.AddFluentCss();
+
+...
+
+app.UseRouting();
+app.UseFluentCss();   // serve /fluentcss/hash and /fluentcss/{hash}.css
+app.UseAuthorization();
+```
+
+Register the tag helper and the namespaces in `_ViewImports.cshtml` (or `Pages/_ViewImports.cshtml` for Razor Pages):
+
+```razor
+@using static FluentCss.Core.FluentCssBuilder
+@using FluentCss.Core
+@addTagHelper *, FluentCss
+```
+
+Finally add the tag helper and, optionally, the Tailwind CSS reset (preflight) to your layout:
+
+```html
+<head>
+    ...
+    <link rel="stylesheet" href="/_content/FluentCss/preflight.css" />
+    <fluent-css />
+</head>
+```
+
+The tag helper renders the stylesheet `<link>` and a small script that keeps it in sync after client-side DOM changes, such as a partial view loaded over AJAX.
+
+### 3. Non-Blazor / Any .NET App
 
 ```csharp
 using FluentCss.Core;
@@ -357,15 +395,17 @@ The project structure:
 FluentCss/
 ├── src/
 │   ├── FluentCss.Core/       # Core library (netstandard2.0)
-│   ├── FluentCss/            # Blazor component + tag helpers (net10.0)
-│   └── FluentCss.Middleware/ # Middleware + DI extension
+│   ├── FluentCss/            # Blazor component, MVC/Razor Pages tag helpers + assets (net10.0)
+│   └── FluentCss.Middleware/ # Middleware and DI extensions (net10.0)
 ├── tests/
 │   └── FluentCss.Core.Tests/ # Unit tests
 └── test-apps/
-    ├── FluentCss.Docs/                  # Shared documentation UI (Razor Class Library)
-    ├── FluentCssBlazorSsr/              # Documentation site (static SSR) - hosts FluentCss.Docs
-    ├── FluentCssBlazorWasmStandalone/   # Documentation site (WASM standalone) - hosts FluentCss.Docs
-    ├── FluentCssBlazorInteractiveServer/# Example site (interactive server)
-    ├── FluentCssMvc/                    # Example site (MVC)
-    └── FluentCssRazorPages/             # Example site (Razor Pages)
+    ├── FluentCss.Docs/                   # Shared documentation UI (Razor Class Library)
+    ├── FluentCss.Docs.Indexer/           # Build-time search index generator for FluentCss.Docs
+    ├── FluentCssBlazorSsr/               # Documentation site (static SSR) - hosts FluentCss.Docs
+    ├── FluentCssBlazorWasmStandalone/    # Documentation site (WASM standalone) - hosts FluentCss.Docs
+    ├── FluentCssBlazoreInteractiveWasm/  # Example site (interactive WebAssembly)
+    ├── FluentCssBlazorInteractiveServer/ # Example site (interactive server)
+    ├── FluentCssMvc/                     # Example site (MVC)
+    └── FluentCssRazorPages/              # Example site (Razor Pages)
 ```

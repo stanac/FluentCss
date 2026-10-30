@@ -1,4 +1,6 @@
 @page "/docs/performance"
+@using FluentCss.Docs.Components.Shared
+@using Microsoft.AspNetCore.Components.Web
 
 <PageTitle>Performance - FluentCss</PageTitle>
 
@@ -151,11 +153,12 @@
         public static class Styles
         {
             public static string Button { get; } =
-                $"{Css.Px(6).Py(3)
+                Css.Px(6).Py(3)
                      .Background(Color.Blue600)
                      .Color(Color.White)
                      .FontBold()
-                     .Hover(h => h.Background(Color.Blue700))}";
+                     .Hover(h => h.Background(Color.Blue700))
+                     .ToString();
         }
 
         // Rendered as many times as you like, the builder only ran once.
@@ -165,15 +168,17 @@
     private const string Variants =
         """
         private static readonly string NavLink =
-            $"{Css.Px(3).Py(2).RoundedMd()
+            Css.Px(3).Py(2).RoundedMd()
                  .Color(Color.Slate600)
-                 .Hover(h => h.Background(Color.Slate100))}";
+                 .Hover(h => h.Background(Color.Slate100))
+                 .ToString();
 
         private static readonly string NavLinkActive =
-            $"{Css.Px(3).Py(2).RoundedMd()
+            Css.Px(3).Py(2).RoundedMd()
                  .FontBold()
                  .Background(Color.Blue100)
-                 .Color(Color.Blue700)}";
+                 .Color(Color.Blue700)
+                 .ToString();
 
         // Only the selection runs per render.
         private string ClassFor(string href) =>

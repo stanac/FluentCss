@@ -4,16 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Description>ASP.NET Core middleware and DI extensions for FluentCss, plus the MVC/Razor Pages tag helpers: serve the generated stylesheet and keep it in sync.</Description>
+    <Description>ASP.NET Core middleware and DI extensions for FluentCss: serve the generated stylesheet and keep it in sync.</Description>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="fluentcss.js" />
-    <EmbeddedResource Include="fluentcss.min.js" />
   </ItemGroup>
 
   <ItemGroup>

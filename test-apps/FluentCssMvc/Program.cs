@@ -10,6 +10,7 @@ namespace FluentCssMvc
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddFluentCss();
 
             var app = builder.Build();
 

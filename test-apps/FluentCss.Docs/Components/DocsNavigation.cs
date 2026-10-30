@@ -42,6 +42,7 @@ public static class DocsNavigation
             new("Borders & effects", "/docs/borders-effects"),
             new("Interactivity", "/docs/interactivity"),
             new("Tables & SVG", "/docs/tables-svg"),
+            new("Interfaces", "/docs/interfaces"),
         ]),
     ];
 }

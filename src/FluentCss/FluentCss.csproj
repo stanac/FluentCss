@@ -1,18 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Description>Blazor component and static assets for FluentCss.</Description>
+    <Description>Blazor component, MVC/Razor Pages tag helpers and static assets for FluentCss.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
+  <!--
+    The tag helpers need the ASP.NET Core shared framework. PrivateAssets keeps the
+    framework reference from flowing to consumers, so a Blazor WebAssembly project
+    can still reference this package (and its CssStyles component) without pulling
+    in a server framework that has no browser runtime pack.
+  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[10.*, 11)" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="fluentcss.js" />
+    <EmbeddedResource Include="fluentcss.min.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>14</LangVersion>
+		<Description>Fluent strongly typed CSS for Blazor, MVC and Razor Pages</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

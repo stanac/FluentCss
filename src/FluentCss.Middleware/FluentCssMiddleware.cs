@@ -21,7 +21,8 @@ namespace FluentCss.Middleware;
 /// </para>
 /// <para>
 /// The preflight reset is not part of this stylesheet. It is shipped as a static
-/// asset at <c>_content/FluentCss.Middleware/preflight.css</c> and linked separately.
+/// asset in the <c>FluentCss</c> package at <c>_content/FluentCss/preflight.css</c>
+/// and linked separately.
 /// </para>
 /// </remarks>
 public sealed class FluentCssMiddleware

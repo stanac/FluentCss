@@ -1,7 +1,7 @@
 using FluentCss.Core;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace FluentCss.Middleware;
+namespace FluentCss;
 
 /// <summary>
 /// Renders everything FluentCss needs in the document head: the stylesheet link

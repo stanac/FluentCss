@@ -418,9 +418,13 @@ Tailwind's behavior in practice.
    transforms / filters / transitions and fixes the `Ring` / `Shadow` conflict
    and duplicate base-utility behavior.
 3. **Rename projects.** Done: `FluentCss.Blazor` → `FluentCss` (Blazor
-   component and static assets) and `FluentCss.MvcRazor` → `FluentCss.Middleware`
-   (middleware and the `UseFluentCss()` DI extension). The tag helpers stayed in
-   `FluentCss.Middleware` rather than `FluentCss`, because a browser-facing Razor
-   class library cannot reference `Microsoft.AspNetCore.App` without breaking
-   Blazor WebAssembly consumers. Users can still choose the middleware and
-   script-link path in Blazor projects.
+   component, MVC/Razor Pages tag helpers and static assets) and
+   `FluentCss.MvcRazor` → `FluentCss.Middleware` (middleware and the
+   `AddFluentCss()` / `UseFluentCss()` extensions). The tag helpers live in
+   `FluentCss` next to `CssStyles`. The ASP.NET Core framework reference they
+   need is marked `PrivateAssets="all"`, and the theme tag helper reads the
+   request through `IHttpContextAccessor` instead of an MVC `ViewContext`, so the
+   assembly keeps no `Microsoft.AspNetCore.Mvc.*` reference. That stops the MVC
+   application-parts discovery from flagging it and breaking Blazor WebAssembly
+   consumers. Users can still choose the middleware and script-link path in
+   server-hosted Blazor projects.
