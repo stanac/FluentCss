@@ -2,7 +2,6 @@
     <PropertyGroup>
 	    <Version>0.1.0</Version>
 		<PackageLicenseExpression>0BSD</PackageLicenseExpression>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Authors>stanac</Authors>
 		<Summary>Fluent strongly typed CSS for Blazor, MVC and Razor Pages</Summary>
 		<IncludeSymbols>true</IncludeSymbols>
