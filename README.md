@@ -4,6 +4,9 @@
 
 ---
 
+> **Using an AI coding agent?** See the agent usage guide:
+> [AGENTS.md](https://github.com/stanac/FluentCss/blob/main/AGENTS.md).
+
 ## Overview
 
 FluentCss lets you build CSS utility classes directly in `.razor`/`.cshtml` files using a fluent, chainable API. Instead of writing CSS by hand, you compose styles with type-safe method calls — and FluentCss automatically generates the CSS and class names.
