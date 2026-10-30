@@ -1,0 +1,103 @@
+# Publishes FluentCss, FluentCss.Core and FluentCss.Middleware to nuget.org.
+#
+# Authentication uses NuGet "Trusted Publishing" (GitHub OIDC): no long-lived
+# API key is stored in the repository. NuGet/login@v1 exchanges the GitHub OIDC
+# token for a short-lived API key, which is used for that run only.
+#
+# ---------------------------------------------------------------------------
+# One-time setup on nuget.org (before the first run):
+#
+#   nuget.org -> account -> Trusted Publishing -> Create
+#     Package owner:     stanac            (your nuget.org account/org)
+#     Repository owner:  stanac
+#     Repository:        FluentCss
+#     Workflow file:     publish-nuget.yml   (must match this file name)
+#     Environment:       (leave empty - this workflow does not set one)
+#
+#   Then add a repository secret NUGET_USER containing your nuget.org
+#   *username* (NOT the email address), e.g. "stanac".
+#
+# The package version comes from Directory.Build.props, which MSBuild imports
+# automatically for every project (single source of truth). To publish a new
+# version, bump <Version> there and re-run.
+#
+# Run it from the Actions tab: "Publish NuGet packages" -> "Run workflow".
+# ---------------------------------------------------------------------------
+name: Publish NuGet packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Test and pack only - do NOT push to nuget.org."
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+
+jobs:
+  publish:
+    name: Pack & publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write # required: allows the job to request the GitHub OIDC token
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        run: dotnet test tests/FluentCss.Core.Tests/FluentCss.Core.Tests.csproj -c Release
+
+      # No version argument: MSBuild imports Directory.Build.props automatically,
+      # so each project packs with the <Version> defined there.
+      - name: Pack
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/package
+
+          for proj in \
+            src/FluentCss.Core \
+            src/FluentCss \
+            src/FluentCss.Middleware
+          do
+            dotnet pack "$proj" -c Release -o artifacts/package
+          done
+
+      - name: Show packages
+        run: ls -l artifacts/package
+
+      - name: NuGet login (OIDC -> temporary API key)
+        if: ${{ !inputs.dry-run }}
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to nuget.org
+        if: ${{ !inputs.dry-run }}
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          for file in artifacts/package/*.nupkg artifacts/package/*.snupkg; do
+            echo "Pushing $file"
+            dotnet nuget push "$file" \
+              --api-key "${NUGET_API_KEY}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
