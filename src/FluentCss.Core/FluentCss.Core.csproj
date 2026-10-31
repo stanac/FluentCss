@@ -6,7 +6,12 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>14</LangVersion>
 		<Description>Fluent strongly typed CSS for Blazor, MVC and Razor Pages</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="True" PackagePath="\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="FluentCss" />
