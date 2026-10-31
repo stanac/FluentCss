@@ -2,6 +2,12 @@
 
 **Utility-first CSS builder for .NET** — generate Tailwind-inspired utility CSS classes on-the-fly from C# code.
 
+> ⚠️ **Pre-release software.** FluentCss is in active development and has not
+> reached a stable release. The public API — interface shapes, method names,
+> generated class names and CSS output — may change between versions without a
+> major-version bump. Pin an exact version and read the release notes before
+> upgrading.
+
 ---
 
 > **Using an AI coding agent?** See the agent usage guide:
