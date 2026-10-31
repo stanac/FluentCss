@@ -36,10 +36,11 @@ FluentCss lets you build CSS utility classes directly in `.razor`/`.cshtml` file
 ## Installation
 
 ```bash
-dotnet add package FluentCss.Core
-dotnet add package FluentCss             # Blazor and MVC/Razor Pages tag helpers
-dotnet add package FluentCss.Middleware  # ASP.NET Core MVC / Razor Pages middleware
+dotnet add package FluentCss             # For Blazor and MVC/Razor Pages tag helpers
+dotnet add package FluentCss.Middleware  # For MVC/Razor Pages middleware
 ```
+
+Nuget.org links: [FluentCss](https://www.nuget.org/packages/FluentCss), [FluentCss.Middleware](https://www.nuget.org/packages/FluentCss.Middleware).
 
 ## Quick Start
 
@@ -53,19 +54,13 @@ Add the following directives to your `_Imports.razor` for a cleaner syntax:
 @using FluentCss.Core
 ```
 
-Add `<CssStyles />` to your layout (e.g., `App.razor` or `MainLayout.razor`):
-
-```razor
-<CssStyles />
-```
-
-**Important!!: during development place `<CssStyles />` at the end of the layout file!**
-
-Optionally, include the Tailwind CSS reset (preflight) to normalize browser defaults:
+Add `<CssStyles />` ad preflight to your layout (e.g., `App.razor` or `MainLayout.razor`):
 
 ```razor
 <link rel="stylesheet" href="_content/FluentCss/preflight.css" />
+<CssStyles />
 ```
+
 Preflight is licensed by Tailwind under MIT license.
 
 Then build classes anywhere in your components using the shorthand `@Css` and `@Dark`:
