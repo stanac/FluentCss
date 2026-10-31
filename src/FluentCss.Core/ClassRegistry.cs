@@ -404,6 +404,17 @@ public class ClassRegistry : IEnumerable<UtilityClass>
             {
                 rule.Declarations.Append(" !important");
             }
+
+            if (utility.AdditionalProperty != null)
+            {
+                rule.Declarations.Append("; ")
+                    .Append(utility.AdditionalProperty).Append(": ").Append(utility.AdditionalValue);
+
+                if (utility.Important)
+                {
+                    rule.Declarations.Append(" !important");
+                }
+            }
         }
 
         lock (_cssBuilderLock)

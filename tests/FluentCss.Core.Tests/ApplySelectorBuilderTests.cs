@@ -130,4 +130,14 @@ public class ApplySelectorBuilderTests
 
         act.Should().Throw<InvalidOperationException>();
     }
+
+    [Fact]
+    public void ApplySelector_Should_Emit_Additional_Declarations()
+    {
+        var sut = CreateSut(out ClassRegistry registry);
+
+        sut.ApplySelector(s => s.Class("pill"), css => css.RoundedL(Length.Rem(0.375)));
+
+        registry.Css.Should().Contain(".pill { border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem }");
+    }
 }
