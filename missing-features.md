@@ -130,12 +130,13 @@ the surrounding gaps are easy to misread as "unsupported".
   (`:nth-child(2 of .item)`) has no typed overload; the `string` overload only
   passes it through. `Lang(...)` / `Dir(...)` take a raw string without
   validating the argument (`:dir` should be `ltr` / `rtl`).
-- **[partial] Pseudo-element variants.** `PseudoElement(...)`, `FunctionalPseudoElement(...)`,
-  `Before()` and `After()` exist in the selector builder, but there is no
-  `Before` / `After` variant on `IFluentCssBuilder`. `UtilityClass` still emits a
-  single `:`, so `::before` / `::after` / `::placeholder` / `::marker` /
-  `::selection` / `::file` are only available through `ApplySelector`, not as
-  class variants.
+- **Pseudo-element variants.** `IFluentCssBuilder.Pseudo(name, ...)` decides the
+  colon count from the name: known pseudo-elements get a double colon
+  (`::placeholder`), everything else a single colon (`:hover`); a leading
+  `:` / `::` forces the shape. The typed `Before`, `After`, `Placeholder`,
+  `Marker`, `Selection`, `File`, `Backdrop`, `FirstLetter` and `FirstLine`
+  helpers wrap it. `SelectorBuilder` keeps its explicit `PseudoElement(...)` /
+  `FunctionalPseudoElement(...)` methods.
 - **[partial] Container queries.** The `@container` selector wrapper exists
   (`Selector.New().Container(query)`). There is no utility-level `@container` /
   `@min-*` / `@max-*` variant family.
@@ -192,15 +193,16 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Flexbox and grid
 
-- **[missing]** `flex` shorthand (`flex-1`, `flex-auto`, `flex-initial`,
-  `flex-none`)
+- **`flex` shorthand.** `Flex1()`, `FlexAuto()`, `FlexInitial()` and
+  `FlexNone()` emit the `flex` shorthand.
 - **[partial] grid-auto-flow / grid-auto-columns / grid-auto-rows.**
   `GridAutoFlowRow`, `GridAutoFlowColumn`, `GridAutoFlowRowDense` and
   `GridAutoFlowColumnDense` are implemented; missing `grid-auto-columns`,
   `grid-auto-rows` and arbitrary tracks.
 - **[missing]** `place-content`, `place-items`, `place-self`
 - **[partial] flex-grow / flex-shrink.** `Grow()` / `Shrink()` (value `1`) plus
-  `Grow(n)` / `Shrink(n)`; missing the `flex` shorthands.
+  `Grow(n)` / `Shrink(n)`; the `flex` shorthands are covered by `Flex1()` /
+  `FlexAuto()` / `FlexInitial()` / `FlexNone()`.
 - **[partial] grid-template-columns / grid-template-rows.** `GridCols(n)` and
   `GridRows(n)` only emit `repeat(n, minmax(0, 1fr))`; missing named lines,
   subgrid, arbitrary tracks and `none`.
@@ -214,8 +216,12 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Spacing
 
-- **[missing]** `space-x` / `space-y` (space between children)
-- **[missing]** `divide-x` / `divide-y` (and divide colors/styles)
+- **`space-x` / `space-y`.** `SpaceX(int|Length)` / `SpaceY(int|Length)` style
+  the siblings through a `> :not([hidden]) ~ :not([hidden])` selector suffix.
+  There is no `space-*-reverse`.
+- **`divide-x` / `divide-y`.** `DivideX()` / `DivideX(int)` / `DivideY()` /
+  `DivideY(int)` plus `DivideColor(Color)`. Divide styles (`divide-dashed`, ...)
+  are still missing.
 - **[missing]** logical properties: `ps`, `pe`, `pbs`, `pbe`, `ms`, `me`,
   `mbs`, `mbe`
 - Padding (`p`, `px`, `py`, `pt`, `pr`, `pb`, `pl`) and margin
@@ -228,10 +234,11 @@ the surrounding gaps are easy to misread as "unsupported".
 - **[missing]** `size-*`
 - **[missing]** logical properties: `inline-size`, `min-inline-size`,
   `max-inline-size`, `block-size`, `min-block-size`, `max-block-size`
-- **[partial] width / height.** Numeric scale plus `full`, `screen`, `auto` and
-  arbitrary lengths via `W(Length)` / `H(Length)`; missing dedicated fraction,
-  `min-content` / `max-content` / `fit-content` and `svh` / `lvh` / `dvh`
-  helpers (still expressible with a `Length`).
+- **[partial] width / height.** Numeric scale plus `full`, `screen`, `auto`,
+  `fit` (`WFit` / `HFit`), `min-content` (`WMin` / `HMin`), `max-content`
+  (`WMax` / `HMax`) and arbitrary lengths via `W(Length)` / `H(Length)`; missing
+  dedicated fraction and `svh` / `lvh` / `dvh` helpers (still expressible with a
+  `Length`).
 - **[partial] min/max width & height.** The predefined `Size` set plus any
   `Length` (arbitrary values/units, including `none`/`auto`/`min`/`max`/`fit`
   passed as a `Length`); missing a dedicated numeric scale and per-axis keyword
@@ -254,10 +261,13 @@ the surrounding gaps are easy to misread as "unsupported".
 - **[partial] list-style.** `list-style-type` (`ListStyleNone`, `ListDisc`,
   `ListDecimal`) and `list-style-position` (`ListInside`, `ListOutside`) are
   implemented; missing `list-style-image`.
-- **[missing]** text-decoration color, style, thickness and underline offset
+- **text-decoration.** `DecorationColor(Color)`, `Decoration(int thickness)`,
+  `DecorationSolid` / `DecorationDouble` / `DecorationDotted` /
+  `DecorationDashed` / `DecorationWavy` and `UnderlineOffset(int)`.
 - **[missing]** `text-wrap` (`balance`, `pretty`, `nowrap`, `wrap`)
 - **[missing]** `tab-size`
-- **[missing]** `vertical-align`
+- **`vertical-align`.** `AlignBaseline`, `AlignTop`, `AlignMiddle`,
+  `AlignBottom`, `AlignTextTop`, `AlignTextBottom`, `AlignSub`, `AlignSuper`.
 - **[missing]** `content`
 - **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`) plus
   arbitrary sizes via `Text(Length)`; missing the wider named scale and
@@ -265,8 +275,8 @@ the surrounding gaps are easy to misread as "unsupported".
 - **[partial] font-weight.** All standard weights (`100`–`900`) are implemented;
   missing arbitrary values (use `Arbitrary`).
 - **[partial] text-transform / font-style / text-align / decoration.** Common
-  values plus `LineThrough` and `Overline`; missing `normal` variants for every
-  axis.
+  values plus `LineThrough`, `Overline` and `TextEnd`; missing `normal` variants
+  for every axis and `text-align: justify` / `start`.
 
 ---
 
@@ -316,8 +326,11 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Filters
 
-- **[missing]** all `filter` utilities: `blur`, `brightness`, `contrast`,
-  `drop-shadow`, `grayscale`, `hue-rotate`, `invert`, `saturate`, `sepia`.
+- **[partial] filter utilities.** `Blur` (all sizes), `Brightness`, `Contrast`,
+  `DropShadow` (all sizes), `Grayscale`, `HueRotate`, `Invert`, `Saturate`,
+  `Sepia` and `FilterNone` are implemented. They each set the `filter` property
+  directly, so they do not compose (stacking two filters keeps the globally
+  first-registered rule).
 - **[missing]** all `backdrop-filter` equivalents.
 
 ---
@@ -330,24 +343,26 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Transitions and animation
 
-- **[missing]** `transition-property`
+- **[partial] transition utilities.** `Transition`, `TransitionNone`,
+  `TransitionAll`, `TransitionColors`, `TransitionOpacity`, `TransitionShadow`,
+  `TransitionTransform`, `Duration`, `Delay` and `EaseLinear` / `EaseIn` /
+  `EaseOut` / `EaseInOut`. The `Transition*` helpers use the `transition`
+  shorthand (property + 150ms + timing) in one class.
 - **[missing]** `transition-behavior`
-- **[missing]** `transition-duration`
-- **[missing]** `transition-timing-function`
-- **[missing]** `transition-delay`
 - **[missing]** `animation` (`animate-*`) and `@keyframes` support
 
 ---
 
 ## Transforms
 
+- **[partial] transforms.** `Rotate`, `Scale`, `ScaleX` / `ScaleY`,
+  `TranslateX` / `TranslateY`, `SkewX` / `SkewY`, `TransformNone`,
+  `TransformGpu` and the `Origin*` helpers (including `OriginTop`). Each sets
+  the `transform` property directly, so multiple transforms do not compose
+  (stacking keeps the globally first-registered rule).
 - **[missing]** `backface-visibility`
 - **[missing]** `perspective`, `perspective-origin`
-- **[missing]** `rotate`
-- **[missing]** `scale`
-- **[missing]** `skew`
-- **[missing]** `transform`, `transform-origin`, `transform-style`
-- **[missing]** `translate`
+- **[missing]** `transform-style`
 - **[missing]** `zoom`
 
 ---

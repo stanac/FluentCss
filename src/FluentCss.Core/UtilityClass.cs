@@ -49,9 +49,24 @@ public class UtilityClass
     public string Property { get; }
     public string Value { get; }
     public string? Pseudo { get; private set; }
+
+    /// <summary>
+    /// True when <see cref="Pseudo"/> names a pseudo-element and must be emitted
+    /// with a double colon (<c>::placeholder</c>); false for a pseudo-class
+    /// (<c>:hover</c>). See <see cref="PseudoNames"/> for how the shape is chosen.
+    /// </summary>
+    public bool PseudoIsElement { get; private set; }
+
     public string? Theme { get; private set; }
     public string? MediaQuery { get; private set; }
     public string? MediaPrefix { get; private set; }
+
+    /// <summary>
+    /// Selector fragment appended to the generated class selector, used by the
+    /// utilities that style the children of the element the class is on (for
+    /// example <c>space-x-*</c>). <c>null</c> for an ordinary single-class rule.
+    /// </summary>
+    public string? SelectorSuffix { get; private set; }
 
     /// <summary>
     /// True when the value is emitted with <c>!important</c>. A class can have at
@@ -77,9 +92,32 @@ public class UtilityClass
             return this;
         }
 
+        (string name, bool isElement) = PseudoNames.Normalize(pseudo!);
+
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
-            Pseudo = pseudo!.Trim(':'),
+            Pseudo = name,
+            PseudoIsElement = isElement,
+            SelectorSuffix = SelectorSuffix,
+            Theme = Theme,
+            MediaPrefix = MediaPrefix,
+            MediaQuery = MediaQuery,
+            Important = Important
+        };
+    }
+
+    internal UtilityClass WithSelectorSuffix(string? selectorSuffix)
+    {
+        if (string.IsNullOrWhiteSpace(selectorSuffix))
+        {
+            return this;
+        }
+
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
+        {
+            Pseudo = Pseudo,
+            PseudoIsElement = PseudoIsElement,
+            SelectorSuffix = selectorSuffix,
             Theme = Theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -97,6 +135,8 @@ public class UtilityClass
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
             Pseudo = Pseudo,
+            PseudoIsElement = PseudoIsElement,
+            SelectorSuffix = SelectorSuffix,
             Theme = theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -118,6 +158,8 @@ public class UtilityClass
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
             Pseudo = Pseudo,
+            PseudoIsElement = PseudoIsElement,
+            SelectorSuffix = SelectorSuffix,
             Theme = Theme,
             MediaPrefix = prefix,
             MediaQuery = query,
@@ -135,6 +177,8 @@ public class UtilityClass
         return new UtilityClass(_classNameNoPseudo, Property, Value)
         {
             Pseudo = Pseudo,
+            PseudoIsElement = PseudoIsElement,
+            SelectorSuffix = SelectorSuffix,
             Theme = Theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -198,7 +242,12 @@ public class UtilityClass
 
         if (!string.IsNullOrWhiteSpace(Pseudo))
         {
-            sb.Append(':').Append(Pseudo);
+            sb.Append(PseudoIsElement ? "::" : ":").Append(Pseudo);
+        }
+
+        if (!string.IsNullOrWhiteSpace(SelectorSuffix))
+        {
+            sb.Append(' ').Append(SelectorSuffix);
         }
 
         sb.Append(" { ").Append(Property).Append(": ").Append(Value);

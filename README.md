@@ -247,12 +247,16 @@ Spacing scale: `n × 0.25rem`. E.g., `P(4)` = `1rem`.
 | `.M(n)` / `.Mx(n)` / `.My(n)` | `margin` / `margin-inline` / `margin-block` |
 | `.Mt(n)` / `.Mr(n)` / `.Mb(n)` / `.Ml(n)` | directional margin |
 | `.MxAuto()` / `.MyAuto()` | auto margins |
+| `.SpaceX(n)` / `.SpaceY(n)` | space between child elements |
+| `.DivideX(n)` / `.DivideY(n)` / `.DivideColor(Color)` | borders between child elements |
 
 ### Sizing
 
 ```csharp
 .W(n)       .WFull()    .WScreen()    .WAuto()
+.WFit()     .WMin()     .WMax()
 .H(n)       .HFull()    .HScreen()
+.HFit()     .HMin()     .HMax()
 .MaxW(Size.Md)    .MinW(Size.Sm)
 .MaxH(Size.Lg)    .MinH(Size.Zero)
 ```
@@ -265,11 +269,14 @@ Predefined sizes: `Size.Sm`, `Size.Md`, `Size.Lg`, `Size.Xl`, `Size.Xxl`, `Size.
 .TextXs()    .TextSm()    .TextBase()
 .TextLg()    .TextXl()    .Text2Xl()    .Text3Xl()
 .FontThin()  .FontNormal()  .FontBold()
-.TextCenter() .TextLeft() .TextRight()
+.TextCenter() .TextLeft() .TextRight() .TextEnd()
 .Underline() .NoUnderline()
 .Italic()    .NotItalic()
 .Uppercase() .Lowercase() .Capitalize()
 .Leading(n)  .WhitespaceNoWrap()
+.DecorationColor(Color.Indigo500)  .Decoration(2)
+.DecorationSolid()  .DecorationWavy()  .UnderlineOffset(4)
+.AlignMiddle()  .AlignTop()  .AlignBaseline()
 ```
 
 ### Colors
@@ -304,6 +311,15 @@ Examples: `Color.Red50`, `Color.Blue700`, `Color.Emerald400`, `Color.Slate950`.
 .OverflowAuto()  .OverflowHidden()  .OverflowScroll()
 .ObjectCover()   .ObjectContain()
 .AspectSquare()  .AspectVideo()
+
+// Transitions
+.Transition()  .TransitionColors()  .Duration(300)  .EaseInOut()
+
+// Transforms (set transform directly; they do not compose)
+.Rotate(45)  .Scale(50)  .TranslateX(4)  .OriginTop()  .TransformNone()
+
+// Filters (set filter directly; they do not compose)
+.Blur()  .Grayscale()  .Brightness(50)  .DropShadowLg()  .FilterNone()
 ```
 
 ### Pseudo-classes
@@ -314,6 +330,21 @@ Examples: `Color.Red50`, `Color.Blue700`, `Color.Emerald400`, `Color.Slate950`.
 .Active(a => a.Background(Color.Blue700))
 .Pseudo("nth-child(2)", x => x.Background(Color.Gray100))
 ```
+
+Pseudo-elements use the same shape and emit a double colon:
+
+```csharp
+.Placeholder(p => p.Color(Color.Neutral400))  // ::placeholder
+.Before(b => b.Background(Color.Red500))      // ::before
+.After(a => a.Underline())                    // ::after
+.Marker(m => m.Color(Color.Blue500))          // ::marker
+.Selection(s => s.Background(Color.Blue200))  // ::selection
+.File(f => f.RoundedMd())                     // ::file-selector-button
+```
+
+`.Pseudo("part(label)", ...)`, `Backdrop(...)`, `FirstLetter(...)` and
+`FirstLine(...)` cover the remaining pseudo-elements. `Pseudo(...)` decides
+between one and two colons from the name; a leading `:` / `::` forces it.
 
 ### Media Queries (responsive)
 
@@ -387,28 +418,3 @@ Examples:
 [BSD Zero Clause License](https://opensource.org/licenses/0BSD) (0BSD) — a public-domain-equivalent license with no restrictions.
 
 Color values ~~adapted~~ stolen from [Tailwind CSS](https://tailwindcss.com) (MIT licensed).
-
-## Contributing
-
-Issues and pull requests are welcome! By submitting a pull request, you agree that your contribution will be licensed under the [BSD Zero Clause License](https://opensource.org/licenses/0BSD) (0BSD).
-
-The project structure:
-
-```
-FluentCss/
-├── src/
-│   ├── FluentCss.Core/       # Core library (netstandard2.0)
-│   ├── FluentCss/            # Blazor component, MVC/Razor Pages tag helpers + assets (net10.0)
-│   └── FluentCss.Middleware/ # Middleware and DI extensions (net10.0)
-├── tests/
-│   └── FluentCss.Core.Tests/ # Unit tests
-└── test-apps/
-    ├── FluentCss.Docs/                   # Shared documentation UI (Razor Class Library)
-    ├── FluentCss.Docs.Indexer/           # Build-time search index generator for FluentCss.Docs
-    ├── FluentCssBlazorSsr/               # Documentation site (static SSR) - hosts FluentCss.Docs
-    ├── FluentCssBlazorWasmStandalone/    # Documentation site (WASM standalone) - hosts FluentCss.Docs
-    ├── FluentCssBlazoreInteractiveWasm/  # Example site (interactive WebAssembly)
-    ├── FluentCssBlazorInteractiveServer/ # Example site (interactive server)
-    ├── FluentCssMvc/                     # Example site (MVC)
-    └── FluentCssRazorPages/              # Example site (Razor Pages)
-```

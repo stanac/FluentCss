@@ -138,6 +138,8 @@ Use it: `<button class="@MyStyles.PrimaryButton">Save</button>`.
 
 ```csharp
 Css.Hover(h => h.Background(Color.Blue700));   // pseudo-classes
+Css.Placeholder(p => p.Color(Color.Neutral400)); // pseudo-elements (::placeholder)
+Css.Before(b => b.Background(Color.Red500));    // ::before
 Css.MinMd(md => md.Flex(FlexDirection.Row));   // responsive (>= breakpoint)
 Css.MaxMd(md => md.Hidden());                  // responsive (< breakpoint)
 Css.Media("(prefers-reduced-motion: reduce)", "reduce-motion", x => x.Hidden());
@@ -176,7 +178,7 @@ full method list for `IStyleBuilder<T>` is on the
 | `IImportantStyleBuilder<out T>` | `IStyleBuilder<T>` | Adds `Important(Action<IStyleScopeBuilder>)`. |
 | `IStyleScopeBuilder` | `IStyleBuilder<IStyleScopeBuilder>` | Scope passed to `Important`; deliberately has no `Important`, so blocks cannot nest. |
 | `IOnlyStyleBuilder` | `IImportantStyleBuilder<IOnlyStyleBuilder>` | Styles-only scope passed to `Pseudo`/`Hover`/`Focus`/`Active`/`ApplySelector`; no variant methods. |
-| `IFluentCssBuilder` | `IImportantStyleBuilder<IFluentCssBuilder>` | The normal builder returned by `Css`/`Dark`/`Theme(...)`; adds `Pseudo(...)`. |
+| `IFluentCssBuilder` | `IImportantStyleBuilder<IFluentCssBuilder>` | The normal builder returned by `Css`/`Dark`/`Theme(...)`; adds `Pseudo(...)` (pseudo-class and pseudo-element). |
 | `IMediaFluentCssBuilder` | `IFluentCssBuilder` | Adds `Media(query, prefix, action)`, the primitive behind the responsive helpers. |
 | `IRootFluentCssBuilder` | `IMediaFluentCssBuilder` | Root stage; adds `ApplySelector(...)`. Only this stage can start a media query or attach a selector. |
 
@@ -532,6 +534,53 @@ public interface IStyleBuilder<out T>                // every utility method
     T Fill(Color color);
     T Stroke(Color color);
     T StrokeWidth(int width);
+
+    // Sizing keywords
+    T WFit();  T HFit();  T WMin();  T WMax();  T HMin();  T HMax();
+
+    // Flex shorthands
+    T Flex1();  T FlexAuto();  T FlexInitial();  T FlexNone();
+
+    // Space between children / dividers (style the siblings through a selector suffix)
+    T SpaceX(int scale);  T SpaceX(Length length);
+    T SpaceY(int scale);  T SpaceY(Length length);
+    T DivideX();  T DivideX(int width);  T DivideY();  T DivideY(int width);
+    T DivideColor(Color color);
+
+    // Vertical align / text align
+    T AlignBaseline(); T AlignTop(); T AlignMiddle(); T AlignBottom();
+    T AlignTextTop(); T AlignTextBottom(); T AlignSub(); T AlignSuper();
+    T TextEnd();
+
+    // Text decoration
+    T DecorationColor(Color color); T Decoration(int thickness);
+    T DecorationSolid(); T DecorationDouble(); T DecorationDotted();
+    T DecorationDashed(); T DecorationWavy(); T UnderlineOffset(int offset);
+
+    // Transitions
+    T Transition(); T TransitionNone(); T TransitionAll(); T TransitionColors();
+    T TransitionOpacity(); T TransitionShadow(); T TransitionTransform();
+    T Duration(int milliseconds); T Delay(int milliseconds);
+    T EaseLinear(); T EaseIn(); T EaseOut(); T EaseInOut();
+
+    // Transforms (set transform directly; they do not compose)
+    T TransformNone(); T TransformGpu();
+    T OriginCenter(); T OriginTop(); T OriginTopRight(); T OriginRight();
+    T OriginBottomRight(); T OriginBottom(); T OriginBottomLeft(); T OriginLeft(); T OriginTopLeft();
+    T Rotate(int degrees); T Scale(int percent); T ScaleX(int percent); T ScaleY(int percent);
+    T TranslateX(int scale); T TranslateX(Length length);
+    T TranslateY(int scale); T TranslateY(Length length);
+    T SkewX(int degrees); T SkewY(int degrees);
+
+    // Filters (set filter directly; they do not compose)
+    T FilterNone();
+    T Blur(); T BlurSm(); T BlurMd(); T BlurLg(); T BlurXl(); T Blur2Xl(); T Blur3Xl();
+    T Brightness(int percent); T Contrast(int percent);
+    T DropShadow(); T DropShadowSm(); T DropShadowMd(); T DropShadowLg(); T DropShadowXl(); T DropShadow2Xl();
+    T Grayscale(); T Grayscale(int percent); T HueRotate(int degrees);
+    T Invert(); T Invert(int percent); T Saturate(int percent);
+    T Sepia(); T Sepia(int percent);
+
     T Arbitrary(string className, string property, string value);
 }
 public interface IImportantStyleBuilder<out T> : IStyleBuilder<T>

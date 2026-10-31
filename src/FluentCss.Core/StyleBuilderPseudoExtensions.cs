@@ -231,6 +231,42 @@ public static class StyleBuilderPseudoExtensions
     public static IFluentCssBuilder Dir(this IFluentCssBuilder builder, string direction, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
         builder.Pseudo($"dir({RequireArgument(direction, nameof(direction))})", pseudoBuilderAction);
 
+    /// <summary>Matches <c>::before</c>.</summary>
+    public static IFluentCssBuilder Before(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("before", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::after</c>.</summary>
+    public static IFluentCssBuilder After(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("after", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::placeholder</c> for form placeholders.</summary>
+    public static IFluentCssBuilder Placeholder(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("placeholder", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::marker</c> for list markers.</summary>
+    public static IFluentCssBuilder Marker(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("marker", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::selection</c> for the highlighted text.</summary>
+    public static IFluentCssBuilder Selection(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("selection", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::file-selector-button</c> (Tailwind's <c>file:</c> variant).</summary>
+    public static IFluentCssBuilder File(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("file-selector-button", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::backdrop</c> for modal backdrops.</summary>
+    public static IFluentCssBuilder Backdrop(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("backdrop", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::first-letter</c>.</summary>
+    public static IFluentCssBuilder FirstLetter(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("first-letter", pseudoBuilderAction);
+
+    /// <summary>Matches <c>::first-line</c>.</summary>
+    public static IFluentCssBuilder FirstLine(this IFluentCssBuilder builder, Action<IOnlyStyleBuilder> pseudoBuilderAction) =>
+        builder.Pseudo("first-line", pseudoBuilderAction);
+
     private static string RequireArgument(string value, string parameterName)
     {
         if (string.IsNullOrWhiteSpace(value))

@@ -1417,6 +1417,320 @@ public interface IStyleBuilder<out T>
     /// <summary>Sets stroke-width in pixels</summary>
     T StrokeWidth(int width);
 
+    // ---------------------------------------------------------------------
+    // Sizing keywords
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets width to fit-content</summary>
+    T WFit();
+
+    /// <summary>Sets height to fit-content</summary>
+    T HFit();
+
+    /// <summary>Sets width to min-content</summary>
+    T WMin();
+
+    /// <summary>Sets width to max-content</summary>
+    T WMax();
+
+    /// <summary>Sets height to min-content</summary>
+    T HMin();
+
+    /// <summary>Sets height to max-content</summary>
+    T HMax();
+
+    // ---------------------------------------------------------------------
+    // Flex shorthands
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets flex to 1 1 0%</summary>
+    T Flex1();
+
+    /// <summary>Sets flex to 1 1 auto</summary>
+    T FlexAuto();
+
+    /// <summary>Sets flex to 0 1 auto</summary>
+    T FlexInitial();
+
+    /// <summary>Sets flex to none</summary>
+    T FlexNone();
+
+    // ---------------------------------------------------------------------
+    // Space between children and dividers
+    // ---------------------------------------------------------------------
+
+    /// <summary>Adds horizontal space between child elements (margin-inline-start on siblings)</summary>
+    T SpaceX(int scale);
+
+    /// <summary>Adds horizontal space between child elements from a <see cref="Length"/></summary>
+    T SpaceX(Length length);
+
+    /// <summary>Adds vertical space between child elements (margin-block-start on siblings)</summary>
+    T SpaceY(int scale);
+
+    /// <summary>Adds vertical space between child elements from a <see cref="Length"/></summary>
+    T SpaceY(Length length);
+
+    /// <summary>Adds a 1px inline-start border between child elements</summary>
+    T DivideX();
+
+    /// <summary>Adds an inline-start border between child elements</summary>
+    T DivideX(int width);
+
+    /// <summary>Adds a 1px block-start border between child elements</summary>
+    T DivideY();
+
+    /// <summary>Adds a block-start border between child elements</summary>
+    T DivideY(int width);
+
+    /// <summary>Sets the border color of divided child elements</summary>
+    T DivideColor(Color color);
+
+    // ---------------------------------------------------------------------
+    // Vertical align, text align
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets vertical-align to baseline</summary>
+    T AlignBaseline();
+
+    /// <summary>Sets vertical-align to top</summary>
+    T AlignTop();
+
+    /// <summary>Sets vertical-align to middle</summary>
+    T AlignMiddle();
+
+    /// <summary>Sets vertical-align to bottom</summary>
+    T AlignBottom();
+
+    /// <summary>Sets vertical-align to text-top</summary>
+    T AlignTextTop();
+
+    /// <summary>Sets vertical-align to text-bottom</summary>
+    T AlignTextBottom();
+
+    /// <summary>Sets vertical-align to sub</summary>
+    T AlignSub();
+
+    /// <summary>Sets vertical-align to super</summary>
+    T AlignSuper();
+
+    /// <summary>Sets text-align to end</summary>
+    T TextEnd();
+
+    // ---------------------------------------------------------------------
+    // Text decoration (color, style, thickness, underline offset)
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets text-decoration-color</summary>
+    T DecorationColor(Color color);
+
+    /// <summary>Sets text-decoration-thickness in pixels</summary>
+    T Decoration(int thickness);
+
+    /// <summary>Sets text-decoration-style to solid</summary>
+    T DecorationSolid();
+
+    /// <summary>Sets text-decoration-style to double</summary>
+    T DecorationDouble();
+
+    /// <summary>Sets text-decoration-style to dotted</summary>
+    T DecorationDotted();
+
+    /// <summary>Sets text-decoration-style to dashed</summary>
+    T DecorationDashed();
+
+    /// <summary>Sets text-decoration-style to wavy</summary>
+    T DecorationWavy();
+
+    /// <summary>Sets text-underline-offset in pixels</summary>
+    T UnderlineOffset(int offset);
+
+    // ---------------------------------------------------------------------
+    // Transitions
+    // ---------------------------------------------------------------------
+
+    /// <summary>Transitions the common animatable properties over 150ms</summary>
+    T Transition();
+
+    /// <summary>Sets transition-property to none</summary>
+    T TransitionNone();
+
+    /// <summary>Transitions all properties over 150ms</summary>
+    T TransitionAll();
+
+    /// <summary>Transitions colors over 150ms</summary>
+    T TransitionColors();
+
+    /// <summary>Transitions opacity over 150ms</summary>
+    T TransitionOpacity();
+
+    /// <summary>Transitions box-shadow over 150ms</summary>
+    T TransitionShadow();
+
+    /// <summary>Transitions transforms over 150ms</summary>
+    T TransitionTransform();
+
+    /// <summary>Sets transition-duration in milliseconds</summary>
+    T Duration(int milliseconds);
+
+    /// <summary>Sets transition-delay in milliseconds</summary>
+    T Delay(int milliseconds);
+
+    /// <summary>Sets transition-timing-function to linear</summary>
+    T EaseLinear();
+
+    /// <summary>Sets transition-timing-function to ease-in</summary>
+    T EaseIn();
+
+    /// <summary>Sets transition-timing-function to ease-out</summary>
+    T EaseOut();
+
+    /// <summary>Sets transition-timing-function to ease-in-out</summary>
+    T EaseInOut();
+
+    // ---------------------------------------------------------------------
+    // Transforms (non-composing: each sets the transform property directly)
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets transform to none</summary>
+    T TransformNone();
+
+    /// <summary>Sets transform to translateZ(0) for GPU compositing</summary>
+    T TransformGpu();
+
+    /// <summary>Sets transform-origin to center</summary>
+    T OriginCenter();
+
+    /// <summary>Sets transform-origin to top</summary>
+    T OriginTop();
+
+    /// <summary>Sets transform-origin to top right</summary>
+    T OriginTopRight();
+
+    /// <summary>Sets transform-origin to right</summary>
+    T OriginRight();
+
+    /// <summary>Sets transform-origin to bottom right</summary>
+    T OriginBottomRight();
+
+    /// <summary>Sets transform-origin to bottom</summary>
+    T OriginBottom();
+
+    /// <summary>Sets transform-origin to bottom left</summary>
+    T OriginBottomLeft();
+
+    /// <summary>Sets transform-origin to left</summary>
+    T OriginLeft();
+
+    /// <summary>Sets transform-origin to top left</summary>
+    T OriginTopLeft();
+
+    /// <summary>Rotates the element by degrees</summary>
+    T Rotate(int degrees);
+
+    /// <summary>Scales the element by a percentage (100 = 1)</summary>
+    T Scale(int percent);
+
+    /// <summary>Scales the element horizontally by a percentage</summary>
+    T ScaleX(int percent);
+
+    /// <summary>Scales the element vertically by a percentage</summary>
+    T ScaleY(int percent);
+
+    /// <summary>Translates the element along X by the spacing scale</summary>
+    T TranslateX(int scale);
+
+    /// <summary>Translates the element along X by a <see cref="Length"/></summary>
+    T TranslateX(Length length);
+
+    /// <summary>Translates the element along Y by the spacing scale</summary>
+    T TranslateY(int scale);
+
+    /// <summary>Translates the element along Y by a <see cref="Length"/></summary>
+    T TranslateY(Length length);
+
+    /// <summary>Skews the element along X by degrees</summary>
+    T SkewX(int degrees);
+
+    /// <summary>Skews the element along Y by degrees</summary>
+    T SkewY(int degrees);
+
+    // ---------------------------------------------------------------------
+    // Filters (non-composing: each sets the filter property directly)
+    // ---------------------------------------------------------------------
+
+    /// <summary>Sets filter to none</summary>
+    T FilterNone();
+
+    /// <summary>Applies an 8px blur</summary>
+    T Blur();
+
+    /// <summary>Applies a small blur</summary>
+    T BlurSm();
+
+    /// <summary>Applies a medium blur</summary>
+    T BlurMd();
+
+    /// <summary>Applies a large blur</summary>
+    T BlurLg();
+
+    /// <summary>Applies an extra-large blur</summary>
+    T BlurXl();
+
+    /// <summary>Applies a 2x-large blur</summary>
+    T Blur2Xl();
+
+    /// <summary>Applies a 3x-large blur</summary>
+    T Blur3Xl();
+
+    /// <summary>Sets filter brightness by a percentage (100 = 1)</summary>
+    T Brightness(int percent);
+
+    /// <summary>Sets filter contrast by a percentage (100 = 1)</summary>
+    T Contrast(int percent);
+
+    /// <summary>Applies a default drop shadow</summary>
+    T DropShadow();
+
+    /// <summary>Applies a small drop shadow</summary>
+    T DropShadowSm();
+
+    /// <summary>Applies a medium drop shadow</summary>
+    T DropShadowMd();
+
+    /// <summary>Applies a large drop shadow</summary>
+    T DropShadowLg();
+
+    /// <summary>Applies an extra-large drop shadow</summary>
+    T DropShadowXl();
+
+    /// <summary>Applies a 2x-large drop shadow</summary>
+    T DropShadow2Xl();
+
+    /// <summary>Applies grayscale(100%)</summary>
+    T Grayscale();
+
+    /// <summary>Applies grayscale by a percentage</summary>
+    T Grayscale(int percent);
+
+    /// <summary>Rotates the hue by degrees</summary>
+    T HueRotate(int degrees);
+
+    /// <summary>Applies invert(100%)</summary>
+    T Invert();
+
+    /// <summary>Applies invert by a percentage</summary>
+    T Invert(int percent);
+
+    /// <summary>Sets filter saturation by a percentage (100 = 1)</summary>
+    T Saturate(int percent);
+
+    /// <summary>Applies sepia(100%)</summary>
+    T Sepia();
+
+    /// <summary>Applies sepia by a percentage</summary>
+    T Sepia(int percent);
+
     /// <summary>
     /// Escape hatch for any CSS declaration the typed helpers do not cover. Emits a
     /// single utility with the given class name, property and value.

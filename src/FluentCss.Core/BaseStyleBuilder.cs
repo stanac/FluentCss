@@ -572,6 +572,165 @@ public abstract class BaseStyleBuilder<T> : IImportantStyleBuilder<T>
     public T Stroke(Color color) => AddInternal(new UtilityClass($"stroke-{color.Name}", "stroke", color.Value));
     public T StrokeWidth(int width) => AddInternal(new UtilityClass($"stroke-{width}", "stroke-width", $"{width}px"));
 
+    // ---------------------------------------------------------------------
+    // Sizing keywords
+    // ---------------------------------------------------------------------
+
+    public T WFit() => AddInternal(new UtilityClass("w-fit", "width", "fit-content"));
+    public T HFit() => AddInternal(new UtilityClass("h-fit", "height", "fit-content"));
+    public T WMin() => AddInternal(new UtilityClass("w-min", "width", "min-content"));
+    public T WMax() => AddInternal(new UtilityClass("w-max", "width", "max-content"));
+    public T HMin() => AddInternal(new UtilityClass("h-min", "height", "min-content"));
+    public T HMax() => AddInternal(new UtilityClass("h-max", "height", "max-content"));
+
+    // ---------------------------------------------------------------------
+    // Flex shorthands
+    // ---------------------------------------------------------------------
+
+    public T Flex1() => AddInternal(new UtilityClass("flex-1", "flex", "1 1 0%"));
+    public T FlexAuto() => AddInternal(new UtilityClass("flex-auto", "flex", "1 1 auto"));
+    public T FlexInitial() => AddInternal(new UtilityClass("flex-initial", "flex", "0 1 auto"));
+    public T FlexNone() => AddInternal(new UtilityClass("flex-none", "flex", "none"));
+
+    // ---------------------------------------------------------------------
+    // Space between children and dividers
+    // ---------------------------------------------------------------------
+
+    private const string SiblingSelector = "> :not([hidden]) ~ :not([hidden])";
+
+    public T SpaceX(int scale) => AddInternal(new UtilityClass($"space-x-{scale}", "margin-inline-start", GetSpacingValue(scale)).WithSelectorSuffix(SiblingSelector));
+    public T SpaceX(Length length) => AddInternal(new UtilityClass($"space-x-{length.Token}", "margin-inline-start", length.Value).WithSelectorSuffix(SiblingSelector));
+    public T SpaceY(int scale) => AddInternal(new UtilityClass($"space-y-{scale}", "margin-block-start", GetSpacingValue(scale)).WithSelectorSuffix(SiblingSelector));
+    public T SpaceY(Length length) => AddInternal(new UtilityClass($"space-y-{length.Token}", "margin-block-start", length.Value).WithSelectorSuffix(SiblingSelector));
+
+    public T DivideX() => DivideX(1);
+    public T DivideX(int width) => AddInternal(new UtilityClass($"divide-x-{width}", "border-inline-start-width", $"{width}px").WithSelectorSuffix(SiblingSelector));
+    public T DivideY() => DivideY(1);
+    public T DivideY(int width) => AddInternal(new UtilityClass($"divide-y-{width}", "border-block-start-width", $"{width}px").WithSelectorSuffix(SiblingSelector));
+    public T DivideColor(Color color) => AddInternal(new UtilityClass($"divide-{color.Name}", "border-color", color.Value).WithSelectorSuffix(SiblingSelector));
+
+    // ---------------------------------------------------------------------
+    // Vertical align, text align
+    // ---------------------------------------------------------------------
+
+    public T AlignBaseline() => AddInternal(new UtilityClass("align-baseline", "vertical-align", "baseline"));
+    public T AlignTop() => AddInternal(new UtilityClass("align-top", "vertical-align", "top"));
+    public T AlignMiddle() => AddInternal(new UtilityClass("align-middle", "vertical-align", "middle"));
+    public T AlignBottom() => AddInternal(new UtilityClass("align-bottom", "vertical-align", "bottom"));
+    public T AlignTextTop() => AddInternal(new UtilityClass("align-text-top", "vertical-align", "text-top"));
+    public T AlignTextBottom() => AddInternal(new UtilityClass("align-text-bottom", "vertical-align", "text-bottom"));
+    public T AlignSub() => AddInternal(new UtilityClass("align-sub", "vertical-align", "sub"));
+    public T AlignSuper() => AddInternal(new UtilityClass("align-super", "vertical-align", "super"));
+
+    public T TextEnd() => AddInternal(new UtilityClass("text-end", "text-align", "end"));
+
+    // ---------------------------------------------------------------------
+    // Text decoration
+    // ---------------------------------------------------------------------
+
+    public T DecorationColor(Color color) => AddInternal(new UtilityClass($"decoration-{color.Name}", "text-decoration-color", color.Value));
+    public T Decoration(int thickness) => AddInternal(new UtilityClass($"decoration-{thickness}", "text-decoration-thickness", $"{thickness}px"));
+    public T DecorationSolid() => AddInternal(new UtilityClass("decoration-solid", "text-decoration-style", "solid"));
+    public T DecorationDouble() => AddInternal(new UtilityClass("decoration-double", "text-decoration-style", "double"));
+    public T DecorationDotted() => AddInternal(new UtilityClass("decoration-dotted", "text-decoration-style", "dotted"));
+    public T DecorationDashed() => AddInternal(new UtilityClass("decoration-dashed", "text-decoration-style", "dashed"));
+    public T DecorationWavy() => AddInternal(new UtilityClass("decoration-wavy", "text-decoration-style", "wavy"));
+    public T UnderlineOffset(int offset) => AddInternal(new UtilityClass($"underline-offset-{offset}", "text-underline-offset", $"{offset}px"));
+
+    // ---------------------------------------------------------------------
+    // Transitions
+    // ---------------------------------------------------------------------
+
+    private static string TransitionValue(string properties, int milliseconds = 150, string timing = "cubic-bezier(0.4, 0, 0.2, 1)")
+    {
+        string[] parts = properties.Split(',');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            parts[i] = parts[i].Trim() + " " + milliseconds + "ms " + timing;
+        }
+
+        return string.Join(", ", parts);
+    }
+
+    public T Transition() => AddInternal(new UtilityClass("transition", "transition", TransitionValue("color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter")));
+    public T TransitionNone() => AddInternal(new UtilityClass("transition-none", "transition-property", "none"));
+    public T TransitionAll() => AddInternal(new UtilityClass("transition-all", "transition", TransitionValue("all")));
+    public T TransitionColors() => AddInternal(new UtilityClass("transition-colors", "transition", TransitionValue("color, background-color, border-color, text-decoration-color, fill, stroke")));
+    public T TransitionOpacity() => AddInternal(new UtilityClass("transition-opacity", "transition", TransitionValue("opacity")));
+    public T TransitionShadow() => AddInternal(new UtilityClass("transition-shadow", "transition", TransitionValue("box-shadow")));
+    public T TransitionTransform() => AddInternal(new UtilityClass("transition-transform", "transition", TransitionValue("transform, translate, scale, rotate")));
+    public T Duration(int milliseconds) => AddInternal(new UtilityClass($"duration-{milliseconds}", "transition-duration", $"{milliseconds}ms"));
+    public T Delay(int milliseconds) => AddInternal(new UtilityClass($"delay-{milliseconds}", "transition-delay", $"{milliseconds}ms"));
+    public T EaseLinear() => AddInternal(new UtilityClass("ease-linear", "transition-timing-function", "linear"));
+    public T EaseIn() => AddInternal(new UtilityClass("ease-in", "transition-timing-function", "cubic-bezier(0.4, 0, 1, 1)"));
+    public T EaseOut() => AddInternal(new UtilityClass("ease-out", "transition-timing-function", "cubic-bezier(0, 0, 0.2, 1)"));
+    public T EaseInOut() => AddInternal(new UtilityClass("ease-in-out", "transition-timing-function", "cubic-bezier(0.4, 0, 0.2, 1)"));
+
+    // ---------------------------------------------------------------------
+    // Transforms (each sets transform directly; they do not compose)
+    // ---------------------------------------------------------------------
+
+    public T TransformNone() => AddInternal(new UtilityClass("transform-none", "transform", "none"));
+    public T TransformGpu() => AddInternal(new UtilityClass("transform-gpu", "transform", "translateZ(0)"));
+
+    public T OriginCenter() => AddInternal(new UtilityClass("origin-center", "transform-origin", "center"));
+    public T OriginTop() => AddInternal(new UtilityClass("origin-top", "transform-origin", "top"));
+    public T OriginTopRight() => AddInternal(new UtilityClass("origin-top-right", "transform-origin", "top right"));
+    public T OriginRight() => AddInternal(new UtilityClass("origin-right", "transform-origin", "right"));
+    public T OriginBottomRight() => AddInternal(new UtilityClass("origin-bottom-right", "transform-origin", "bottom right"));
+    public T OriginBottom() => AddInternal(new UtilityClass("origin-bottom", "transform-origin", "bottom"));
+    public T OriginBottomLeft() => AddInternal(new UtilityClass("origin-bottom-left", "transform-origin", "bottom left"));
+    public T OriginLeft() => AddInternal(new UtilityClass("origin-left", "transform-origin", "left"));
+    public T OriginTopLeft() => AddInternal(new UtilityClass("origin-top-left", "transform-origin", "top left"));
+
+    public T Rotate(int degrees) => AddInternal(new UtilityClass($"rotate-{degrees}", "transform", $"rotate({degrees}deg)"));
+    public T Scale(int percent) => AddInternal(new UtilityClass($"scale-{percent}", "transform", $"scale({Fraction(percent)})"));
+    public T ScaleX(int percent) => AddInternal(new UtilityClass($"scale-x-{percent}", "transform", $"scaleX({Fraction(percent)})"));
+    public T ScaleY(int percent) => AddInternal(new UtilityClass($"scale-y-{percent}", "transform", $"scaleY({Fraction(percent)})"));
+    public T TranslateX(int scale) => AddInternal(new UtilityClass($"translate-x-{scale}", "transform", $"translateX({GetSpacingValue(scale)})"));
+    public T TranslateX(Length length) => AddInternal(new UtilityClass($"translate-x-{length.Token}", "transform", $"translateX({length.Value})"));
+    public T TranslateY(int scale) => AddInternal(new UtilityClass($"translate-y-{scale}", "transform", $"translateY({GetSpacingValue(scale)})"));
+    public T TranslateY(Length length) => AddInternal(new UtilityClass($"translate-y-{length.Token}", "transform", $"translateY({length.Value})"));
+    public T SkewX(int degrees) => AddInternal(new UtilityClass($"skew-x-{degrees}", "transform", $"skewX({degrees}deg)"));
+    public T SkewY(int degrees) => AddInternal(new UtilityClass($"skew-y-{degrees}", "transform", $"skewY({degrees}deg)"));
+
+    // ---------------------------------------------------------------------
+    // Filters (each sets filter directly; they do not compose)
+    // ---------------------------------------------------------------------
+
+    private static string Fraction(int percent) => (percent / 100.0).ToString("0.####", CultureInfo.InvariantCulture);
+
+    private T FilterUtility(string className, string value) => AddInternal(new UtilityClass(className, "filter", value));
+
+    public T FilterNone() => FilterUtility("filter-none", "none");
+
+    public T Blur() => FilterUtility("blur", "blur(8px)");
+    public T BlurSm() => FilterUtility("blur-sm", "blur(4px)");
+    public T BlurMd() => FilterUtility("blur-md", "blur(12px)");
+    public T BlurLg() => FilterUtility("blur-lg", "blur(16px)");
+    public T BlurXl() => FilterUtility("blur-xl", "blur(24px)");
+    public T Blur2Xl() => FilterUtility("blur-2xl", "blur(40px)");
+    public T Blur3Xl() => FilterUtility("blur-3xl", "blur(64px)");
+
+    public T Brightness(int percent) => FilterUtility($"brightness-{percent}", $"brightness({Fraction(percent)})");
+    public T Contrast(int percent) => FilterUtility($"contrast-{percent}", $"contrast({Fraction(percent)})");
+
+    public T DropShadow() => FilterUtility("drop-shadow", "drop-shadow(0 1px 1px rgb(0 0 0 / 0.05))");
+    public T DropShadowSm() => FilterUtility("drop-shadow-sm", "drop-shadow(0 1px 0 rgb(0 0 0 / 0.05))");
+    public T DropShadowMd() => FilterUtility("drop-shadow-md", "drop-shadow(0 3px 3px rgb(0 0 0 / 0.12))");
+    public T DropShadowLg() => FilterUtility("drop-shadow-lg", "drop-shadow(0 4px 4px rgb(0 0 0 / 0.15))");
+    public T DropShadowXl() => FilterUtility("drop-shadow-xl", "drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))");
+    public T DropShadow2Xl() => FilterUtility("drop-shadow-2xl", "drop-shadow(0 25px 25px rgb(0 0 0 / 0.15))");
+
+    public T Grayscale() => FilterUtility("grayscale", "grayscale(100%)");
+    public T Grayscale(int percent) => FilterUtility($"grayscale-{percent}", $"grayscale({percent}%)");
+    public T HueRotate(int degrees) => FilterUtility($"hue-rotate-{degrees}", $"hue-rotate({degrees}deg)");
+    public T Invert() => FilterUtility("invert", "invert(100%)");
+    public T Invert(int percent) => FilterUtility($"invert-{percent}", $"invert({percent}%)");
+    public T Saturate(int percent) => FilterUtility($"saturate-{percent}", $"saturate({Fraction(percent)})");
+    public T Sepia() => FilterUtility("sepia", "sepia(100%)");
+    public T Sepia(int percent) => FilterUtility($"sepia-{percent}", $"sepia({percent}%)");
+
     public T Arbitrary(string className, string property, string value) =>
         AddInternal(new UtilityClass(className, property, value));
 

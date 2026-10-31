@@ -6,7 +6,7 @@ internal class OnlyStyleBuilder : BaseStyleBuilder<IOnlyStyleBuilder>, IOnlyStyl
     private readonly string? _pseudo;
     private readonly List<string> _classNames = [];
 
-    internal OnlyStyleBuilder(ClassRegistry registry, string? theme, string? mediaQuery, string? mediaPrefix, string? pseudo) 
+    internal OnlyStyleBuilder(ClassRegistry registry, string? theme, string? mediaQuery, string? mediaPrefix, string? pseudo)
         : base(theme, mediaQuery, mediaPrefix)
     {
         _registry = registry;
