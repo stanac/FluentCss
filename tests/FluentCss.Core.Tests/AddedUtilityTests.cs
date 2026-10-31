@@ -196,4 +196,97 @@ public class AddedUtilityTests
 
         registry.Select(x => x.ClassName).Should().Equal("hover:space-x-2", "sm:rotate-45");
     }
+
+    [Fact]
+    public void Named_Radii_Should_Emit_Expected_Utilities()
+    {
+        AssertUtility(b => b.RoundedXl(), "rounded-xl", "border-radius", "0.75rem");
+        AssertUtility(b => b.Rounded2Xl(), "rounded-2xl", "border-radius", "1rem");
+        AssertUtility(b => b.Rounded3Xl(), "rounded-3xl", "border-radius", "1.5rem");
+    }
+
+    [Fact]
+    public void PerCorner_Radius_Should_Emit_Expected_Utilities()
+    {
+        AssertUtility(b => b.RoundedTL(), "rounded-tl", "border-top-left-radius", "0.25rem");
+        AssertUtility(b => b.RoundedTR(Length.Rem(0.5)), "rounded-tr-0.5rem", "border-top-right-radius", "0.5rem");
+        AssertUtility(b => b.RoundedBR(), "rounded-br", "border-bottom-right-radius", "0.25rem");
+        AssertUtility(b => b.RoundedBL(Length.Px(8)), "rounded-bl-8px", "border-bottom-left-radius", "8px");
+    }
+
+    [Fact]
+    public void PerSide_Radius_Should_Emit_Both_Corner_Declarations()
+    {
+        var left = Single(b => b.RoundedL(Length.Rem(0.375)));
+        left.ClassName.Should().Be("rounded-l-0.375rem");
+        left.Property.Should().Be("border-top-left-radius");
+        left.AdditionalProperty.Should().Be("border-bottom-left-radius");
+        left.CssString.Should().Be(".rounded-l-0\\.375rem { border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem } ");
+
+        var top = Single(b => b.RoundedT());
+        top.ClassName.Should().Be("rounded-t");
+        top.CssString.Should().Be(".rounded-t { border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem } ");
+
+        Single(b => b.RoundedR()).CssString.Should().Contain("border-top-right-radius: 0.25rem; border-bottom-right-radius: 0.25rem");
+        Single(b => b.RoundedB()).CssString.Should().Contain("border-bottom-right-radius: 0.25rem; border-bottom-left-radius: 0.25rem");
+    }
+
+    [Fact]
+    public void Larger_Text_Sizes_Should_Emit_Expected_Utilities()
+    {
+        AssertUtility(b => b.Text4Xl(), "text-4xl", "font-size", "2.25rem");
+        AssertUtility(b => b.Text5Xl(), "text-5xl", "font-size", "3rem");
+        AssertUtility(b => b.Text6Xl(), "text-6xl", "font-size", "3.75rem");
+        AssertUtility(b => b.Text7Xl(), "text-7xl", "font-size", "4.5rem");
+        AssertUtility(b => b.Text8Xl(), "text-8xl", "font-size", "6rem");
+        AssertUtility(b => b.Text9Xl(), "text-9xl", "font-size", "8rem");
+    }
+
+    [Fact]
+    public void Axis_Overflow_Should_Emit_Expected_Utilities()
+    {
+        AssertUtility(b => b.OverflowXAuto(), "overflow-x-auto", "overflow-x", "auto");
+        AssertUtility(b => b.OverflowXHidden(), "overflow-x-hidden", "overflow-x", "hidden");
+        AssertUtility(b => b.OverflowXScroll(), "overflow-x-scroll", "overflow-x", "scroll");
+        AssertUtility(b => b.OverflowYAuto(), "overflow-y-auto", "overflow-y", "auto");
+        AssertUtility(b => b.OverflowYHidden(), "overflow-y-hidden", "overflow-y", "hidden");
+        AssertUtility(b => b.OverflowYScroll(), "overflow-y-scroll", "overflow-y", "scroll");
+    }
+
+    [Fact]
+    public void Outline_Style_And_Colorless_Ring_Should_Emit_Expected_Utilities()
+    {
+        AssertUtility(b => b.OutlineSolid(), "outline-solid", "outline-style", "solid");
+        AssertUtility(b => b.OutlineDashed(), "outline-dashed", "outline-style", "dashed");
+        AssertUtility(b => b.OutlineDotted(), "outline-dotted", "outline-style", "dotted");
+        AssertUtility(b => b.OutlineDouble(), "outline-double", "outline-style", "double");
+        AssertUtility(b => b.OutlineNone(), "outline-none", "outline-style", "none");
+        AssertUtility(b => b.Ring(0), "ring-0", "box-shadow", "0 0 0 0px");
+    }
+
+    [Fact]
+    public void Radius_Should_Compose_With_Pseudo_Variants()
+    {
+        var added = Single(b => b.Hover(h => h.RoundedTL(Length.Rem(0.5))));
+        added.ClassName.Should().Be("hover:rounded-tl-0.5rem");
+        added.CssString.Should().Contain(":hover { border-top-left-radius");
+    }
+
+    [Fact]
+    public void Container_Should_Emit_Full_Width_And_Breakpoint_Max_Widths()
+    {
+        ClassRegistry registry = new();
+        var sut = new InternalRootFluentCssBuilder(registry, null, null, null);
+
+        sut.Container();
+
+        var classes = registry.Select(x => x.ClassName).ToList();
+        classes.Should().Contain("w-full");
+        classes.Should().Contain("min-sm:max-w-640px");
+        classes.Should().Contain("min-md:max-w-768px");
+        classes.Should().Contain("min-lg:max-w-1024px");
+        classes.Should().Contain("min-xl:max-w-1280px");
+        classes.Should().Contain("min-2xl:max-w-1536px");
+        classes.Should().HaveCount(6);
+    }
 }

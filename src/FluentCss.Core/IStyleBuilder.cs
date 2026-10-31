@@ -1731,6 +1731,53 @@ public interface IStyleBuilder<out T>
     /// <summary>Applies sepia by a percentage</summary>
     T Sepia(int percent);
 
+    // Named radii
+    T RoundedXl();
+    T Rounded2Xl();
+    T Rounded3Xl();
+
+    // Per-side / per-corner radius (a side sets two corner radii)
+    T RoundedT();
+    T RoundedT(Length radius);
+    T RoundedR();
+    T RoundedR(Length radius);
+    T RoundedB();
+    T RoundedB(Length radius);
+    T RoundedL();
+    T RoundedL(Length radius);
+    T RoundedTL();
+    T RoundedTL(Length radius);
+    T RoundedTR();
+    T RoundedTR(Length radius);
+    T RoundedBR();
+    T RoundedBR(Length radius);
+    T RoundedBL();
+    T RoundedBL(Length radius);
+
+    // Larger font sizes
+    T Text4Xl();
+    T Text5Xl();
+    T Text6Xl();
+    T Text7Xl();
+    T Text8Xl();
+    T Text9Xl();
+
+    // Axis overflow
+    T OverflowXAuto();
+    T OverflowXHidden();
+    T OverflowXScroll();
+    T OverflowYAuto();
+    T OverflowYHidden();
+    T OverflowYScroll();
+
+    // Outline style and a colorless ring
+    T OutlineSolid();
+    T OutlineDashed();
+    T OutlineDotted();
+    T OutlineDouble();
+    T OutlineNone();
+    T Ring(int width);
+
     /// <summary>
     /// Escape hatch for any CSS declaration the typed helpers do not cover. Emits a
     /// single utility with the given class name, property and value.

@@ -581,6 +581,24 @@ public interface IStyleBuilder<out T>                // every utility method
     T Invert(); T Invert(int percent); T Saturate(int percent);
     T Sepia(); T Sepia(int percent);
 
+    // Radii (named, per-side and per-corner)
+    T RoundedXl(); T Rounded2Xl(); T Rounded3Xl();
+    T RoundedT(); T RoundedT(Length radius); T RoundedR(); T RoundedR(Length radius);
+    T RoundedB(); T RoundedB(Length radius); T RoundedL(); T RoundedL(Length radius);
+    T RoundedTL(); T RoundedTL(Length radius); T RoundedTR(); T RoundedTR(Length radius);
+    T RoundedBR(); T RoundedBR(Length radius); T RoundedBL(); T RoundedBL(Length radius);
+
+    // Larger font sizes
+    T Text4Xl(); T Text5Xl(); T Text6Xl(); T Text7Xl(); T Text8Xl(); T Text9Xl();
+
+    // Axis overflow
+    T OverflowXAuto(); T OverflowXHidden(); T OverflowXScroll();
+    T OverflowYAuto(); T OverflowYHidden(); T OverflowYScroll();
+
+    // Outline style and colorless ring
+    T OutlineSolid(); T OutlineDashed(); T OutlineDotted(); T OutlineDouble(); T OutlineNone();
+    T Ring(int width);
+
     T Arbitrary(string className, string property, string value);
 }
 public interface IImportantStyleBuilder<out T> : IStyleBuilder<T>

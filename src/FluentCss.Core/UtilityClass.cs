@@ -69,6 +69,16 @@ public class UtilityClass
     public string? SelectorSuffix { get; private set; }
 
     /// <summary>
+    /// Optional second declaration emitted in the same rule (for example the two
+    /// corner radii of <c>rounded-t</c>). <c>null</c> when the utility sets a
+    /// single property.
+    /// </summary>
+    public string? AdditionalProperty { get; private set; }
+
+    /// <summary>The value of <see cref="AdditionalProperty"/>.</summary>
+    public string? AdditionalValue { get; private set; }
+
+    /// <summary>
     /// True when the value is emitted with <c>!important</c>. A class can have at
     /// most one identity, so the flag is part of the class name (for example
     /// <c>!p-4</c>) as well as the declaration.
@@ -99,6 +109,8 @@ public class UtilityClass
             Pseudo = name,
             PseudoIsElement = isElement,
             SelectorSuffix = SelectorSuffix,
+            AdditionalProperty = AdditionalProperty,
+            AdditionalValue = AdditionalValue,
             Theme = Theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -118,6 +130,24 @@ public class UtilityClass
             Pseudo = Pseudo,
             PseudoIsElement = PseudoIsElement,
             SelectorSuffix = selectorSuffix,
+            AdditionalProperty = AdditionalProperty,
+            AdditionalValue = AdditionalValue,
+            Theme = Theme,
+            MediaPrefix = MediaPrefix,
+            MediaQuery = MediaQuery,
+            Important = Important
+        };
+    }
+
+    internal UtilityClass AddDeclaration(string property, string value)
+    {
+        return new UtilityClass(_classNameNoPseudo, Property, Value)
+        {
+            Pseudo = Pseudo,
+            PseudoIsElement = PseudoIsElement,
+            SelectorSuffix = SelectorSuffix,
+            AdditionalProperty = property,
+            AdditionalValue = value,
             Theme = Theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -137,6 +167,8 @@ public class UtilityClass
             Pseudo = Pseudo,
             PseudoIsElement = PseudoIsElement,
             SelectorSuffix = SelectorSuffix,
+            AdditionalProperty = AdditionalProperty,
+            AdditionalValue = AdditionalValue,
             Theme = theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -160,6 +192,8 @@ public class UtilityClass
             Pseudo = Pseudo,
             PseudoIsElement = PseudoIsElement,
             SelectorSuffix = SelectorSuffix,
+            AdditionalProperty = AdditionalProperty,
+            AdditionalValue = AdditionalValue,
             Theme = Theme,
             MediaPrefix = prefix,
             MediaQuery = query,
@@ -179,6 +213,8 @@ public class UtilityClass
             Pseudo = Pseudo,
             PseudoIsElement = PseudoIsElement,
             SelectorSuffix = SelectorSuffix,
+            AdditionalProperty = AdditionalProperty,
+            AdditionalValue = AdditionalValue,
             Theme = Theme,
             MediaPrefix = MediaPrefix,
             MediaQuery = MediaQuery,
@@ -251,6 +287,11 @@ public class UtilityClass
         }
 
         sb.Append(" { ").Append(Property).Append(": ").Append(Value);
+
+        if (AdditionalProperty != null)
+        {
+            sb.Append("; ").Append(AdditionalProperty).Append(": ").Append(AdditionalValue);
+        }
 
         if (Important)
         {

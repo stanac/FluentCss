@@ -731,6 +731,69 @@ public abstract class BaseStyleBuilder<T> : IImportantStyleBuilder<T>
     public T Sepia() => FilterUtility("sepia", "sepia(100%)");
     public T Sepia(int percent) => FilterUtility($"sepia-{percent}", $"sepia({percent}%)");
 
+    // ---------------------------------------------------------------------
+    // Named radii and per-side / per-corner radius
+    // ---------------------------------------------------------------------
+
+    public T RoundedXl() => AddInternal(new UtilityClass("rounded-xl", "border-radius", "0.75rem"));
+    public T Rounded2Xl() => AddInternal(new UtilityClass("rounded-2xl", "border-radius", "1rem"));
+    public T Rounded3Xl() => AddInternal(new UtilityClass("rounded-3xl", "border-radius", "1.5rem"));
+
+    private T TwoDeclarationUtility(string className, string property1, string value1, string property2, string value2) =>
+        AddInternal(new UtilityClass(className, property1, value1).AddDeclaration(property2, value2));
+
+    public T RoundedT() => TwoDeclarationUtility("rounded-t", "border-top-left-radius", "0.25rem", "border-top-right-radius", "0.25rem");
+    public T RoundedT(Length radius) => TwoDeclarationUtility($"rounded-t-{radius.Token}", "border-top-left-radius", radius.Value, "border-top-right-radius", radius.Value);
+    public T RoundedR() => TwoDeclarationUtility("rounded-r", "border-top-right-radius", "0.25rem", "border-bottom-right-radius", "0.25rem");
+    public T RoundedR(Length radius) => TwoDeclarationUtility($"rounded-r-{radius.Token}", "border-top-right-radius", radius.Value, "border-bottom-right-radius", radius.Value);
+    public T RoundedB() => TwoDeclarationUtility("rounded-b", "border-bottom-right-radius", "0.25rem", "border-bottom-left-radius", "0.25rem");
+    public T RoundedB(Length radius) => TwoDeclarationUtility($"rounded-b-{radius.Token}", "border-bottom-right-radius", radius.Value, "border-bottom-left-radius", radius.Value);
+    public T RoundedL() => TwoDeclarationUtility("rounded-l", "border-top-left-radius", "0.25rem", "border-bottom-left-radius", "0.25rem");
+    public T RoundedL(Length radius) => TwoDeclarationUtility($"rounded-l-{radius.Token}", "border-top-left-radius", radius.Value, "border-bottom-left-radius", radius.Value);
+
+    public T RoundedTL() => AddInternal(new UtilityClass("rounded-tl", "border-top-left-radius", "0.25rem"));
+    public T RoundedTL(Length radius) => LengthUtility("rounded-tl", "border-top-left-radius", radius);
+    public T RoundedTR() => AddInternal(new UtilityClass("rounded-tr", "border-top-right-radius", "0.25rem"));
+    public T RoundedTR(Length radius) => LengthUtility("rounded-tr", "border-top-right-radius", radius);
+    public T RoundedBR() => AddInternal(new UtilityClass("rounded-br", "border-bottom-right-radius", "0.25rem"));
+    public T RoundedBR(Length radius) => LengthUtility("rounded-br", "border-bottom-right-radius", radius);
+    public T RoundedBL() => AddInternal(new UtilityClass("rounded-bl", "border-bottom-left-radius", "0.25rem"));
+    public T RoundedBL(Length radius) => LengthUtility("rounded-bl", "border-bottom-left-radius", radius);
+
+    // ---------------------------------------------------------------------
+    // Larger font sizes
+    // ---------------------------------------------------------------------
+
+    public T Text4Xl() => AddInternal(new UtilityClass("text-4xl", "font-size", "2.25rem"));
+    public T Text5Xl() => AddInternal(new UtilityClass("text-5xl", "font-size", "3rem"));
+    public T Text6Xl() => AddInternal(new UtilityClass("text-6xl", "font-size", "3.75rem"));
+    public T Text7Xl() => AddInternal(new UtilityClass("text-7xl", "font-size", "4.5rem"));
+    public T Text8Xl() => AddInternal(new UtilityClass("text-8xl", "font-size", "6rem"));
+    public T Text9Xl() => AddInternal(new UtilityClass("text-9xl", "font-size", "8rem"));
+
+    // ---------------------------------------------------------------------
+    // Axis overflow
+    // ---------------------------------------------------------------------
+
+    public T OverflowXAuto() => AddInternal(new UtilityClass("overflow-x-auto", "overflow-x", "auto"));
+    public T OverflowXHidden() => AddInternal(new UtilityClass("overflow-x-hidden", "overflow-x", "hidden"));
+    public T OverflowXScroll() => AddInternal(new UtilityClass("overflow-x-scroll", "overflow-x", "scroll"));
+    public T OverflowYAuto() => AddInternal(new UtilityClass("overflow-y-auto", "overflow-y", "auto"));
+    public T OverflowYHidden() => AddInternal(new UtilityClass("overflow-y-hidden", "overflow-y", "hidden"));
+    public T OverflowYScroll() => AddInternal(new UtilityClass("overflow-y-scroll", "overflow-y", "scroll"));
+
+    // ---------------------------------------------------------------------
+    // Outline style and a colorless ring overload
+    // ---------------------------------------------------------------------
+
+    public T OutlineSolid() => AddInternal(new UtilityClass("outline-solid", "outline-style", "solid"));
+    public T OutlineDashed() => AddInternal(new UtilityClass("outline-dashed", "outline-style", "dashed"));
+    public T OutlineDotted() => AddInternal(new UtilityClass("outline-dotted", "outline-style", "dotted"));
+    public T OutlineDouble() => AddInternal(new UtilityClass("outline-double", "outline-style", "double"));
+    public T OutlineNone() => AddInternal(new UtilityClass("outline-none", "outline-style", "none"));
+
+    public T Ring(int width) => AddInternal(new UtilityClass($"ring-{width}", "box-shadow", $"0 0 0 {width}px"));
+
     public T Arbitrary(string className, string property, string value) =>
         AddInternal(new UtilityClass(className, property, value));
 

@@ -173,6 +173,9 @@ the surrounding gaps are easy to misread as "unsupported".
 
 ## Layout
 
+- **`container`.** `Container()` (extension on `IMediaFluentCssBuilder`) applies
+  full width plus the Tailwind max-widths at each breakpoint. Add `MxAuto()` to
+  center it.
 - **[missing]** `columns`
 - **[missing]** `break-after`, `break-before`, `break-inside`
 - **[missing]** `box-decoration-break`
@@ -269,9 +272,9 @@ the surrounding gaps are easy to misread as "unsupported".
 - **`vertical-align`.** `AlignBaseline`, `AlignTop`, `AlignMiddle`,
   `AlignBottom`, `AlignTextTop`, `AlignTextBottom`, `AlignSub`, `AlignSuper`.
 - **[missing]** `content`
-- **[partial] font-size.** Fixed seven-step scale (`text-xs`…`text-3xl`) plus
-  arbitrary sizes via `Text(Length)`; missing the wider named scale and
-  per-size line heights (the `Text*` helpers set `font-size` only).
+- **[partial] font-size.** Named scale `text-xs`…`text-9xl` plus arbitrary
+  sizes via `Text(Length)`; missing per-size line heights (the `Text*` helpers
+  set `font-size` only).
 - **[partial] font-weight.** All standard weights (`100`–`900`) are implemented;
   missing arbitrary values (use `Arbitrary`).
 - **[partial] text-transform / font-style / text-align / decoration.** Common
@@ -295,15 +298,21 @@ the surrounding gaps are easy to misread as "unsupported".
 ## Borders
 
 - **[missing]** per-side border styles and colors
-- **[missing]** per-corner / logical border radius (`rounded-t`, `rounded-l`,
-  `rounded-ss`, …)
-- **[missing]** `outline-style`
-- **[missing]** `divide-*` utilities
+- **[partial] border radius.** Named `RoundedSm`…`Rounded3Xl` and `RoundedFull`,
+  arbitrary `Rounded(Length)`, plus per-side (`RoundedT/R/B/L`) and per-corner
+  (`RoundedTL/TR/BR/BL`) with default and `Length` overloads. Logical corners
+  (`rounded-ss`, …) are missing.
+- **`outline-style`.** `OutlineSolid`, `OutlineDashed`, `OutlineDotted`,
+  `OutlineDouble`, `OutlineNone` (plus the existing `Outline(width)`,
+  `OutlineHidden()`, `OutlineColor`, `OutlineOffset`).
+- **`divide-*`.** `DivideX()` / `DivideX(int)` / `DivideY()` / `DivideY(int)`
+  plus `DivideColor(Color)`. Divide styles (`divide-dashed`, ...) are still
+  missing.
 - **[partial] border-style.** `solid`, `dashed`, `dotted` and `double` (and
   `none` through the `Border(width, color, BorderStyle)` composite overload).
-- **[partial] outline.** `Outline(width)`, `OutlineHidden()`, `OutlineColor`
-  and `OutlineOffset`; missing `outline-style`.
-- **[partial] ring.** A single hard-coded `box-shadow` ring; missing
+- **[partial] outline.** `Outline(width)`, `OutlineHidden()`, `OutlineColor`,
+  `OutlineOffset` and the `outline-style` helpers.
+- **[partial] ring.** `Ring(width, Color)` and `Ring(width)`; missing
   `ring-inset`, `ring-offset-*`, ring color-only utilities and composable
   shadows. See also the box-shadow conflict note below.
 

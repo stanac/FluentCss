@@ -268,6 +268,7 @@ Predefined sizes: `Size.Sm`, `Size.Md`, `Size.Lg`, `Size.Xl`, `Size.Xxl`, `Size.
 ```csharp
 .TextXs()    .TextSm()    .TextBase()
 .TextLg()    .TextXl()    .Text2Xl()    .Text3Xl()
+.Text4Xl()   .Text5Xl()   .Text6Xl()    .Text7Xl()   .Text8Xl()  .Text9Xl()
 .FontThin()  .FontNormal()  .FontBold()
 .TextCenter() .TextLeft() .TextRight() .TextEnd()
 .Underline() .NoUnderline()
@@ -298,8 +299,11 @@ Examples: `Color.Red50`, `Color.Blue700`, `Color.Emerald400`, `Color.Slate950`.
 .Border(2, Color.Slate300, BorderStyle.Dashed)
 .BorderSolid()  .BorderDashed()  .BorderDotted()
 .Rounded()     .RoundedSm()   .RoundedMd()   .RoundedLg()   .RoundedFull()
+.RoundedXl()   .Rounded2Xl()  .Rounded3Xl()
+.RoundedT()    .RoundedR()    .RoundedB()    .RoundedL()    // two corners each
+.RoundedTL()   .RoundedTR()   .RoundedBR()   .RoundedBL()   // one corner each
 .Ring(2, Color.Blue200)        // ring (box-shadow based outline)
-.Outline(2)    .OutlineHidden()
+.Outline(2)    .OutlineHidden()  .OutlineSolid()  .OutlineDashed()
 ```
 
 ### Effects & Utilities
@@ -309,6 +313,8 @@ Examples: `Color.Red50`, `Color.Blue700`, `Color.Emerald400`, `Color.Slate950`.
 .Opacity(50)          // 0-100 → opacity: 0.5
 .CursorPointer()
 .OverflowAuto()  .OverflowHidden()  .OverflowScroll()
+.OverflowXAuto() .OverflowYAuto()  .OverflowXHidden()  .OverflowYHidden()
+.Container()     // full width + responsive max-widths
 .ObjectCover()   .ObjectContain()
 .AspectSquare()  .AspectVideo()
 

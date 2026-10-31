@@ -76,4 +76,20 @@ public static class MediaFluentCssBuilderExtensions
     /// <summary>Max helper for <see cref="Breakpoints.XXLarge"/> (96rem).</summary>
     public static IMediaFluentCssBuilder Max2Xl(this IMediaFluentCssBuilder builder, Action<IFluentCssBuilder> cssBuilderAction) =>
         builder.Max(Breakpoints.XXLarge, cssBuilderAction);
+
+    /// <summary>
+    /// Applies the Tailwind-style <c>container</c>: full width plus a max-width that
+    /// steps up at each breakpoint. Centering is not included; add <c>MxAuto()</c>
+    /// when the container should be centered.
+    /// </summary>
+    public static IMediaFluentCssBuilder Container(this IMediaFluentCssBuilder builder)
+    {
+        builder.WFull();
+        builder.MinSm(m => m.MaxW(Length.Px(640)));
+        builder.MinMd(m => m.MaxW(Length.Px(768)));
+        builder.MinLg(m => m.MaxW(Length.Px(1024)));
+        builder.MinXl(m => m.MaxW(Length.Px(1280)));
+        builder.Min2Xl(m => m.MaxW(Length.Px(1536)));
+        return builder;
+    }
 }
